@@ -705,67 +705,81 @@ export default function EmailPreferencesPage() {
                 </div>
 
                 {shouldShowServiceWideControls(domain) && (
-                  <div className="mb-6">
-                    <Label className="text-sm font-medium mb-2 block">
-                      Service-wide Frequency
-                      <span className="text-xs font-normal ml-1 text-muted-foreground">(Optional emails only)</span>
-                    </Label>
+                  <div className="mb-8 p-6 bg-gradient-to-r from-muted/30 to-background rounded-lg border border-border/70 shadow-sm">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className={`w-2 h-6 rounded-full ${domainConfig[domain].color}`}></div>
+                      <h3 className="text-lg font-medium">Service-wide Frequency</h3>
+                    </div>
+
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Control how often you receive all optional {domainConfig[domain].name.toLowerCase()} in a single place.
+                      This will affect all non-required emails in this category.
+                    </p>
+
                     <RadioGroup
                       value={getDomainFrequency(domain) === 'mixed' ? '' : getDomainFrequency(domain)}
                       onValueChange={(value) => handleServiceSubscription(domain, value as EmailFrequency)}
-                      className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2"
+                      className="grid grid-cols-2 sm:grid-cols-4 gap-3"
                     >
-                      {domainConfig[domain].name !== "Security Alerts" && (
-                        <>
-                          <label
-                            className={`flex items-center space-x-2 bg-muted/50 p-3 rounded-md hover:bg-muted/80 transition-colors cursor-pointer ${getDomainFrequency(domain) === 'daily' ? 'ring-1 ring-primary' : ''}`}
-                            htmlFor={`service-${domain}-daily`}
-                          >
-                            <RadioGroupItem value="daily" id={`service-${domain}-daily`} />
-                            <Label htmlFor={`service-${domain}-daily`} className="text-sm cursor-pointer">Daily</Label>
-                          </label>
-                          <label
-                            className={`flex items-center space-x-2 bg-muted/50 p-3 rounded-md hover:bg-muted/80 transition-colors cursor-pointer ${getDomainFrequency(domain) === 'weekly' ? 'ring-1 ring-primary' : ''}`}
-                            htmlFor={`service-${domain}-weekly`}
-                          >
-                            <RadioGroupItem value="weekly" id={`service-${domain}-weekly`} />
-                            <Label htmlFor={`service-${domain}-weekly`} className="text-sm cursor-pointer">Weekly</Label>
-                          </label>
-                          <label
-                            className={`flex items-center space-x-2 bg-muted/50 p-3 rounded-md hover:bg-muted/80 transition-colors cursor-pointer ${getDomainFrequency(domain) === 'monthly' ? 'ring-1 ring-primary' : ''}`}
-                            htmlFor={`service-${domain}-monthly`}
-                          >
-                            <RadioGroupItem value="monthly" id={`service-${domain}-monthly`} />
-                            <Label htmlFor={`service-${domain}-monthly`} className="text-sm cursor-pointer">Monthly</Label>
-                          </label>
-                          <label
-                            className={`flex items-center space-x-2 bg-muted/50 p-3 rounded-md hover:bg-muted/80 transition-colors cursor-pointer ${getDomainFrequency(domain) === 'none' ? 'ring-1 ring-primary' : ''}`}
-                            htmlFor={`service-${domain}-none`}
-                          >
-                            <RadioGroupItem value="none" id={`service-${domain}-none`} />
-                            <Label htmlFor={`service-${domain}-none`} className="text-sm cursor-pointer">None</Label>
-                          </label>
-                        </>
-                      )}
-                      {getDomainFrequency(domain) === 'mixed' && (
-                        <div className="text-xs text-muted-foreground mt-2">
-                          Mixed settings (choose to make uniform)
-                        </div>
-                      )}
+                      <label
+                        className={`flex items-center space-x-2 bg-background p-4 rounded-md hover:bg-muted/80 transition-colors cursor-pointer border ${getDomainFrequency(domain) === 'daily' ? 'ring-2 ring-primary border-primary' : 'border-muted'}`}
+                        htmlFor={`service-${domain}-daily`}
+                      >
+                        <RadioGroupItem value="daily" id={`service-${domain}-daily`} />
+                        <Label htmlFor={`service-${domain}-daily`} className="text-sm font-medium cursor-pointer">Daily</Label>
+                      </label>
+                      <label
+                        className={`flex items-center space-x-2 bg-background p-4 rounded-md hover:bg-muted/80 transition-colors cursor-pointer border ${getDomainFrequency(domain) === 'weekly' ? 'ring-2 ring-primary border-primary' : 'border-muted'}`}
+                        htmlFor={`service-${domain}-weekly`}
+                      >
+                        <RadioGroupItem value="weekly" id={`service-${domain}-weekly`} />
+                        <Label htmlFor={`service-${domain}-weekly`} className="text-sm font-medium cursor-pointer">Weekly</Label>
+                      </label>
+                      <label
+                        className={`flex items-center space-x-2 bg-background p-4 rounded-md hover:bg-muted/80 transition-colors cursor-pointer border ${getDomainFrequency(domain) === 'monthly' ? 'ring-2 ring-primary border-primary' : 'border-muted'}`}
+                        htmlFor={`service-${domain}-monthly`}
+                      >
+                        <RadioGroupItem value="monthly" id={`service-${domain}-monthly`} />
+                        <Label htmlFor={`service-${domain}-monthly`} className="text-sm font-medium cursor-pointer">Monthly</Label>
+                      </label>
+                      <label
+                        className={`flex items-center space-x-2 bg-background p-4 rounded-md hover:bg-muted/80 transition-colors cursor-pointer border ${getDomainFrequency(domain) === 'none' ? 'ring-2 ring-primary border-primary' : 'border-muted'}`}
+                        htmlFor={`service-${domain}-none`}
+                      >
+                        <RadioGroupItem value="none" id={`service-${domain}-none`} />
+                        <Label htmlFor={`service-${domain}-none`} className="text-sm font-medium cursor-pointer">None</Label>
+                      </label>
                     </RadioGroup>
+
+                    {getDomainFrequency(domain) === 'mixed' && (
+                      <div className="mt-3 p-3 rounded-md border border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/30 text-amber-800 dark:text-amber-400">
+                        <p className="text-sm flex items-center">
+                          <AlertCircle className="h-4 w-4 mr-2" />
+                          You have mixed frequency settings. Use the controls above to make them uniform.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
 
                 {getDomainFrequency(domain) !== 'none' && (
-                  <div className="w-full space-y-4">
-                    {getEmailsByDomain(domain).map(renderEmailPreference)}
-                  </div>
+                  <>
+                    <div className="mb-6 flex items-center justify-between">
+                      <h3 className="text-lg font-medium">Individual Email Settings</h3>
+                      <Badge variant="outline" className="text-xs">
+                        {getEmailsByDomain(domain).filter(e => !e.required).length} Emails
+                      </Badge>
+                    </div>
+                    <div className="w-full space-y-4">
+                      {getEmailsByDomain(domain).map(renderEmailPreference)}
+                    </div>
+                  </>
                 )}
 
                 {getDomainFrequency(domain) === 'none' && (
                   <>
-                    <div className="mb-6 text-center py-4 bg-muted/30 rounded-lg border border-border/50 text-muted-foreground">
-                      <p>You've unsubscribed from all optional {domainConfig[domain].name} emails.</p>
+                    <div className="mb-6 text-center py-8 bg-muted/30 rounded-lg border border-border/50 text-muted-foreground">
+                      <p className="mb-1">You've unsubscribed from all optional {domainConfig[domain].name} emails.</p>
                       <button
                         onClick={() => handleServiceSubscription(domain, 'monthly')}
                         className="text-sm text-primary underline mt-2 hover:text-primary/80"
