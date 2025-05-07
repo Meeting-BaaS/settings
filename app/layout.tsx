@@ -1,13 +1,13 @@
-import type { Metadata, Viewport } from "next"
-import { Sofia_Sans } from "next/font/google"
-import { Toaster } from "@/components/ui/sonner"
-import { ThemeProvider } from "next-themes"
 import "@/app/globals.css"
-import { headers } from "next/headers"
-import { getAuthSession } from "@/lib/auth/session"
-import { redirect } from "next/navigation"
-import Header from "@/components/header"
 import Footer from "@/components/footer"
+import Header from "@/components/header"
+import { Toaster } from "@/components/ui/sonner"
+import { getAuthSession } from "@/lib/auth/session"
+import type { Metadata, Viewport } from "next"
+import { ThemeProvider } from "next-themes"
+import { Sofia_Sans } from "next/font/google"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
 import LayoutRoot from "./layout-root"
 
 const sofiaSans = Sofia_Sans({
@@ -52,7 +52,7 @@ export default async function RootLayout({
       <body className={`${sofiaSans.className} flex min-h-screen flex-col antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
           <Header user={session.user} />
-          <main className="flex-1">
+          <main className="flex-1 pt-14">
             <LayoutRoot>{children}</LayoutRoot>
           </main>
           <Footer />
