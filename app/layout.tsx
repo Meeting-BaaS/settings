@@ -52,7 +52,7 @@ export default async function RootLayout({
       <body className={`${sofiaSans.className} flex min-h-screen flex-col antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
           <Header user={session.user} />
-          <main className="flex-1 flex flex-col">
+          <main className="flex-1">
             <LayoutRoot>{children}</LayoutRoot>
           </main>
           <Footer />
