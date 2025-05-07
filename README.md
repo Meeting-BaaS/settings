@@ -61,9 +61,52 @@ This project is pre-configured to integrate with the authentication app. Ensure 
 
 The settings app includes a comprehensive email preferences management system that allows users to:
 
-- Control email subscriptions by service category (Reports, Announcements, Developer Updates)
+- Control email subscriptions by service category (Reports, Announcements, Developer Updates, Account)
 - Set frequency preferences (daily, weekly, monthly) for each type of email
 - Unsubscribe from individual emails or entire service categories at once
+- Resend the latest email of any type
+
+### Email Preference Types
+
+The application uses a centralized type system for email preferences defined in `lib/email-types.ts`:
+
+```typescript
+// Available email frequency options
+export type EmailFrequency = "daily" | "weekly" | "monthly" | "none";
+
+// Available service/domain categories
+export type EmailDomain =
+  | "reports"
+  | "announcements"
+  | "developers"
+  | "account";
+
+// Email type definition as stored in the database
+export interface EmailType {
+  id: string; // Unique identifier
+  name: string; // Display name
+  description: string; // Description text
+  domain: EmailDomain; // Service category
+  frequencies: EmailFrequency[]; // Available frequencies
+  required?: boolean; // If true, can't be unsubscribed
+}
+```
+
+### Email Preferences API
+
+The application provides a mock API in `lib/email-api.ts` for working with email preferences:
+
+| Function                 | Description                                  |
+| ------------------------ | -------------------------------------------- |
+| `updateEmailFrequency`   | Update frequency for a single email type     |
+| `updateServiceFrequency` | Update frequency for all emails in a service |
+| `unsubscribeWithToken`   | Unsubscribe using token from email link      |
+| `getEmailPreferences`    | Get all user preferences                     |
+| `resendLatestEmail`      | Request resend of the latest email           |
+| `batchUpdatePreferences` | Update multiple preferences at once          |
+| `getAvailableEmailTypes` | Get configuration for all email types        |
+
+In production, replace the mock implementations with actual API calls to your backend.
 
 ### Unsubscribe Links
 
@@ -86,12 +129,6 @@ For individual email types:
 https://settings.meetingbaas.com/email-preferences?unsubscribe=product-updates&token=eyJhbGciOiJIUzI1NiJ9...
 ```
 
-You can also specify a frequency (optional):
-
-```
-https://settings.meetingbaas.com/email-preferences?unsubscribe=product-updates&frequency=weekly&token=eyJhbGciOiJIUzI1NiJ9...
-```
-
 When a user clicks an unsubscribe link:
 
 1. They'll be directed to the email preferences page
@@ -103,13 +140,13 @@ When a user clicks an unsubscribe link:
 
 The following email type IDs are available for unsubscribe links:
 
-| ID                          | Name                             | Service Category  |
-| --------------------------- | -------------------------------- | ----------------- |
-| `usage-reports`             | Usage Reports                    | Reports           |
-| `product-updates`           | Product Updates                  | Announcements     |
-| `maintenance-notifications` | Maintenance Notifications        | Announcements     |
-| `company-news`              | Company News                     | Announcements     |
-| `api-changes`               | API Changes                      | Developer Updates |
-| `developer-resources`       | Developer Resources              | Developer Updates |
-| `security-alerts`           | Security Alerts (Required)       | Announcements     |
-| `billing-notifications`     | Billing Notifications (Required) | Reports           |
+| ID                          | Name                      | Service Category  | Required |
+| --------------------------- | ------------------------- | ----------------- | -------- |
+| `usage-reports`             | Usage Reports             | Reports           | No       |
+| `product-updates`           | Product Updates           | Announcements     | No       |
+| `maintenance-notifications` | Maintenance Notifications | Announcements     | No       |
+| `company-news`              | Company News              | Announcements     | No       |
+| `api-changes`               | API Changes               | Developer Updates | No       |
+| `developer-resources`       | Developer Resources       | Developer Updates | No       |
+| `security-alerts`           | Security Alerts           | Account           | Yes      |
+| `billing-notifications`     | Billing Notifications     | Account           | Yes      |

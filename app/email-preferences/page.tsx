@@ -26,111 +26,104 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-import { resendLatestEmail, unsubscribeWithToken, updateEmailFrequency, updateServiceFrequency } from "@/lib/email-api"
+import {
+  getEmailPreferences,
+  resendLatestEmail,
+  unsubscribeWithToken,
+  updateEmailFrequency,
+  updateServiceFrequency
+} from "@/lib/email-api"
 
-// Define possible domain types and frequencies
-type EmailDomain = 'reports' | 'announcements' | 'developers' | 'account';
-type EmailFrequency = 'daily' | 'weekly' | 'monthly' | 'none';
+import {
+  EmailDomain,
+  EmailFrequency
+} from "@/lib/email-types"
 
-// These types would match your DB schema
-interface EmailType {
+// =================================================================
+// This is the email preferences page component
+// It interacts with the email-api.ts module for all API operations
+// =================================================================
+
+// User authentication token - replace with actual auth in production
+// TODO: Get real user token from authentication system
+const USER_TOKEN = "mock-user-token";
+
+// Email types that will match DB schema
+// TODO: Fetch this from the API instead of hardcoding
+const EMAIL_TYPES: {
   id: string;               // Database ID/slug
   name: string;             // Display name
   description: string;      // Description text
   domain: EmailDomain;      // Which domain sends this email
   frequencies: EmailFrequency[]; // Available frequencies
   required?: boolean;       // If true, can't be unsubscribed
-}
+}[] = [
+    // Reports (reports.meetingbaas.com)
+    {
+      id: "usage-reports",
+      name: "Usage Reports",
+      description: "Monthly reports on your Meeting BaaS usage and statistics.",
+      domain: "reports",
+      frequencies: ["daily", "weekly", "monthly"]
+    },
 
-// Email types that will match DB schema
-const EMAIL_TYPES: EmailType[] = [
-  // Reports (reports.meetingbaas.com)
-  // {
-  //   id: "meeting-summaries",
-  //   name: "Meeting Summaries",
-  //   description: "Automated summaries of your recorded meetings.",
-  //   domain: "reports",
-  //   frequencies: ["daily", "weekly", "monthly"]
-  // },
-  {
-    id: "usage-reports",
-    name: "Usage Reports",
-    description: "Monthly reports on your Meeting BaaS usage and statistics.",
-    domain: "reports",
-    frequencies: ["daily", "weekly", "monthly"]
-  },
-  // {
-  //   id: "ai-insights",
-  //   name: "AI Insights",
-  //   description: "AI-generated insights from your meeting transcripts.",
-  //   domain: "reports",
-  //   frequencies: ["weekly", "monthly"]
-  // },
+    // Announcements (announcements.meetingbaas.com)
+    {
+      id: "product-updates",
+      name: "Product Updates",
+      description: "New features and improvements to the platform.",
+      domain: "announcements",
+      frequencies: ["weekly", "monthly"]
+    },
+    {
+      id: "maintenance-notifications",
+      name: "Maintenance Notifications",
+      description: "Scheduled maintenance and system updates.",
+      domain: "announcements",
+      frequencies: ["daily"]
+    },
+    {
+      id: "company-news",
+      name: "Company News",
+      description: "News and announcements about Meeting BaaS.",
+      domain: "announcements",
+      frequencies: ["monthly"]
+    },
 
-  // Announcements (announcements.meetingbaas.com)
-  {
-    id: "product-updates",
-    name: "Product Updates",
-    description: "New features and improvements to the platform.",
-    domain: "announcements",
-    frequencies: ["weekly", "monthly"]
-  },
-  {
-    id: "maintenance-notifications",
-    name: "Maintenance Notifications",
-    description: "Scheduled maintenance and system updates.",
-    domain: "announcements",
-    frequencies: ["daily"]
-  },
-  {
-    id: "company-news",
-    name: "Company News",
-    description: "News and announcements about Meeting BaaS.",
-    domain: "announcements",
-    frequencies: ["monthly"]
-  },
+    // Developers (developers.meetingbaas.com)
+    {
+      id: "api-changes",
+      name: "API Changes",
+      description: "Updates and changes to the Meeting BaaS API.",
+      domain: "developers",
+      frequencies: ["daily", "weekly", "monthly"]
+    },
+    {
+      id: "developer-resources",
+      name: "Developer Resources",
+      description: "New resources, tutorials and documentation.",
+      domain: "developers",
+      frequencies: ["daily", "weekly", "monthly"]
+    },
 
-  // Developers (developers.meetingbaas.com)
-  {
-    id: "api-changes",
-    name: "API Changes",
-    description: "Updates and changes to the Meeting BaaS API.",
-    domain: "developers",
-    frequencies: ["daily", "weekly", "monthly"]
-  },
-  {
-    id: "developer-resources",
-    name: "Developer Resources",
-    description: "New resources, tutorials and documentation.",
-    domain: "developers",
-    frequencies: ["daily", "weekly", "monthly"]
-  },
-  // {
-  //   id: "mcp-updates",
-  //   name: "MCP Updates",
-  //   description: "Updates to the Model Context Protocol (MCP) implementation.",
-  //   domain: "developers",
-  //   frequencies: ["weekly"]
-  // },
-
-  // Account notifications (required)
-  {
-    id: "security-alerts",
-    name: "Security Alerts",
-    description: "Important security notifications about your account.",
-    domain: "account",
-    frequencies: ["daily"],
-    required: true
-  },
-  {
-    id: "billing-notifications",
-    name: "Billing Notifications",
-    description: "Invoices and payment confirmations.",
-    domain: "account",
-    frequencies: ["daily", "weekly", "monthly"],
-    required: true
-  }
-];
+    // Account notifications (required)
+    {
+      id: "security-alerts",
+      name: "Security Alerts",
+      description: "Important security notifications about your account.",
+      domain: "account",
+      frequencies: ["daily"],
+      required: true
+    },
+    {
+      id: "billing-notifications",
+      name: "Billing Notifications",
+      description: "Invoices and payment confirmations.",
+      domain: "account",
+      frequencies: ["daily", "weekly", "monthly"],
+      required: true
+    }
+  ];
 
 // Group email types by domain
 const getEmailsByDomain = (domain: EmailDomain) => {
@@ -138,7 +131,7 @@ const getEmailsByDomain = (domain: EmailDomain) => {
 };
 
 // Find email type by ID
-const findEmailTypeById = (id: string): EmailType | undefined => {
+const findEmailTypeById = (id: string) => {
   return EMAIL_TYPES.find(type => type.id === id);
 };
 
@@ -183,17 +176,38 @@ export default function EmailPreferencesPage() {
 
   // State for preferences (email type ID → selected frequency)
   const [preferences, setPreferences] = useState<Record<string, EmailFrequency>>({});
+  const [loading, setLoading] = useState(true);
 
-  // Initialize preferences based on EMAIL_TYPES
+  // Initialize preferences from API
   useEffect(() => {
-    const initialPreferences: Record<string, EmailFrequency> = {};
+    // Fetch preferences from API
+    const fetchPreferences = async () => {
+      try {
+        setLoading(true);
+        console.log("Fetching email preferences from API...");
 
-    EMAIL_TYPES.forEach(emailType => {
-      // Default to the first available frequency or 'none'
-      initialPreferences[emailType.id] = emailType.frequencies[0] || 'none';
-    });
+        // TODO: In production, this would fetch real preferences from the API
+        // For now, we're using the mock API which returns hardcoded values
+        const apiPreferences = await getEmailPreferences(USER_TOKEN);
 
-    setPreferences(initialPreferences);
+        // If API call is successful, set the preferences
+        setPreferences(apiPreferences);
+      } catch (error) {
+        console.error("Error fetching preferences:", error);
+        toast.error("Failed to load email preferences. Please try again.");
+
+        // Fallback to default preferences if API call fails
+        const fallbackPreferences: Record<string, EmailFrequency> = {};
+        EMAIL_TYPES.forEach(emailType => {
+          fallbackPreferences[emailType.id] = emailType.frequencies[0] || 'none';
+        });
+        setPreferences(fallbackPreferences);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPreferences();
   }, []);
 
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -216,8 +230,7 @@ export default function EmailPreferencesPage() {
   // Check for URL parameters - for handling unsubscribe links from emails
   useEffect(() => {
     const unsubscribeType = searchParams.get('unsubscribe');
-    const frequency = searchParams.get('frequency') as EmailFrequency | null;
-    const token = searchParams.get('token'); // In a real app, you'd validate this token
+    const token = searchParams.get('token');
 
     if (unsubscribeType && token) {
       const emailType = findEmailTypeById(unsubscribeType);
@@ -227,28 +240,33 @@ export default function EmailPreferencesPage() {
           toast.error(`${emailType.name} notifications cannot be disabled for security reasons.`);
         } else {
           // Process unsubscribe via API if token is provided
-          if (token) {
-            unsubscribeWithToken(unsubscribeType, token)
-              .then(response => {
-                // Show confirmation dialog instead of automatic unsubscribe
-                setConfirmDialog({
-                  isOpen: true,
-                  emailId: unsubscribeType,
-                  emailName: emailType.name,
-                  newFrequency: 'none'
-                });
-              })
-              .catch(error => {
-                console.error("Error unsubscribing with token:", error);
-                toast.error("Invalid or expired unsubscribe link. Please try again.");
+          console.log(`Processing unsubscribe link for ${unsubscribeType} with token`);
+
+          unsubscribeWithToken(unsubscribeType, token)
+            .then(response => {
+              // Show confirmation dialog
+              setConfirmDialog({
+                isOpen: true,
+                emailId: unsubscribeType,
+                emailName: emailType.name,
+                newFrequency: 'none'
               });
-          }
+            })
+            .catch(error => {
+              console.error("Error unsubscribing with token:", error);
+              toast.error("Invalid or expired unsubscribe link. Please try again.");
+            });
         }
       }
     }
   }, [searchParams]);
 
-  const handleFrequencyChange = (emailType: EmailType, frequency: EmailFrequency) => {
+  const handleFrequencyChange = (emailType: {
+    id: string;
+    name: string;
+    required?: boolean;
+    frequencies: EmailFrequency[];
+  }, frequency: EmailFrequency) => {
     // If it's required, don't allow changing to 'none'
     if (emailType.required && frequency === 'none') {
       toast.error(`${emailType.name} notifications cannot be disabled for security reasons.`);
@@ -271,17 +289,16 @@ export default function EmailPreferencesPage() {
   };
 
   const updatePreference = (id: string, frequency: EmailFrequency) => {
-    // Update local state optimistically first
-    setPreferences((prev) => {
-      const newPreferences = {
-        ...prev,
-        [id]: frequency
-      };
-      return newPreferences;
-    });
+    // Update local state optimistically
+    setPreferences((prev) => ({
+      ...prev,
+      [id]: frequency
+    }));
 
     // Call the API to update the preference
-    updateEmailFrequency("mock-user-token", id, frequency)
+    console.log(`Updating email preference: ${id} -> ${frequency}`);
+
+    updateEmailFrequency(USER_TOKEN, id, frequency)
       .then(response => {
         const emailType = findEmailTypeById(id);
 
@@ -304,6 +321,17 @@ export default function EmailPreferencesPage() {
       });
   };
 
+  // Function to determine if a specific domain should show service-wide controls
+  const shouldShowServiceWideControls = (domain: EmailDomain): boolean => {
+    // Don't show for account (all required) or reports (only one optional email)
+    if (domain === 'account') return false;
+    if (domain === 'reports') return false;
+
+    // For other domains, show if there's more than one optional email
+    const optionalEmails = getEmailsByDomain(domain).filter(e => !e.required);
+    return optionalEmails.length > 1;
+  };
+
   // Function to handle service-level subscription changes
   const handleServiceSubscription = (domain: EmailDomain, frequency: EmailFrequency) => {
     // If unsubscribing from a service (setting to none)
@@ -318,66 +346,64 @@ export default function EmailPreferencesPage() {
       return;
     }
 
+    console.log(`Updating all ${domain} emails to ${frequency}`);
+
     // Call the API to update service-wide frequency
-    updateServiceFrequency("mock-user-token", { domain, frequency })
+    updateServiceFrequency(USER_TOKEN, { domain, frequency })
       .then(response => {
         // On successful API response, update local state for all affected emails
         const emailsInDomain = getEmailsByDomain(domain);
-        emailsInDomain.forEach(emailType => {
-          if (!emailType.required) {
-            // If the exact frequency is available, use it
-            if (emailType.frequencies.includes(frequency)) {
-              // Update local state without calling API again
-              setPreferences((prev) => ({
-                ...prev,
-                [emailType.id]: frequency
-              }));
-            }
-            // Otherwise, find the closest available frequency
-            else if (emailType.frequencies.length > 0) {
-              // Frequency priority order: daily -> weekly -> monthly -> none
-              const frequencyOrder = ['daily', 'weekly', 'monthly', 'none'];
-              const selectedIndex = frequencyOrder.indexOf(frequency);
 
-              // Start by looking for frequencies with lower frequency (less frequent)
-              let closestFrequency: EmailFrequency | undefined;
+        // Update local state for all affected emails
+        setPreferences(prev => {
+          const newPreferences = { ...prev };
 
-              // Look for less frequent options first (moving right in the array)
-              for (let i = selectedIndex + 1; i < frequencyOrder.length; i++) {
-                const option = frequencyOrder[i] as EmailFrequency;
-                if (emailType.frequencies.includes(option)) {
-                  closestFrequency = option;
-                  break;
-                }
+          emailsInDomain.forEach(emailType => {
+            if (!emailType.required) {
+              // If the exact frequency is available, use it
+              if (emailType.frequencies.includes(frequency)) {
+                newPreferences[emailType.id] = frequency;
               }
+              // Otherwise, find the closest available frequency
+              else if (emailType.frequencies.length > 0) {
+                // Frequency priority order: daily -> weekly -> monthly -> none
+                const frequencyOrder = ['daily', 'weekly', 'monthly', 'none'];
+                const selectedIndex = frequencyOrder.indexOf(frequency);
 
-              // If no less frequent option, look for more frequent options (moving left in the array)
-              if (!closestFrequency) {
-                for (let i = selectedIndex - 1; i >= 0; i--) {
+                // Start by looking for frequencies with lower frequency (less frequent)
+                let closestFrequency: EmailFrequency | undefined;
+
+                // Look for less frequent options first (moving right in the array)
+                for (let i = selectedIndex + 1; i < frequencyOrder.length; i++) {
                   const option = frequencyOrder[i] as EmailFrequency;
                   if (emailType.frequencies.includes(option)) {
                     closestFrequency = option;
                     break;
                   }
                 }
-              }
 
-              // Apply the closest frequency found or the first available if nothing else works
-              if (closestFrequency) {
-                // Update local state without calling API again
-                setPreferences((prev) => ({
-                  ...prev,
-                  [emailType.id]: closestFrequency
-                }));
-              } else {
-                // Update local state without calling API again
-                setPreferences((prev) => ({
-                  ...prev,
-                  [emailType.id]: emailType.frequencies[0]
-                }));
+                // If no less frequent option, look for more frequent options (moving left in the array)
+                if (!closestFrequency) {
+                  for (let i = selectedIndex - 1; i >= 0; i--) {
+                    const option = frequencyOrder[i] as EmailFrequency;
+                    if (emailType.frequencies.includes(option)) {
+                      closestFrequency = option;
+                      break;
+                    }
+                  }
+                }
+
+                // Apply the closest frequency found or the first available if nothing else works
+                if (closestFrequency) {
+                  newPreferences[emailType.id] = closestFrequency;
+                } else {
+                  newPreferences[emailType.id] = emailType.frequencies[0];
+                }
               }
             }
-          }
+          });
+
+          return newPreferences;
         });
 
         toast.success(`Updated all optional ${domainConfig[domain].name} preferences`);
@@ -402,25 +428,46 @@ export default function EmailPreferencesPage() {
     return allSame ? firstFreq : 'mixed';
   };
 
+  // Function to handle Resend Latest button click
+  const handleResendLatest = (emailType: { id: string; name: string }) => {
+    console.log(`Resending latest ${emailType.name} email (ID: ${emailType.id})`);
+
+    // Call the API function to resend the latest email
+    resendLatestEmail(USER_TOKEN, emailType.id)
+      .then(response => {
+        toast.success(`Latest ${emailType.name} email will be resent shortly`);
+      })
+      .catch(error => {
+        console.error("Error resending email:", error);
+        toast.error(`Failed to resend ${emailType.name} email. Please try again.`);
+      });
+  };
+
   // Modified handleConfirmUnsubscribe to handle service-level unsubscribes
   const handleConfirmUnsubscribe = () => {
     // Check if this is a service-level unsubscribe
     if (confirmDialog.emailId.startsWith('service-')) {
       const domain = confirmDialog.emailId.replace('service-', '') as EmailDomain;
 
+      console.log(`Unsubscribing from all ${domain} emails`);
+
       // Use the service API to unsubscribe from all emails in this domain
-      updateServiceFrequency("mock-user-token", { domain, frequency: 'none' })
+      updateServiceFrequency(USER_TOKEN, { domain, frequency: 'none' })
         .then(response => {
           // On successful API response, update local state for all non-required emails
           const emailsInDomain = getEmailsByDomain(domain);
-          emailsInDomain.forEach(emailType => {
-            if (!emailType.required) {
-              // Update local state without calling API again
-              setPreferences((prev) => ({
-                ...prev,
-                [emailType.id]: 'none'
-              }));
-            }
+
+          // Update the local state
+          setPreferences(prev => {
+            const newPreferences = { ...prev };
+
+            emailsInDomain.forEach(emailType => {
+              if (!emailType.required) {
+                newPreferences[emailType.id] = 'none';
+              }
+            });
+
+            return newPreferences;
           });
 
           // Show success message
@@ -433,11 +480,13 @@ export default function EmailPreferencesPage() {
           toast.error(`Failed to unsubscribe from ${domainConfig[domain].name} emails. Please try again.`);
         });
     } else {
+      console.log(`Unsubscribing from ${confirmDialog.emailId} email`);
+
       // Regular email-specific unsubscribe
-      updateEmailFrequency("mock-user-token", confirmDialog.emailId, 'none')
+      updateEmailFrequency(USER_TOKEN, confirmDialog.emailId, 'none')
         .then(response => {
-          // Update local state without calling API again
-          setPreferences((prev) => ({
+          // Update local state
+          setPreferences(prev => ({
             ...prev,
             [confirmDialog.emailId]: 'none'
           }));
@@ -456,32 +505,14 @@ export default function EmailPreferencesPage() {
     setConfirmDialog({ isOpen: false, emailId: "", emailName: "", newFrequency: "none" });
   };
 
-  // Function to determine if a specific domain should show service-wide controls
-  const shouldShowServiceWideControls = (domain: EmailDomain): boolean => {
-    // Don't show for account (all required) or reports (only one optional email)
-    if (domain === 'account') return false;
-    if (domain === 'reports') return false;
-
-    // For other domains, show if there's more than one optional email
-    const optionalEmails = getEmailsByDomain(domain).filter(e => !e.required);
-    return optionalEmails.length > 1;
-  };
-
-  // Function to handle Resend Latest button click
-  const handleResendLatest = (emailType: EmailType) => {
-    // Call the API function to resend the latest email
-    resendLatestEmail("mock-user-token", emailType.id)
-      .then(response => {
-        toast.success(`Latest ${emailType.name} email will be resent shortly`);
-      })
-      .catch(error => {
-        console.error("Error resending email:", error);
-        toast.error(`Failed to resend ${emailType.name} email. Please try again.`);
-      });
-  };
-
   // Function to render email preference with frequencies
-  const renderEmailPreference = (emailType: EmailType) => {
+  const renderEmailPreference = (emailType: {
+    id: string;
+    name: string;
+    description: string;
+    frequencies: EmailFrequency[];
+    required?: boolean;
+  }) => {
     if (!(emailType.id in preferences)) return null;
 
     const currentFrequency = preferences[emailType.id];
@@ -575,8 +606,10 @@ export default function EmailPreferencesPage() {
   };
 
   // If preferences haven't loaded yet, show loading state
-  if (Object.keys(preferences).length === 0) {
-    return <div>Loading preferences...</div>;
+  if (loading) {
+    return <div className="flex items-center justify-center h-40">
+      <div className="text-muted-foreground">Loading preferences...</div>
+    </div>;
   }
 
   return (

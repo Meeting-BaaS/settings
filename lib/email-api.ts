@@ -1,5 +1,16 @@
 import axios from "axios";
 
+import {
+  BatchUpdateResponse,
+  EmailFrequency,
+  EmailPreference,
+  EmailPreferences,
+  EmailType,
+  ResendEmailResponse,
+  ServiceFrequencyUpdate,
+  ServiceUpdateResponse,
+} from "./email-types";
+
 // =================================================================
 // MOCK IMPLEMENTATION - TO BE REPLACED WITH REAL API ENDPOINTS LATER
 // =================================================================
@@ -7,23 +18,6 @@ import axios from "axios";
 // Each function has a console.log that shows what data is being sent/received
 // Search for "[MOCK]" to find all the places that need to be updated with real API calls
 // =================================================================
-
-type EmailFrequency = "daily" | "weekly" | "monthly" | "none";
-type EmailDomain = "reports" | "announcements" | "developers" | "account";
-
-// Types for email preferences and operations
-export interface EmailPreference {
-  id: string;
-  frequency: EmailFrequency;
-}
-
-export interface ServiceFrequencyUpdate {
-  domain: EmailDomain;
-  frequency: EmailFrequency;
-}
-
-// Export the types for use in other files
-export type { EmailDomain, EmailFrequency };
 
 // Update email frequency for a single email type
 export async function updateEmailFrequency(
@@ -62,7 +56,7 @@ export async function updateEmailFrequency(
 export async function updateServiceFrequency(
   userToken: string,
   data: ServiceFrequencyUpdate
-): Promise<{ success: boolean; updatedEmails: string[] }> {
+): Promise<ServiceUpdateResponse> {
   // MOCK IMPLEMENTATION - Replace with actual API call
   console.log(
     `[MOCK API] updateServiceFrequency: Setting all ${data.domain} emails to ${data.frequency}`
@@ -124,7 +118,7 @@ export async function unsubscribeWithToken(
 // Get all email preferences for the user
 export async function getEmailPreferences(
   userToken: string
-): Promise<Record<string, EmailFrequency>> {
+): Promise<EmailPreferences> {
   // MOCK IMPLEMENTATION - Replace with actual API call
   console.log("[MOCK API] getEmailPreferences: Fetching user preferences");
   console.log(`[MOCK API] Auth token: ${userToken}`);
@@ -161,7 +155,7 @@ export async function getEmailPreferences(
 export async function resendLatestEmail(
   userToken: string,
   emailId: string
-): Promise<{ success: boolean; message: string }> {
+): Promise<ResendEmailResponse> {
   // MOCK IMPLEMENTATION - Replace with actual API call
   console.log(
     `[MOCK API] resendLatestEmail: Resending latest ${emailId} email`
@@ -191,7 +185,7 @@ export async function resendLatestEmail(
 export async function batchUpdatePreferences(
   userToken: string,
   preferences: EmailPreference[]
-): Promise<{ success: boolean; updatedCount: number }> {
+): Promise<BatchUpdateResponse> {
   // MOCK IMPLEMENTATION - Replace with actual API call
   console.log(
     `[MOCK API] batchUpdatePreferences: Updating ${preferences.length} preferences`
@@ -220,16 +214,9 @@ export async function batchUpdatePreferences(
 }
 
 // Get a list of available email types and their configuration
-export async function getAvailableEmailTypes(userToken: string): Promise<
-  {
-    id: string;
-    name: string;
-    description: string;
-    domain: EmailDomain;
-    frequencies: EmailFrequency[];
-    required?: boolean;
-  }[]
-> {
+export async function getAvailableEmailTypes(
+  userToken: string
+): Promise<EmailType[]> {
   // MOCK IMPLEMENTATION - Replace with actual API call
   console.log(
     "[MOCK API] getAvailableEmailTypes: Fetching email types configuration"
