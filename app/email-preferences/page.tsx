@@ -30,7 +30,7 @@ export default function EmailPreferencesPage() {
   }
 
   return (
-    <>
+    <div className="container max-w-4xl py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Email Preferences</h1>
         <p className="text-muted-foreground mt-2">
@@ -185,6 +185,6 @@ export default function EmailPreferencesPage() {
           </div>
         </CardContent>
       </Card>
-    </>
+    </div>
   )
 } 
