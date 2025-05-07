@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Define possible domain types and frequencies
 type EmailDomain = 'reports' | 'announcements' | 'developers';
@@ -42,27 +43,27 @@ interface EmailType {
 // Email types that will match DB schema
 const EMAIL_TYPES: EmailType[] = [
   // Reports (reports.meetingbaas.com)
+  // {
+  //   id: "meeting-summaries",
+  //   name: "Meeting Summaries",
+  //   description: "Automated summaries of your recorded meetings.",
+  //   domain: "reports",
+  //   frequencies: ["daily", "weekly", "monthly"]
+  // },
   {
-    id: "meeting-summaries",
-    name: "Meeting Summaries",
-    description: "Automated summaries of your recorded meetings.",
+    id: "usage-reports",
+    name: "Usage Reports",
+    description: "Monthly reports on your Meeting BaaS usage and statistics.",
     domain: "reports",
     frequencies: ["daily", "weekly", "monthly"]
   },
-  {
-    id: "usage-metrics",
-    name: "Usage Metrics",
-    description: "Reports on your Meeting BaaS usage and statistics.",
-    domain: "reports",
-    frequencies: ["weekly", "monthly"]
-  },
-  {
-    id: "ai-insights",
-    name: "AI Insights",
-    description: "AI-generated insights from your meeting transcripts.",
-    domain: "reports",
-    frequencies: ["weekly", "monthly"]
-  },
+  // {
+  //   id: "ai-insights",
+  //   name: "AI Insights",
+  //   description: "AI-generated insights from your meeting transcripts.",
+  //   domain: "reports",
+  //   frequencies: ["weekly", "monthly"]
+  // },
 
   // Announcements (announcements.meetingbaas.com)
   {
@@ -93,22 +94,22 @@ const EMAIL_TYPES: EmailType[] = [
     name: "API Changes",
     description: "Updates and changes to the Meeting BaaS API.",
     domain: "developers",
-    frequencies: ["weekly", "monthly"]
+    frequencies: ["daily", "weekly", "monthly"]
   },
   {
     id: "developer-resources",
     name: "Developer Resources",
     description: "New resources, tutorials and documentation.",
     domain: "developers",
-    frequencies: ["monthly"]
+    frequencies: ["daily", "weekly", "monthly"]
   },
-  {
-    id: "mcp-updates",
-    name: "MCP Updates",
-    description: "Updates to the Model Context Protocol (MCP) implementation.",
-    domain: "developers",
-    frequencies: ["weekly"]
-  },
+  // {
+  //   id: "mcp-updates",
+  //   name: "MCP Updates",
+  //   description: "Updates to the Model Context Protocol (MCP) implementation.",
+  //   domain: "developers",
+  //   frequencies: ["weekly"]
+  // },
 
   // Required notifications (mixed domains)
   {
@@ -124,7 +125,7 @@ const EMAIL_TYPES: EmailType[] = [
     name: "Billing Notifications",
     description: "Invoices and payment confirmations.",
     domain: "reports",
-    frequencies: ["monthly"],
+    frequencies: ["daily", "weekly", "monthly"],
     required: true
   }
 ];
@@ -144,17 +145,26 @@ const domainConfig = {
   reports: {
     icon: <Info className="h-4 w-4" />,
     color: "bg-blue-500",
-    badge: "text-blue-500 border-blue-200 bg-blue-100 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-400"
+    badge: "text-blue-500 border-blue-200 bg-blue-100 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-400",
+    name: "Reports",
+    description: "Reports and metrics about your Meeting BaaS usage.",
+    domain: "reports.meetingbaas.com"
   },
   announcements: {
     icon: <Bell className="h-4 w-4" />,
     color: "bg-green-500",
-    badge: "text-green-500 border-green-200 bg-green-100 dark:border-green-800 dark:bg-green-950 dark:text-green-400"
+    badge: "text-green-500 border-green-200 bg-green-100 dark:border-green-800 dark:bg-green-950 dark:text-green-400",
+    name: "Announcements",
+    description: "Product updates and important announcements.",
+    domain: "announcements.meetingbaas.com"
   },
   developers: {
     icon: <Mail className="h-4 w-4" />,
     color: "bg-purple-500",
-    badge: "text-purple-500 border-purple-200 bg-purple-100 dark:border-purple-800 dark:bg-purple-950 dark:text-purple-400"
+    badge: "text-purple-500 border-purple-200 bg-purple-100 dark:border-purple-800 dark:bg-purple-950 dark:text-purple-400",
+    name: "Developer Updates",
+    description: "API updates and developer resources.",
+    domain: "developers.meetingbaas.com"
   }
 };
 
@@ -270,9 +280,9 @@ export default function EmailPreferencesPage() {
     if (!(emailType.id in preferences)) return null;
 
     return (
-      <Card key={emailType.id} className="mb-4 bg-card/30 shadow-sm">
-        <CardHeader className="p-4 pb-0">
-          <div className="flex items-start justify-between mb-1">
+      <Card key={emailType.id} className="bg-card/30 shadow-sm w-full mb-4">
+        <CardHeader className="p-4 pb-2">
+          <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
               <h4 className="font-medium">{emailType.name}</h4>
               {emailType.required && (
@@ -280,54 +290,52 @@ export default function EmailPreferencesPage() {
               )}
             </div>
           </div>
-          <CardDescription className="text-sm text-muted-foreground">
+          <CardDescription className="text-sm text-muted-foreground mt-1">
             {emailType.description}
           </CardDescription>
         </CardHeader>
 
         <CardContent className="p-4 pt-2">
-          <div className="mt-2">
-            <Label className="text-sm font-medium mb-2 block">Email Frequency</Label>
-            <RadioGroup
-              value={preferences[emailType.id]}
-              onValueChange={(value) => handleFrequencyChange(emailType, value as EmailFrequency)}
-              className="flex flex-wrap gap-2"
-            >
-              {emailType.frequencies.includes('daily') && (
-                <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
-                  <RadioGroupItem value="daily" id={`${emailType.id}-daily`} disabled={emailType.required && preferences[emailType.id] !== 'daily'} />
-                  <Label htmlFor={`${emailType.id}-daily`} className="text-xs cursor-pointer">Daily</Label>
-                </div>
-              )}
-
-              {emailType.frequencies.includes('weekly') && (
-                <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
-                  <RadioGroupItem value="weekly" id={`${emailType.id}-weekly`} disabled={emailType.required && preferences[emailType.id] !== 'weekly'} />
-                  <Label htmlFor={`${emailType.id}-weekly`} className="text-xs cursor-pointer">Weekly</Label>
-                </div>
-              )}
-
-              {emailType.frequencies.includes('monthly') && (
-                <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
-                  <RadioGroupItem value="monthly" id={`${emailType.id}-monthly`} disabled={emailType.required && preferences[emailType.id] !== 'monthly'} />
-                  <Label htmlFor={`${emailType.id}-monthly`} className="text-xs cursor-pointer">Monthly</Label>
-                </div>
-              )}
-
-              {!emailType.required && (
-                <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
-                  <RadioGroupItem value="none" id={`${emailType.id}-none`} />
-                  <Label htmlFor={`${emailType.id}-none`} className="text-xs cursor-pointer">None</Label>
-                </div>
-              )}
-            </RadioGroup>
-
-            {preferences[emailType.id] !== 'none' && !emailType.required && (
-              <p className="text-xs text-muted-foreground mt-2">
-                You will receive {preferences[emailType.id]} emails. Select "None" to unsubscribe.
-              </p>
+          <Label className="text-sm font-medium mb-2 block">Email Frequency</Label>
+          <RadioGroup
+            value={preferences[emailType.id]}
+            onValueChange={(value) => handleFrequencyChange(emailType, value as EmailFrequency)}
+            className="grid grid-cols-4 gap-2"
+          >
+            {emailType.frequencies.includes('daily') && (
+              <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
+                <RadioGroupItem value="daily" id={`${emailType.id}-daily`} disabled={emailType.required && preferences[emailType.id] !== 'daily'} />
+                <Label htmlFor={`${emailType.id}-daily`} className="text-xs cursor-pointer">Daily</Label>
+              </div>
             )}
-          </div>
+
+            {emailType.frequencies.includes('weekly') && (
+              <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
+                <RadioGroupItem value="weekly" id={`${emailType.id}-weekly`} disabled={emailType.required && preferences[emailType.id] !== 'weekly'} />
+                <Label htmlFor={`${emailType.id}-weekly`} className="text-xs cursor-pointer">Weekly</Label>
+              </div>
+            )}
+
+            {emailType.frequencies.includes('monthly') && (
+              <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
+                <RadioGroupItem value="monthly" id={`${emailType.id}-monthly`} disabled={emailType.required && preferences[emailType.id] !== 'monthly'} />
+                <Label htmlFor={`${emailType.id}-monthly`} className="text-xs cursor-pointer">Monthly</Label>
+              </div>
+            )}
+
+            {!emailType.required && (
+              <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
+                <RadioGroupItem value="none" id={`${emailType.id}-none`} />
+                <Label htmlFor={`${emailType.id}-none`} className="text-xs cursor-pointer">None</Label>
+              </div>
+            )}
+          </RadioGroup>
+
+          {preferences[emailType.id] !== 'none' && !emailType.required && (
+            <p className="text-xs text-muted-foreground mt-2">
+              You will receive {preferences[emailType.id]} emails.
+            </p>
+          )}
         </CardContent>
       </Card>
     );
@@ -355,74 +363,46 @@ export default function EmailPreferencesPage() {
         </Card>
       )}
 
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-3xl font-bold">Email Preferences</h1>
         <p className="text-muted-foreground mt-1">
           Manage which emails you receive from Meeting BaaS.
         </p>
       </div>
 
-      <div className="space-y-12">
-        {/* Reports Section */}
-        <div>
-          <div className="flex items-center mb-4">
-            <div className={`w-3 h-3 ${domainConfig.reports.color} rounded-full mr-2`}></div>
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              Reports
-              <Badge variant="outline" className={domainConfig.reports.badge}>
-                reports.meetingbaas.com
+      <Tabs defaultValue="reports" className="w-full">
+        <TabsList className="flex w-full mb-6">
+          {(Object.keys(domainConfig) as EmailDomain[]).map((domain) => (
+            <TabsTrigger
+              key={domain}
+              value={domain}
+              className="flex-1 flex items-center justify-center gap-2 relative group"
+              style={{ minHeight: "40px" }}
+            >
+              <div className={`w-2 h-2 ${domainConfig[domain].color} rounded-full`}></div>
+              <span>{domainConfig[domain].name}</span>
+              <div className="absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-data-[state=active]:scale-x-100 transition-transform duration-300 ease-in-out" style={{ backgroundColor: `var(--${domain}-color, ${domain === 'reports' ? '#3b82f6' : domain === 'announcements' ? '#22c55e' : '#a855f7'})` }}></div>
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        {(Object.keys(domainConfig) as EmailDomain[]).map((domain) => (
+          <TabsContent key={domain} value={domain} className="mt-0">
+            <div className="flex items-center mb-4">
+              <Badge variant="outline" className={`${domainConfig[domain].badge} mr-2`}>
+                {domainConfig[domain].domain}
               </Badge>
-            </h2>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4">
-            Reports and metrics about your Meeting BaaS usage.
-          </p>
+              <p className="text-sm text-muted-foreground">
+                {domainConfig[domain].description}
+              </p>
+            </div>
 
-          <div className="grid gap-4">
-            {getEmailsByDomain('reports').map(renderEmailPreference)}
-          </div>
-        </div>
-
-        {/* Announcements Section */}
-        <div>
-          <div className="flex items-center mb-4">
-            <div className={`w-3 h-3 ${domainConfig.announcements.color} rounded-full mr-2`}></div>
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              Announcements
-              <Badge variant="outline" className={domainConfig.announcements.badge}>
-                announcements.meetingbaas.com
-              </Badge>
-            </h2>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4">
-            Product updates and important announcements.
-          </p>
-
-          <div className="grid gap-4">
-            {getEmailsByDomain('announcements').map(renderEmailPreference)}
-          </div>
-        </div>
-
-        {/* Developers Section */}
-        <div>
-          <div className="flex items-center mb-4">
-            <div className={`w-3 h-3 ${domainConfig.developers.color} rounded-full mr-2`}></div>
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              Developer Updates
-              <Badge variant="outline" className={domainConfig.developers.badge}>
-                developers.meetingbaas.com
-              </Badge>
-            </h2>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4">
-            API updates and developer resources.
-          </p>
-
-          <div className="grid gap-4">
-            {getEmailsByDomain('developers').map(renderEmailPreference)}
-          </div>
-        </div>
-      </div>
+            <div className="w-full space-y-4">
+              {getEmailsByDomain(domain).map(renderEmailPreference)}
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
 
       {/* Confirmation Dialog */}
       <AlertDialog

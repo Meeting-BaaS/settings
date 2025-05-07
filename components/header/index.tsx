@@ -1,16 +1,16 @@
-import { UserAvatar } from "@/components/header/user-avatar"
-import Image from "next/image"
-import { ThemeToggle } from "@/components/header/theme-toggle"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { GitHubLogo } from "@/components/icons/github"
 import { menuOptions } from "@/components/header/menu-options"
+import { ThemeToggle } from "@/components/header/theme-toggle"
+import { UserAvatar } from "@/components/header/user-avatar"
+import { GitHubLogo } from "@/components/icons/github"
+import { Button } from "@/components/ui/button"
 import type { User } from "@/lib/auth/types"
+import Image from "next/image"
+import Link from "next/link"
 
 export default function Header({ user }: { user: User }) {
   return (
-    <header className="sticky top-2 z-40 mx-auto box-content w-full max-w-container border-b bg-background/15 backdrop-blur-md lg:mt-2 lg:w-[calc(100%-4rem)] lg:rounded-2xl lg:border">
-      <nav className="flex h-12 w-full flex-row items-center justify-between px-4">
+    <header className="sticky top-0 z-50 mx-auto box-content w-full max-w-container border-b bg-background/90 backdrop-blur-lg lg:mt-2 lg:w-[calc(100%-4rem)] lg:rounded-2xl lg:border">
+      <nav className="flex h-16 w-full flex-row items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Image
             src="/logo.svg"
