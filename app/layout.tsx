@@ -8,6 +8,7 @@ import { getAuthSession } from "@/lib/auth/session"
 import { redirect } from "next/navigation"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
+import LayoutRoot from "./layout-root"
 
 const sofiaSans = Sofia_Sans({
   subsets: ["latin"],
@@ -51,7 +52,9 @@ export default async function RootLayout({
       <body className={`${sofiaSans.className} flex min-h-screen flex-col antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
           <Header user={session.user} />
-          <main className="flex-1"> {children}</main>
+          <main className="flex-1 flex flex-col">
+            <LayoutRoot>{children}</LayoutRoot>
+          </main>
           <Footer />
           <Toaster />
         </ThemeProvider>

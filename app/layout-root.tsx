@@ -24,7 +24,7 @@ export default function LayoutRoot({ children }: LayoutRootProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen max-w-container mx-auto w-full">
+    <div className="flex flex-col lg:flex-row mx-auto w-full max-w-container xl:h-[70vh]">
       {/* Mobile menu toggle */}
       <div className="lg:hidden p-4 border-b">
         <Button 
@@ -45,7 +45,7 @@ export default function LayoutRoot({ children }: LayoutRootProps) {
       </div>
       
       {/* Main content area - centered on desktop */}
-      <div className="flex-1 p-6 max-w-3xl mx-auto w-full">
+      <div className="flex-1 p-6 max-w-3xl mx-auto w-full overflow-y-auto">
         {children}
       </div>
     </div>
