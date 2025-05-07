@@ -1,11 +1,11 @@
 "use client"
 
-import { Separator } from "@/components/ui/separator"
-import { Switch } from "@/components/ui/switch"
-import { useState, useEffect } from "react"
+import { AlertCircle, Bell, Check, Info, Mail } from "lucide-react"
+import { useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
-import { AlertCircle } from "lucide-react"
-import { 
+
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -15,11 +15,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useSearchParams } from "next/navigation"
+import { Badge } from "@/components/ui/badge"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader
+} from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 // Define possible domain types and frequencies
 type EmailDomain = 'reports' | 'announcements' | 'developers';
-type EmailFrequency = 'daily' | 'weekly' | 'monthly';
+type EmailFrequency = 'daily' | 'weekly' | 'monthly' | 'none';
 
 // These types would match your DB schema
 interface EmailType {
@@ -55,7 +63,7 @@ const EMAIL_TYPES: EmailType[] = [
     domain: "reports",
     frequencies: ["weekly", "monthly"]
   },
-  
+
   // Announcements (announcements.meetingbaas.com)
   {
     id: "product-updates",
@@ -65,7 +73,7 @@ const EMAIL_TYPES: EmailType[] = [
     frequencies: ["weekly", "monthly"]
   },
   {
-    id: "maintenance-notifications", 
+    id: "maintenance-notifications",
     name: "Maintenance Notifications",
     description: "Scheduled maintenance and system updates.",
     domain: "announcements",
@@ -78,7 +86,7 @@ const EMAIL_TYPES: EmailType[] = [
     domain: "announcements",
     frequencies: ["monthly"]
   },
-  
+
   // Developers (developers.meetingbaas.com)
   {
     id: "api-changes",
@@ -101,7 +109,7 @@ const EMAIL_TYPES: EmailType[] = [
     domain: "developers",
     frequencies: ["weekly"]
   },
-  
+
   // Required notifications (mixed domains)
   {
     id: "security-alerts",
@@ -131,37 +139,53 @@ const findEmailTypeById = (id: string): EmailType | undefined => {
   return EMAIL_TYPES.find(type => type.id === id);
 };
 
+// Domain config for styling
+const domainConfig = {
+  reports: {
+    icon: <Info className="h-4 w-4" />,
+    color: "bg-blue-500",
+    badge: "text-blue-500 border-blue-200 bg-blue-100 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-400"
+  },
+  announcements: {
+    icon: <Bell className="h-4 w-4" />,
+    color: "bg-green-500",
+    badge: "text-green-500 border-green-200 bg-green-100 dark:border-green-800 dark:bg-green-950 dark:text-green-400"
+  },
+  developers: {
+    icon: <Mail className="h-4 w-4" />,
+    color: "bg-purple-500",
+    badge: "text-purple-500 border-purple-200 bg-purple-100 dark:border-purple-800 dark:bg-purple-950 dark:text-purple-400"
+  }
+};
+
 export default function EmailPreferencesPage() {
   const searchParams = useSearchParams();
-  
-  // State for preferences (email type ID + frequency)
-  const [preferences, setPreferences] = useState<Record<string, Record<EmailFrequency, boolean>>>({});
-  
+
+  // State for preferences (email type ID → selected frequency)
+  const [preferences, setPreferences] = useState<Record<string, EmailFrequency>>({});
+
   // Initialize preferences based on EMAIL_TYPES
   useEffect(() => {
-    const initialPreferences: Record<string, Record<EmailFrequency, boolean>> = {};
-    
+    const initialPreferences: Record<string, EmailFrequency> = {};
+
     EMAIL_TYPES.forEach(emailType => {
-      initialPreferences[emailType.id] = {
-        daily: emailType.frequencies.includes('daily'),
-        weekly: emailType.frequencies.includes('weekly'),
-        monthly: emailType.frequencies.includes('monthly')
-      };
+      // Default to the first available frequency or 'none'
+      initialPreferences[emailType.id] = emailType.frequencies[0] || 'none';
     });
-    
+
     setPreferences(initialPreferences);
   }, []);
-  
+
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     emailId: string;
     emailName: string;
-    frequency: EmailFrequency;
+    newFrequency: EmailFrequency;
   }>({
     isOpen: false,
     emailId: "",
     emailName: "",
-    frequency: "daily"
+    newFrequency: "none"
   });
 
   const [unsubscribeSuccess, setUnsubscribeSuccess] = useState<{
@@ -174,149 +198,138 @@ export default function EmailPreferencesPage() {
     const unsubscribeType = searchParams.get('unsubscribe');
     const frequency = searchParams.get('frequency') as EmailFrequency | null;
     const token = searchParams.get('token'); // In a real app, you'd validate this token
-    
+
     if (unsubscribeType && token) {
       const emailType = findEmailTypeById(unsubscribeType);
-      
+
       if (emailType) {
         if (emailType.required) {
           toast.error(`${emailType.name} notifications cannot be disabled for security reasons.`);
         } else {
-          // Auto-unsubscribe from URL parameter
-          if (frequency && emailType.frequencies.includes(frequency)) {
-            updatePreference(unsubscribeType, frequency, false);
-            setUnsubscribeSuccess({
-              emailName: emailType.name,
-              frequency: frequency
-            });
-          } else {
-            // Unsubscribe from all frequencies if no specific one is provided
-            emailType.frequencies.forEach(freq => {
-              updatePreference(unsubscribeType, freq, false);
-            });
-            setUnsubscribeSuccess({
-              emailName: emailType.name
-            });
-          }
+          // Set to 'none' (unsubscribe)
+          updatePreference(unsubscribeType, 'none');
+          setUnsubscribeSuccess({
+            emailName: emailType.name,
+            frequency: frequency || undefined
+          });
         }
       }
     }
   }, [searchParams]);
 
-  const handleToggle = (emailType: EmailType, frequency: EmailFrequency) => {
-    // If it's required, don't allow toggling
-    if (emailType.required) {
+  const handleFrequencyChange = (emailType: EmailType, frequency: EmailFrequency) => {
+    // If it's required, don't allow changing to 'none'
+    if (emailType.required && frequency === 'none') {
       toast.error(`${emailType.name} notifications cannot be disabled for security reasons.`);
       return;
     }
-    
-    // If the email type doesn't support this frequency, don't toggle
-    if (!emailType.frequencies.includes(frequency)) {
-      return;
-    }
-    
-    const currentValue = preferences[emailType.id]?.[frequency];
-    
-    // If turning off, show confirmation
-    if (currentValue && !emailType.required) {
+
+    // If changing to 'none', show confirmation
+    if (frequency === 'none' && !emailType.required) {
       setConfirmDialog({
         isOpen: true,
         emailId: emailType.id,
         emailName: emailType.name,
-        frequency: frequency
+        newFrequency: frequency
       });
       return;
     }
-    
-    // If turning on, just do it
-    updatePreference(emailType.id, frequency, true);
+
+    // Otherwise, update the preference
+    updatePreference(emailType.id, frequency);
   };
-  
-  const updatePreference = (id: string, frequency: EmailFrequency, value: boolean) => {
-    setPreferences(prev => {
-      const newPreferences = { 
+
+  const updatePreference = (id: string, frequency: EmailFrequency) => {
+    setPreferences((prev) => {
+      const newPreferences = {
         ...prev,
-        [id]: {
-          ...prev[id],
-          [frequency]: value
-        }
+        [id]: frequency
       };
-      
+
       // In a real app, you would save this to the backend
       const emailType = findEmailTypeById(id);
-      const frequencyText = frequency.charAt(0).toUpperCase() + frequency.slice(1);
-      
-      toast.success(`${value ? 'Subscribed to' : 'Unsubscribed from'} ${frequencyText} ${emailType?.name || id}`);
-      
+
+      if (frequency === 'none') {
+        toast.success(`Unsubscribed from ${emailType?.name || id} emails`);
+      } else {
+        const frequencyText = frequency.charAt(0).toUpperCase() + frequency.slice(1);
+        toast.success(`Now receiving ${frequencyText} ${emailType?.name || id} emails`);
+      }
+
       return newPreferences;
     });
   };
-  
+
   const handleConfirmUnsubscribe = () => {
-    updatePreference(confirmDialog.emailId, confirmDialog.frequency, false);
-    setConfirmDialog({ isOpen: false, emailId: "", emailName: "", frequency: "daily" });
+    updatePreference(confirmDialog.emailId, 'none');
+    setConfirmDialog({ isOpen: false, emailId: "", emailName: "", newFrequency: "none" });
   };
 
   // Function to render email preference with frequencies
   const renderEmailPreference = (emailType: EmailType) => {
-    if (!preferences[emailType.id]) return null;
-    
+    if (!(emailType.id in preferences)) return null;
+
     return (
-      <div key={emailType.id} className="mb-6">
-        <div className="flex items-start justify-between mb-2">
-          <div>
-            <div className="flex items-center">
+      <Card key={emailType.id} className="mb-4 bg-card/30 shadow-sm">
+        <CardHeader className="p-4 pb-0">
+          <div className="flex items-start justify-between mb-1">
+            <div className="flex items-center gap-2">
               <h4 className="font-medium">{emailType.name}</h4>
               {emailType.required && (
-                <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Required</span>
+                <Badge variant="outline" className="text-xs py-0">Required</Badge>
               )}
             </div>
-            <p className="text-sm text-muted-foreground">
-              {emailType.description}
-            </p>
           </div>
-        </div>
-        
-        <div className="grid grid-cols-3 gap-4 ml-6 mt-3">
-          {emailType.frequencies.includes('daily') && (
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium">Daily</span>
-              <Switch 
-                checked={preferences[emailType.id]?.daily || false} 
-                onCheckedChange={() => handleToggle(emailType, 'daily')}
-                id={`${emailType.id}-daily`}
-                disabled={emailType.required}
-              />
-            </div>
-          )}
-          
-          {emailType.frequencies.includes('weekly') && (
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium">Weekly</span>
-              <Switch 
-                checked={preferences[emailType.id]?.weekly || false} 
-                onCheckedChange={() => handleToggle(emailType, 'weekly')}
-                id={`${emailType.id}-weekly`}
-                disabled={emailType.required}
-              />
-            </div>
-          )}
-          
-          {emailType.frequencies.includes('monthly') && (
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium">Monthly</span>
-              <Switch 
-                checked={preferences[emailType.id]?.monthly || false} 
-                onCheckedChange={() => handleToggle(emailType, 'monthly')}
-                id={`${emailType.id}-monthly`}
-                disabled={emailType.required}
-              />
-            </div>
-          )}
-        </div>
-        
-        <Separator className="mt-4" />
-      </div>
+          <CardDescription className="text-sm text-muted-foreground">
+            {emailType.description}
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="p-4 pt-2">
+          <div className="mt-2">
+            <Label className="text-sm font-medium mb-2 block">Email Frequency</Label>
+            <RadioGroup
+              value={preferences[emailType.id]}
+              onValueChange={(value) => handleFrequencyChange(emailType, value as EmailFrequency)}
+              className="flex flex-wrap gap-2"
+            >
+              {emailType.frequencies.includes('daily') && (
+                <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
+                  <RadioGroupItem value="daily" id={`${emailType.id}-daily`} disabled={emailType.required && preferences[emailType.id] !== 'daily'} />
+                  <Label htmlFor={`${emailType.id}-daily`} className="text-xs cursor-pointer">Daily</Label>
+                </div>
+              )}
+
+              {emailType.frequencies.includes('weekly') && (
+                <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
+                  <RadioGroupItem value="weekly" id={`${emailType.id}-weekly`} disabled={emailType.required && preferences[emailType.id] !== 'weekly'} />
+                  <Label htmlFor={`${emailType.id}-weekly`} className="text-xs cursor-pointer">Weekly</Label>
+                </div>
+              )}
+
+              {emailType.frequencies.includes('monthly') && (
+                <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
+                  <RadioGroupItem value="monthly" id={`${emailType.id}-monthly`} disabled={emailType.required && preferences[emailType.id] !== 'monthly'} />
+                  <Label htmlFor={`${emailType.id}-monthly`} className="text-xs cursor-pointer">Monthly</Label>
+                </div>
+              )}
+
+              {!emailType.required && (
+                <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
+                  <RadioGroupItem value="none" id={`${emailType.id}-none`} />
+                  <Label htmlFor={`${emailType.id}-none`} className="text-xs cursor-pointer">None</Label>
+                </div>
+              )}
+            </RadioGroup>
+
+            {preferences[emailType.id] !== 'none' && !emailType.required && (
+              <p className="text-xs text-muted-foreground mt-2">
+                You will receive {preferences[emailType.id]} emails. Select "None" to unsubscribe.
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     );
   };
 
@@ -329,81 +342,91 @@ export default function EmailPreferencesPage() {
     <>
       {/* Success banner for unsubscribe from email link */}
       {unsubscribeSuccess && (
-        <div className="mb-6 bg-green-500/10 border border-green-500 rounded-md p-4">
-          <h3 className="text-green-500 font-medium flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-check">
-              <path d="M20 6 9 17l-5-5"/>
-            </svg>
-            Successfully Unsubscribed
-          </h3>
-          <p className="text-sm mt-1">
-            You have been unsubscribed from {unsubscribeSuccess.frequency 
-              ? `${unsubscribeSuccess.frequency} ${unsubscribeSuccess.emailName} emails`
-              : `all ${unsubscribeSuccess.emailName} emails`}.
-          </p>
-        </div>
+        <Card className="mb-6 border-green-500 bg-green-500/5">
+          <CardContent className="flex flex-col gap-1 p-4">
+            <div className="text-green-500 font-medium flex items-center gap-2">
+              <Check className="h-4 w-4" />
+              Successfully Unsubscribed
+            </div>
+            <p className="text-sm">
+              You have been unsubscribed from {unsubscribeSuccess.emailName} emails.
+            </p>
+          </CardContent>
+        </Card>
       )}
 
-      <div>
-        <h1 className="text-2xl font-bold">Email Preferences</h1>
-        <p className="text-muted-foreground text-sm mt-1 mb-5">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Email Preferences</h1>
+        <p className="text-muted-foreground mt-1">
           Manage which emails you receive from Meeting BaaS.
         </p>
       </div>
-      
-      <div className="space-y-8">
+
+      <div className="space-y-12">
         {/* Reports Section */}
         <div>
-          <h2 className="text-lg font-semibold mb-2 flex items-center">
-            <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-            Reports
-            <span className="text-xs text-muted-foreground ml-2">(reports.meetingbaas.com)</span>
-          </h2>
+          <div className="flex items-center mb-4">
+            <div className={`w-3 h-3 ${domainConfig.reports.color} rounded-full mr-2`}></div>
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              Reports
+              <Badge variant="outline" className={domainConfig.reports.badge}>
+                reports.meetingbaas.com
+              </Badge>
+            </h2>
+          </div>
           <p className="text-sm text-muted-foreground mb-4">
             Reports and metrics about your Meeting BaaS usage.
           </p>
-          
-          <div>
+
+          <div className="grid gap-4">
             {getEmailsByDomain('reports').map(renderEmailPreference)}
           </div>
         </div>
 
         {/* Announcements Section */}
         <div>
-          <h2 className="text-lg font-semibold mb-2 flex items-center">
-            <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-            Announcements
-            <span className="text-xs text-muted-foreground ml-2">(announcements.meetingbaas.com)</span>
-          </h2>
+          <div className="flex items-center mb-4">
+            <div className={`w-3 h-3 ${domainConfig.announcements.color} rounded-full mr-2`}></div>
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              Announcements
+              <Badge variant="outline" className={domainConfig.announcements.badge}>
+                announcements.meetingbaas.com
+              </Badge>
+            </h2>
+          </div>
           <p className="text-sm text-muted-foreground mb-4">
             Product updates and important announcements.
           </p>
-          
-          <div>
+
+          <div className="grid gap-4">
             {getEmailsByDomain('announcements').map(renderEmailPreference)}
           </div>
         </div>
 
         {/* Developers Section */}
         <div>
-          <h2 className="text-lg font-semibold mb-2 flex items-center">
-            <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-            Developer Updates
-            <span className="text-xs text-muted-foreground ml-2">(developers.meetingbaas.com)</span>
-          </h2>
+          <div className="flex items-center mb-4">
+            <div className={`w-3 h-3 ${domainConfig.developers.color} rounded-full mr-2`}></div>
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              Developer Updates
+              <Badge variant="outline" className={domainConfig.developers.badge}>
+                developers.meetingbaas.com
+              </Badge>
+            </h2>
+          </div>
           <p className="text-sm text-muted-foreground mb-4">
             API updates and developer resources.
           </p>
-          
-          <div>
+
+          <div className="grid gap-4">
             {getEmailsByDomain('developers').map(renderEmailPreference)}
           </div>
         </div>
       </div>
-      
+
       {/* Confirmation Dialog */}
-      <AlertDialog 
-        open={confirmDialog.isOpen} 
+      <AlertDialog
+        open={confirmDialog.isOpen}
         onOpenChange={(isOpen: boolean) => {
           if (!isOpen) setConfirmDialog(prev => ({ ...prev, isOpen }));
         }}
@@ -415,7 +438,7 @@ export default function EmailPreferencesPage() {
               Confirm unsubscribe
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to unsubscribe from <strong>{confirmDialog.frequency} {confirmDialog.emailName}</strong> emails? 
+              Are you sure you want to unsubscribe from <strong>{confirmDialog.emailName}</strong> emails?
               You may miss important updates related to your account or service.
             </AlertDialogDescription>
           </AlertDialogHeader>
