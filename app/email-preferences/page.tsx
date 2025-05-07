@@ -1,6 +1,6 @@
 "use client"
 
-import { AlertCircle, Bell, Check, Info, Mail } from "lucide-react"
+import { AlertCircle, Bell, Check, Info, Mail, RefreshCw } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -27,7 +27,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Define possible domain types and frequencies
-type EmailDomain = 'reports' | 'announcements' | 'developers';
+type EmailDomain = 'reports' | 'announcements' | 'developers' | 'account';
 type EmailFrequency = 'daily' | 'weekly' | 'monthly' | 'none';
 
 // These types would match your DB schema
@@ -111,12 +111,12 @@ const EMAIL_TYPES: EmailType[] = [
   //   frequencies: ["weekly"]
   // },
 
-  // Required notifications (mixed domains)
+  // Account notifications (required)
   {
     id: "security-alerts",
     name: "Security Alerts",
     description: "Important security notifications about your account.",
-    domain: "announcements",
+    domain: "account",
     frequencies: ["daily"],
     required: true
   },
@@ -124,7 +124,7 @@ const EMAIL_TYPES: EmailType[] = [
     id: "billing-notifications",
     name: "Billing Notifications",
     description: "Invoices and payment confirmations.",
-    domain: "reports",
+    domain: "account",
     frequencies: ["daily", "weekly", "monthly"],
     required: true
   }
@@ -165,6 +165,14 @@ const domainConfig = {
     name: "Developer Updates",
     description: "API updates and developer resources.",
     domain: "developers.meetingbaas.com"
+  },
+  account: {
+    icon: <AlertCircle className="h-4 w-4" />,
+    color: "bg-red-500",
+    badge: "text-red-500 border-red-200 bg-red-100 dark:border-red-800 dark:bg-red-950 dark:text-red-400",
+    name: "Account",
+    description: "Required notifications related to your account.",
+    domain: "account.meetingbaas.com"
   }
 };
 
@@ -216,11 +224,12 @@ export default function EmailPreferencesPage() {
         if (emailType.required) {
           toast.error(`${emailType.name} notifications cannot be disabled for security reasons.`);
         } else {
-          // Set to 'none' (unsubscribe)
-          updatePreference(unsubscribeType, 'none');
-          setUnsubscribeSuccess({
+          // Instead of automatic unsubscribe, show the confirmation dialog
+          setConfirmDialog({
+            isOpen: true,
+            emailId: unsubscribeType,
             emailName: emailType.name,
-            frequency: frequency || undefined
+            newFrequency: 'none'
           });
         }
       }
@@ -270,17 +279,144 @@ export default function EmailPreferencesPage() {
     });
   };
 
+  // Function to handle service-level subscription changes
+  const handleServiceSubscription = (domain: EmailDomain, frequency: EmailFrequency) => {
+    // If unsubscribing from a service (setting to none)
+    if (frequency === 'none') {
+      // Show confirmation dialog for service-level unsubscribe
+      setConfirmDialog({
+        isOpen: true,
+        emailId: `service-${domain}`,
+        emailName: `all optional ${domainConfig[domain].name}`,
+        newFrequency: 'none'
+      });
+      return;
+    }
+
+    // Otherwise, apply the selected frequency to all non-required emails in this service
+    const emailsInDomain = getEmailsByDomain(domain);
+    emailsInDomain.forEach(emailType => {
+      if (!emailType.required) {
+        // If the exact frequency is available, use it
+        if (emailType.frequencies.includes(frequency)) {
+          updatePreference(emailType.id, frequency);
+        }
+        // Otherwise, find the closest available frequency
+        else if (emailType.frequencies.length > 0) {
+          // Frequency priority order: daily -> weekly -> monthly -> none
+          const frequencyOrder = ['daily', 'weekly', 'monthly', 'none'];
+          const selectedIndex = frequencyOrder.indexOf(frequency);
+
+          // Start by looking for frequencies with lower frequency (less frequent)
+          let closestFrequency: EmailFrequency | undefined;
+
+          // Look for less frequent options first (moving right in the array)
+          for (let i = selectedIndex + 1; i < frequencyOrder.length; i++) {
+            const option = frequencyOrder[i] as EmailFrequency;
+            if (emailType.frequencies.includes(option)) {
+              closestFrequency = option;
+              break;
+            }
+          }
+
+          // If no less frequent option, look for more frequent options (moving left in the array)
+          if (!closestFrequency) {
+            for (let i = selectedIndex - 1; i >= 0; i--) {
+              const option = frequencyOrder[i] as EmailFrequency;
+              if (emailType.frequencies.includes(option)) {
+                closestFrequency = option;
+                break;
+              }
+            }
+          }
+
+          // Apply the closest frequency found or the first available if nothing else works
+          if (closestFrequency) {
+            updatePreference(emailType.id, closestFrequency);
+          } else {
+            updatePreference(emailType.id, emailType.frequencies[0]);
+          }
+        }
+      }
+    });
+
+    toast.success(`Updated all optional ${domainConfig[domain].name} preferences`);
+  };
+
+  // Function to check if all emails in a domain have the same frequency setting
+  const getDomainFrequency = (domain: EmailDomain): EmailFrequency | 'mixed' => {
+    // Only consider non-required emails for domain frequency
+    const emailsInDomain = getEmailsByDomain(domain).filter(e => !e.required);
+
+    // If there are no non-required emails in this domain, return 'none'
+    if (emailsInDomain.length === 0) return 'none';
+
+    const firstFreq = preferences[emailsInDomain[0].id];
+    const allSame = emailsInDomain.every(e => preferences[e.id] === firstFreq);
+
+    return allSame ? firstFreq : 'mixed';
+  };
+
+  // Modified handleConfirmUnsubscribe to handle service-level unsubscribes
   const handleConfirmUnsubscribe = () => {
-    updatePreference(confirmDialog.emailId, 'none');
+    // Check if this is a service-level unsubscribe
+    if (confirmDialog.emailId.startsWith('service-')) {
+      const domain = confirmDialog.emailId.replace('service-', '') as EmailDomain;
+
+      // Unsubscribe from all non-required emails in this domain
+      const emailsInDomain = getEmailsByDomain(domain);
+      emailsInDomain.forEach(emailType => {
+        if (!emailType.required) {
+          updatePreference(emailType.id, 'none');
+        }
+      });
+
+      // Show success message
+      setUnsubscribeSuccess({
+        emailName: confirmDialog.emailName
+      });
+    } else {
+      // Regular email-specific unsubscribe
+      updatePreference(confirmDialog.emailId, 'none');
+
+      // Show success message
+      setUnsubscribeSuccess({
+        emailName: confirmDialog.emailName
+      });
+    }
+
     setConfirmDialog({ isOpen: false, emailId: "", emailName: "", newFrequency: "none" });
+  };
+
+  // Function to determine if a specific domain should show service-wide controls
+  const shouldShowServiceWideControls = (domain: EmailDomain): boolean => {
+    // Don't show for account (all required) or reports (only one optional email)
+    if (domain === 'account') return false;
+    if (domain === 'reports') return false;
+
+    // For other domains, show if there's more than one optional email
+    const optionalEmails = getEmailsByDomain(domain).filter(e => !e.required);
+    return optionalEmails.length > 1;
+  };
+
+  // Function to handle Resend Latest button click
+  const handleResendLatest = (emailType: EmailType) => {
+    // In a real app, you would call an API endpoint to resend the latest email
+    toast.success(`Latest ${emailType.name} email will be resent shortly`);
   };
 
   // Function to render email preference with frequencies
   const renderEmailPreference = (emailType: EmailType) => {
     if (!(emailType.id in preferences)) return null;
 
+    const currentFrequency = preferences[emailType.id];
+    const isSelectable = !emailType.required || (emailType.required && emailType.frequencies.length > 1);
+
     return (
-      <Card key={emailType.id} className="bg-card/30 shadow-sm w-full mb-4">
+      <Card
+        key={emailType.id}
+        className={`bg-card/30 shadow-sm w-full mb-4 ${isSelectable ? 'hover:border-primary/50 transition-colors' : ''}`}
+      >
         <CardHeader className="p-4 pb-2">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
@@ -289,6 +425,16 @@ export default function EmailPreferencesPage() {
                 <Badge variant="outline" className="text-xs py-0">Required</Badge>
               )}
             </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleResendLatest(emailType);
+              }}
+              className="flex items-center text-xs text-primary hover:text-primary/80 p-1 rounded-md hover:bg-muted/50 transition-colors"
+            >
+              <RefreshCw className="h-3 w-3 mr-1" />
+              Resend Latest
+            </button>
           </div>
           <CardDescription className="text-sm text-muted-foreground mt-1">
             {emailType.description}
@@ -298,42 +444,54 @@ export default function EmailPreferencesPage() {
         <CardContent className="p-4 pt-2">
           <Label className="text-sm font-medium mb-2 block">Email Frequency</Label>
           <RadioGroup
-            value={preferences[emailType.id]}
+            value={currentFrequency}
             onValueChange={(value) => handleFrequencyChange(emailType, value as EmailFrequency)}
-            className="grid grid-cols-4 gap-2"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3"
           >
             {emailType.frequencies.includes('daily') && (
-              <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
-                <RadioGroupItem value="daily" id={`${emailType.id}-daily`} disabled={emailType.required && preferences[emailType.id] !== 'daily'} />
-                <Label htmlFor={`${emailType.id}-daily`} className="text-xs cursor-pointer">Daily</Label>
-              </div>
+              <label
+                className={`flex items-center space-x-2 bg-muted/50 p-3 rounded-md hover:bg-muted/80 transition-colors cursor-pointer ${currentFrequency === 'daily' ? 'ring-1 ring-primary' : ''}`}
+                htmlFor={`${emailType.id}-daily`}
+              >
+                <RadioGroupItem value="daily" id={`${emailType.id}-daily`} disabled={emailType.required && currentFrequency !== 'daily'} />
+                <Label htmlFor={`${emailType.id}-daily`} className="text-sm cursor-pointer">Daily</Label>
+              </label>
             )}
 
             {emailType.frequencies.includes('weekly') && (
-              <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
-                <RadioGroupItem value="weekly" id={`${emailType.id}-weekly`} disabled={emailType.required && preferences[emailType.id] !== 'weekly'} />
-                <Label htmlFor={`${emailType.id}-weekly`} className="text-xs cursor-pointer">Weekly</Label>
-              </div>
+              <label
+                className={`flex items-center space-x-2 bg-muted/50 p-3 rounded-md hover:bg-muted/80 transition-colors cursor-pointer ${currentFrequency === 'weekly' ? 'ring-1 ring-primary' : ''}`}
+                htmlFor={`${emailType.id}-weekly`}
+              >
+                <RadioGroupItem value="weekly" id={`${emailType.id}-weekly`} disabled={emailType.required && currentFrequency !== 'weekly'} />
+                <Label htmlFor={`${emailType.id}-weekly`} className="text-sm cursor-pointer">Weekly</Label>
+              </label>
             )}
 
             {emailType.frequencies.includes('monthly') && (
-              <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
-                <RadioGroupItem value="monthly" id={`${emailType.id}-monthly`} disabled={emailType.required && preferences[emailType.id] !== 'monthly'} />
-                <Label htmlFor={`${emailType.id}-monthly`} className="text-xs cursor-pointer">Monthly</Label>
-              </div>
+              <label
+                className={`flex items-center space-x-2 bg-muted/50 p-3 rounded-md hover:bg-muted/80 transition-colors cursor-pointer ${currentFrequency === 'monthly' ? 'ring-1 ring-primary' : ''}`}
+                htmlFor={`${emailType.id}-monthly`}
+              >
+                <RadioGroupItem value="monthly" id={`${emailType.id}-monthly`} disabled={emailType.required && currentFrequency !== 'monthly'} />
+                <Label htmlFor={`${emailType.id}-monthly`} className="text-sm cursor-pointer">Monthly</Label>
+              </label>
             )}
 
             {!emailType.required && (
-              <div className="flex items-center space-x-2 bg-muted/50 p-2 rounded-md">
+              <label
+                className={`flex items-center space-x-2 bg-muted/50 p-3 rounded-md hover:bg-muted/80 transition-colors cursor-pointer ${currentFrequency === 'none' ? 'ring-1 ring-primary' : ''}`}
+                htmlFor={`${emailType.id}-none`}
+              >
                 <RadioGroupItem value="none" id={`${emailType.id}-none`} />
-                <Label htmlFor={`${emailType.id}-none`} className="text-xs cursor-pointer">None</Label>
-              </div>
+                <Label htmlFor={`${emailType.id}-none`} className="text-sm cursor-pointer">None</Label>
+              </label>
             )}
           </RadioGroup>
 
-          {preferences[emailType.id] !== 'none' && !emailType.required && (
-            <p className="text-xs text-muted-foreground mt-2">
-              You will receive {preferences[emailType.id]} emails.
+          {currentFrequency !== 'none' && !emailType.required && (
+            <p className="text-xs text-muted-foreground">
+              You will receive {currentFrequency} emails.
             </p>
           )}
         </CardContent>
@@ -370,36 +528,186 @@ export default function EmailPreferencesPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="reports" className="w-full">
+      <Tabs defaultValue="account" className="w-full">
         <TabsList className="flex w-full mb-6">
-          {(Object.keys(domainConfig) as EmailDomain[]).map((domain) => (
-            <TabsTrigger
-              key={domain}
-              value={domain}
-              className="flex-1 flex items-center justify-center gap-2 relative group"
-              style={{ minHeight: "40px" }}
-            >
-              <div className={`w-2 h-2 ${domainConfig[domain].color} rounded-full`}></div>
-              <span>{domainConfig[domain].name}</span>
-              <div className="absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-data-[state=active]:scale-x-100 transition-transform duration-300 ease-in-out" style={{ backgroundColor: `var(--${domain}-color, ${domain === 'reports' ? '#3b82f6' : domain === 'announcements' ? '#22c55e' : '#a855f7'})` }}></div>
-            </TabsTrigger>
-          ))}
+          <TabsTrigger
+            key="account"
+            value="account"
+            className="flex-1 flex items-center justify-center gap-2 relative group"
+            style={{ minHeight: "40px" }}
+          >
+            <div className={`w-2 h-2 ${domainConfig.account.color} rounded-full`}></div>
+            <span>{domainConfig.account.name}</span>
+            <div className="absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-data-[state=active]:scale-x-100 transition-transform duration-300 ease-in-out" style={{ backgroundColor: `var(--account-color, #ef4444)` }}></div>
+          </TabsTrigger>
+
+          <TabsTrigger
+            key="reports"
+            value="reports"
+            className="flex-1 flex items-center justify-center gap-2 relative group"
+            style={{ minHeight: "40px" }}
+          >
+            <div className={`w-2 h-2 ${domainConfig.reports.color} rounded-full`}></div>
+            <span>{domainConfig.reports.name}</span>
+            <div className="absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-data-[state=active]:scale-x-100 transition-transform duration-300 ease-in-out" style={{ backgroundColor: `var(--reports-color, #3b82f6)` }}></div>
+          </TabsTrigger>
+
+          <TabsTrigger
+            key="announcements"
+            value="announcements"
+            className="flex-1 flex items-center justify-center gap-2 relative group"
+            style={{ minHeight: "40px" }}
+          >
+            <div className={`w-2 h-2 ${domainConfig.announcements.color} rounded-full`}></div>
+            <span>{domainConfig.announcements.name}</span>
+            <div className="absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-data-[state=active]:scale-x-100 transition-transform duration-300 ease-in-out" style={{ backgroundColor: `var(--announcements-color, #22c55e)` }}></div>
+          </TabsTrigger>
+
+          <TabsTrigger
+            key="developers"
+            value="developers"
+            className="flex-1 flex items-center justify-center gap-2 relative group"
+            style={{ minHeight: "40px" }}
+          >
+            <div className={`w-2 h-2 ${domainConfig.developers.color} rounded-full`}></div>
+            <span>{domainConfig.developers.name}</span>
+            <div className="absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-data-[state=active]:scale-x-100 transition-transform duration-300 ease-in-out" style={{ backgroundColor: `var(--developers-color, #a855f7)` }}></div>
+          </TabsTrigger>
         </TabsList>
 
         {(Object.keys(domainConfig) as EmailDomain[]).map((domain) => (
           <TabsContent key={domain} value={domain} className="mt-0">
-            <div className="flex items-center mb-4">
-              <Badge variant="outline" className={`${domainConfig[domain].badge} mr-2`}>
-                {domainConfig[domain].domain}
-              </Badge>
-              <p className="text-sm text-muted-foreground">
-                {domainConfig[domain].description}
-              </p>
-            </div>
+            {domain !== 'account' ? (
+              <>
+                <div className="flex items-center justify-between mb-6 p-4 bg-card/30 rounded-lg border border-border/50">
+                  <div>
+                    <h3 className="text-lg font-medium mb-1 flex items-center gap-2">
+                      <div className={`w-3 h-3 ${domainConfig[domain].color} rounded-full`}></div>
+                      {domainConfig[domain].name}
+                    </h3>
+                    <div className="flex items-center">
+                      <Badge variant="outline" className={`${domainConfig[domain].badge} mr-2`}>
+                        {domainConfig[domain].domain}
+                      </Badge>
+                      <p className="text-sm text-muted-foreground">
+                        {domainConfig[domain].description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-            <div className="w-full space-y-4">
-              {getEmailsByDomain(domain).map(renderEmailPreference)}
-            </div>
+                {shouldShowServiceWideControls(domain) && (
+                  <div className="mb-6">
+                    <Label className="text-sm font-medium mb-2 block">
+                      Service-wide Frequency
+                      <span className="text-xs font-normal ml-1 text-muted-foreground">(Optional emails only)</span>
+                    </Label>
+                    <RadioGroup
+                      value={getDomainFrequency(domain) === 'mixed' ? '' : getDomainFrequency(domain)}
+                      onValueChange={(value) => handleServiceSubscription(domain, value as EmailFrequency)}
+                      className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2"
+                    >
+                      {domainConfig[domain].name !== "Security Alerts" && (
+                        <>
+                          <label
+                            className={`flex items-center space-x-2 bg-muted/50 p-3 rounded-md hover:bg-muted/80 transition-colors cursor-pointer ${getDomainFrequency(domain) === 'daily' ? 'ring-1 ring-primary' : ''}`}
+                            htmlFor={`service-${domain}-daily`}
+                          >
+                            <RadioGroupItem value="daily" id={`service-${domain}-daily`} />
+                            <Label htmlFor={`service-${domain}-daily`} className="text-sm cursor-pointer">Daily</Label>
+                          </label>
+                          <label
+                            className={`flex items-center space-x-2 bg-muted/50 p-3 rounded-md hover:bg-muted/80 transition-colors cursor-pointer ${getDomainFrequency(domain) === 'weekly' ? 'ring-1 ring-primary' : ''}`}
+                            htmlFor={`service-${domain}-weekly`}
+                          >
+                            <RadioGroupItem value="weekly" id={`service-${domain}-weekly`} />
+                            <Label htmlFor={`service-${domain}-weekly`} className="text-sm cursor-pointer">Weekly</Label>
+                          </label>
+                          <label
+                            className={`flex items-center space-x-2 bg-muted/50 p-3 rounded-md hover:bg-muted/80 transition-colors cursor-pointer ${getDomainFrequency(domain) === 'monthly' ? 'ring-1 ring-primary' : ''}`}
+                            htmlFor={`service-${domain}-monthly`}
+                          >
+                            <RadioGroupItem value="monthly" id={`service-${domain}-monthly`} />
+                            <Label htmlFor={`service-${domain}-monthly`} className="text-sm cursor-pointer">Monthly</Label>
+                          </label>
+                          <label
+                            className={`flex items-center space-x-2 bg-muted/50 p-3 rounded-md hover:bg-muted/80 transition-colors cursor-pointer ${getDomainFrequency(domain) === 'none' ? 'ring-1 ring-primary' : ''}`}
+                            htmlFor={`service-${domain}-none`}
+                          >
+                            <RadioGroupItem value="none" id={`service-${domain}-none`} />
+                            <Label htmlFor={`service-${domain}-none`} className="text-sm cursor-pointer">None</Label>
+                          </label>
+                        </>
+                      )}
+                      {getDomainFrequency(domain) === 'mixed' && (
+                        <div className="text-xs text-muted-foreground mt-2">
+                          Mixed settings (choose to make uniform)
+                        </div>
+                      )}
+                    </RadioGroup>
+                  </div>
+                )}
+
+                {getDomainFrequency(domain) !== 'none' && (
+                  <div className="w-full space-y-4">
+                    {getEmailsByDomain(domain).map(renderEmailPreference)}
+                  </div>
+                )}
+
+                {getDomainFrequency(domain) === 'none' && (
+                  <>
+                    <div className="mb-6 text-center py-4 bg-muted/30 rounded-lg border border-border/50 text-muted-foreground">
+                      <p>You've unsubscribed from all optional {domainConfig[domain].name} emails.</p>
+                      <button
+                        onClick={() => handleServiceSubscription(domain, 'monthly')}
+                        className="text-sm text-primary underline mt-2 hover:text-primary/80"
+                      >
+                        Resubscribe
+                      </button>
+                    </div>
+
+                    {/* Always show required emails, even when domain is set to 'none' */}
+                    {getEmailsByDomain(domain)
+                      .filter(email => email.required)
+                      .map(renderEmailPreference)}
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                {/* Special layout for Account tab with required emails */}
+                <div className="flex items-center justify-between mb-6 p-4 bg-card/30 rounded-lg border border-border/50">
+                  <div>
+                    <h3 className="text-lg font-medium mb-1 flex items-center gap-2">
+                      <div className={`w-3 h-3 ${domainConfig[domain].color} rounded-full`}></div>
+                      {domainConfig[domain].name}
+                    </h3>
+                    <div className="flex items-center">
+                      <Badge variant="outline" className={`${domainConfig[domain].badge} mr-2`}>
+                        {domainConfig[domain].domain}
+                      </Badge>
+                      <p className="text-sm text-muted-foreground">
+                        {domainConfig[domain].description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-6 bg-muted/30 p-4 rounded-lg border border-border/50">
+                  <div className="flex items-center gap-2 text-amber-500 mb-2">
+                    <AlertCircle className="h-4 w-4" />
+                    <p className="text-sm font-medium">Required Notifications</p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    These notifications cannot be disabled for security and billing purposes. You can adjust frequency where available.
+                  </p>
+                </div>
+
+                <div className="w-full space-y-4">
+                  {getEmailsByDomain(domain).map(renderEmailPreference)}
+                </div>
+              </>
+            )}
           </TabsContent>
         ))}
       </Tabs>
