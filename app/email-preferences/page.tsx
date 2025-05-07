@@ -636,19 +636,8 @@ export default function EmailPreferencesPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="account" className="w-full">
+      <Tabs defaultValue="reports" className="w-full">
         <TabsList className="flex w-full mb-6">
-          <TabsTrigger
-            key="account"
-            value="account"
-            className="flex-1 flex items-center justify-center gap-2 relative group"
-            style={{ minHeight: "40px" }}
-          >
-            <div className={`w-2 h-2 ${domainConfig.account.color} rounded-full`}></div>
-            <span>{domainConfig.account.name}</span>
-            <div className="absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-data-[state=active]:scale-x-100 transition-transform duration-300 ease-in-out" style={{ backgroundColor: `var(--account-color, #ef4444)` }}></div>
-          </TabsTrigger>
-
           <TabsTrigger
             key="reports"
             value="reports"
@@ -680,6 +669,17 @@ export default function EmailPreferencesPage() {
             <div className={`w-2 h-2 ${domainConfig.developers.color} rounded-full`}></div>
             <span>{domainConfig.developers.name}</span>
             <div className="absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-data-[state=active]:scale-x-100 transition-transform duration-300 ease-in-out" style={{ backgroundColor: `var(--developers-color, #a855f7)` }}></div>
+          </TabsTrigger>
+
+          <TabsTrigger
+            key="account"
+            value="account"
+            className="flex-1 flex items-center justify-center gap-2 relative group"
+            style={{ minHeight: "40px" }}
+          >
+            <div className={`w-2 h-2 ${domainConfig.account.color} rounded-full`}></div>
+            <span>{domainConfig.account.name}</span>
+            <div className="absolute bottom-0 left-0 w-full h-0.5 scale-x-0 group-data-[state=active]:scale-x-100 transition-transform duration-300 ease-in-out" style={{ backgroundColor: `var(--account-color, #ef4444)` }}></div>
           </TabsTrigger>
         </TabsList>
 
@@ -752,9 +752,9 @@ export default function EmailPreferencesPage() {
                     </RadioGroup>
 
                     {getDomainFrequency(domain) === 'mixed' && (
-                      <div className="mt-3 p-3 rounded-md border border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/30 text-amber-800 dark:text-amber-400">
+                      <div className="mt-3 p-3 rounded-md border border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400">
                         <p className="text-sm flex items-center">
-                          <AlertCircle className="h-4 w-4 mr-2" />
+                          <Info className="h-4 w-4 mr-2" />
                           You have mixed frequency settings. Use the controls above to make them uniform.
                         </p>
                       </div>
