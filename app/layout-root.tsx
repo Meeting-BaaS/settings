@@ -24,7 +24,7 @@ export default function LayoutRoot({ children }: LayoutRootProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="flex flex-col lg:flex-row mx-auto w-full max-w-container xl:h-[70vh]">
+    <div className="flex flex-col lg:flex-row mx-auto w-full max-w-container lg:max-h-[600px] xl:max-h-[700px] min-h-[400px]">
       {/* Mobile menu toggle */}
       <div className="lg:hidden p-4 border-b">
         <Button 
@@ -39,14 +39,16 @@ export default function LayoutRoot({ children }: LayoutRootProps) {
       </div>
       
       {/* Sidebar - hidden on mobile unless toggled */}
-      <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block lg:w-64 border-r p-6`}>
+      <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block lg:w-64 border-r p-6 bg-background`}>
         <h2 className="text-lg font-semibold mb-4">Settings</h2>
         <SimpleSidebar items={sidebarNavItems} />
       </div>
       
-      {/* Main content area - centered on desktop */}
+      {/* Main content area - centered on desktop with auto height */}
       <div className="flex-1 p-6 max-w-3xl mx-auto w-full overflow-y-auto">
-        {children}
+        <div className="max-w-2xl mx-auto">
+          {children}
+        </div>
       </div>
     </div>
   )
