@@ -26,8 +26,8 @@ export default function Header({ user }: { user: User }) {
           <div className="flex gap-1">
             <Button
               variant="ghost"
-              size="icon"
-              className="fill-foreground"
+              size="sm"
+              className="fill-foreground h-9 w-9 p-0"
               asChild
               aria-label="Github repository"
             >

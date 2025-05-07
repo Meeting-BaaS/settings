@@ -43,7 +43,7 @@ export const UserAvatar = ({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          size="icon"
+          size="sm"
           className="h-7 w-7 rounded-full border-0 bg-transparent p-0"
           aria-label="User menu"
         >
