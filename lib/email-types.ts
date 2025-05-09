@@ -8,33 +8,29 @@
 /**
  * Available email frequency options
  */
-export type EmailFrequency = "daily" | "weekly" | "monthly" | "none";
+export type EmailFrequency = "daily" | "weekly" | "monthly" | "none"
 
 /**
  * Available service/domain categories
  */
-export type EmailDomain =
-  | "reports"
-  | "announcements"
-  | "developers"
-  | "account";
+export type EmailDomain = "reports" | "announcements" | "developers" | "account"
 
 /**
  * Email type definition as stored in the database
  */
 export interface EmailType {
   /** Unique identifier for the email type */
-  id: string;
+  id: string
   /** Display name of the email type */
-  name: string;
+  name: string
   /** Description of the email content */
-  description: string;
+  description: string
   /** Which domain/service category this email belongs to */
-  domain: EmailDomain;
+  domain: EmailDomain
   /** Which frequencies are available for this email type */
-  frequencies: EmailFrequency[];
+  frequencies: EmailFrequency[]
   /** If true, the email cannot be completely disabled */
-  required?: boolean;
+  required?: boolean
 }
 
 /**
@@ -42,9 +38,9 @@ export interface EmailType {
  */
 export interface EmailPreference {
   /** Email type ID to update */
-  id: string;
+  id: string
   /** New frequency setting */
-  frequency: EmailFrequency;
+  frequency: EmailFrequency
 }
 
 /**
@@ -52,43 +48,43 @@ export interface EmailPreference {
  */
 export interface ServiceFrequencyUpdate {
   /** Domain/service to update */
-  domain: EmailDomain;
+  domain: EmailDomain
   /** New frequency for all emails in this domain */
-  frequency: EmailFrequency;
+  frequency: EmailFrequency
 }
 
 /**
  * Domain configuration for styling and display
  */
 export interface DomainConfig {
-  icon: React.ReactNode;
-  color: string;
-  badge: string;
-  name: string;
-  description: string;
-  domain: string;
+  color: string
+  badge: string
+  name: string
+  description: string
+  domain: string
+  type: EmailDomain
 }
 
 /**
  * All email preferences for a user
  */
-export type EmailPreferences = Record<string, EmailFrequency>;
+export type EmailPreferences = Record<string, EmailFrequency>
 
 /**
  * API responses
  */
 export interface ApiResponse {
-  success: boolean;
+  success: boolean
 }
 
 export interface ServiceUpdateResponse extends ApiResponse {
-  updatedEmails: string[];
+  updatedEmails: string[]
 }
 
 export interface ResendEmailResponse extends ApiResponse {
-  message: string;
+  message: string
 }
 
 export interface BatchUpdateResponse extends ApiResponse {
-  updatedCount: number;
+  updatedCount: number
 }

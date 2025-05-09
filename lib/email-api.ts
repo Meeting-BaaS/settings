@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from "axios"
 
-import {
+import type {
   BatchUpdateResponse,
   EmailFrequency,
   EmailPreference,
@@ -8,8 +8,8 @@ import {
   EmailType,
   ResendEmailResponse,
   ServiceFrequencyUpdate,
-  ServiceUpdateResponse,
-} from "./email-types";
+  ServiceUpdateResponse
+} from "@/lib/email-types"
 
 // =================================================================
 // MOCK IMPLEMENTATION - TO BE REPLACED WITH REAL API ENDPOINTS LATER
@@ -26,10 +26,8 @@ export async function updateEmailFrequency(
   frequency: EmailFrequency
 ): Promise<{ success: boolean }> {
   // MOCK IMPLEMENTATION - Replace with actual API call
-  console.log(
-    `[MOCK API] updateEmailFrequency: Setting ${emailId} to ${frequency}`
-  );
-  console.log(`[MOCK API] Auth token: ${userToken}`);
+  console.log(`[MOCK API] updateEmailFrequency: Setting ${emailId} to ${frequency}`)
+  console.log(`[MOCK API] Auth token: ${userToken}`)
 
   // In production, this would call your backend API
   // TODO: Replace with actual API endpoint
@@ -40,15 +38,15 @@ export async function updateEmailFrequency(
         url: `/api/email-preferences/${emailId}`,
         data: { frequency },
         headers: {
-          Authorization: userToken,
-        },
+          Authorization: userToken
+        }
       })
-    ).data;
+    ).data
   } catch (error) {
-    console.error("[MOCK API] Error in updateEmailFrequency:", error);
+    console.error("[MOCK API] Error in updateEmailFrequency:", error)
     // For the mock implementation, we're simulating a successful response
     // In production, you should remove this and let the error propagate
-    return { success: true };
+    return { success: true }
   }
 }
 
@@ -60,8 +58,8 @@ export async function updateServiceFrequency(
   // MOCK IMPLEMENTATION - Replace with actual API call
   console.log(
     `[MOCK API] updateServiceFrequency: Setting all ${data.domain} emails to ${data.frequency}`
-  );
-  console.log(`[MOCK API] Auth token: ${userToken}`);
+  )
+  console.log(`[MOCK API] Auth token: ${userToken}`)
 
   // In production, this would call your backend API
   // TODO: Replace with actual API endpoint
@@ -72,17 +70,17 @@ export async function updateServiceFrequency(
         url: `/api/email-preferences/service/${data.domain}`,
         data: { frequency: data.frequency },
         headers: {
-          Authorization: userToken,
-        },
+          Authorization: userToken
+        }
       })
-    ).data;
+    ).data
   } catch (error) {
-    console.error("[MOCK API] Error in updateServiceFrequency:", error);
+    console.error("[MOCK API] Error in updateServiceFrequency:", error)
     // For the mock implementation, we're simulating a successful response with fake data
     return {
       success: true,
-      updatedEmails: [`${data.domain}-1`, `${data.domain}-2`],
-    };
+      updatedEmails: [`${data.domain}-1`, `${data.domain}-2`]
+    }
   }
 }
 
@@ -92,8 +90,8 @@ export async function unsubscribeWithToken(
   token: string
 ): Promise<{ success: boolean }> {
   // MOCK IMPLEMENTATION - Replace with actual API call
-  console.log(`[MOCK API] unsubscribeWithToken: Unsubscribing from ${emailId}`);
-  console.log(`[MOCK API] Token: ${token}`);
+  console.log(`[MOCK API] unsubscribeWithToken: Unsubscribing from ${emailId}`)
+  console.log(`[MOCK API] Token: ${token}`)
 
   // In production, this would validate the token and unsubscribe the user
   // TODO: Replace with actual API endpoint
@@ -101,27 +99,25 @@ export async function unsubscribeWithToken(
     return (
       await axios({
         method: "POST",
-        url: `/api/email-preferences/unsubscribe`,
+        url: "/api/email-preferences/unsubscribe",
         data: {
           emailId,
-          token,
-        },
+          token
+        }
       })
-    ).data;
+    ).data
   } catch (error) {
-    console.error("[MOCK API] Error in unsubscribeWithToken:", error);
+    console.error("[MOCK API] Error in unsubscribeWithToken:", error)
     // For the mock implementation, we're simulating a successful response
-    return { success: true };
+    return { success: true }
   }
 }
 
 // Get all email preferences for the user
-export async function getEmailPreferences(
-  userToken: string
-): Promise<EmailPreferences> {
+export async function getEmailPreferences(userToken: string): Promise<EmailPreferences> {
   // MOCK IMPLEMENTATION - Replace with actual API call
-  console.log("[MOCK API] getEmailPreferences: Fetching user preferences");
-  console.log(`[MOCK API] Auth token: ${userToken}`);
+  console.log("[MOCK API] getEmailPreferences: Fetching user preferences")
+  console.log(`[MOCK API] Auth token: ${userToken}`)
 
   // In production, this would fetch real preferences from your backend
   // TODO: Replace with actual API endpoint
@@ -129,14 +125,14 @@ export async function getEmailPreferences(
     return (
       await axios({
         method: "GET",
-        url: `/api/email-preferences`,
+        url: "/api/email-preferences",
         headers: {
-          Authorization: userToken,
-        },
+          Authorization: userToken
+        }
       })
-    ).data;
+    ).data
   } catch (error) {
-    console.error("[MOCK API] Error in getEmailPreferences:", error);
+    console.error("[MOCK API] Error in getEmailPreferences:", error)
     // For the mock implementation, we're simulating a response with fake data
     return {
       "usage-reports": "monthly",
@@ -146,8 +142,8 @@ export async function getEmailPreferences(
       "api-changes": "weekly",
       "developer-resources": "monthly",
       "security-alerts": "daily",
-      "billing-notifications": "monthly",
-    };
+      "billing-notifications": "monthly"
+    }
   }
 }
 
@@ -157,10 +153,8 @@ export async function resendLatestEmail(
   emailId: string
 ): Promise<ResendEmailResponse> {
   // MOCK IMPLEMENTATION - Replace with actual API call
-  console.log(
-    `[MOCK API] resendLatestEmail: Resending latest ${emailId} email`
-  );
-  console.log(`[MOCK API] Auth token: ${userToken}`);
+  console.log(`[MOCK API] resendLatestEmail: Resending latest ${emailId} email`)
+  console.log(`[MOCK API] Auth token: ${userToken}`)
 
   // In production, this would trigger an email resend from your backend
   // TODO: Replace with actual API endpoint
@@ -170,14 +164,14 @@ export async function resendLatestEmail(
         method: "POST",
         url: `/api/email/${emailId}/resend`,
         headers: {
-          Authorization: userToken,
-        },
+          Authorization: userToken
+        }
       })
-    ).data;
+    ).data
   } catch (error) {
-    console.error("[MOCK API] Error in resendLatestEmail:", error);
+    console.error("[MOCK API] Error in resendLatestEmail:", error)
     // For the mock implementation, we're simulating a successful response
-    return { success: true, message: "Email queued for delivery" };
+    return { success: true, message: "Email queued for delivery" }
   }
 }
 
@@ -187,11 +181,9 @@ export async function batchUpdatePreferences(
   preferences: EmailPreference[]
 ): Promise<BatchUpdateResponse> {
   // MOCK IMPLEMENTATION - Replace with actual API call
-  console.log(
-    `[MOCK API] batchUpdatePreferences: Updating ${preferences.length} preferences`
-  );
-  console.log(`[MOCK API] Auth token: ${userToken}`);
-  console.log(`[MOCK API] Preferences: ${JSON.stringify(preferences)}`);
+  console.log(`[MOCK API] batchUpdatePreferences: Updating ${preferences.length} preferences`)
+  console.log(`[MOCK API] Auth token: ${userToken}`)
+  console.log(`[MOCK API] Preferences: ${JSON.stringify(preferences)}`)
 
   // In production, this would update multiple preferences at once in your backend
   // TODO: Replace with actual API endpoint
@@ -199,29 +191,25 @@ export async function batchUpdatePreferences(
     return (
       await axios({
         method: "POST",
-        url: `/api/email-preferences/batch`,
+        url: "/api/email-preferences/batch",
         data: { preferences },
         headers: {
-          Authorization: userToken,
-        },
+          Authorization: userToken
+        }
       })
-    ).data;
+    ).data
   } catch (error) {
-    console.error("[MOCK API] Error in batchUpdatePreferences:", error);
+    console.error("[MOCK API] Error in batchUpdatePreferences:", error)
     // For the mock implementation, we're simulating a successful response
-    return { success: true, updatedCount: preferences.length };
+    return { success: true, updatedCount: preferences.length }
   }
 }
 
 // Get a list of available email types and their configuration
-export async function getAvailableEmailTypes(
-  userToken: string
-): Promise<EmailType[]> {
+export async function getAvailableEmailTypes(userToken: string): Promise<EmailType[]> {
   // MOCK IMPLEMENTATION - Replace with actual API call
-  console.log(
-    "[MOCK API] getAvailableEmailTypes: Fetching email types configuration"
-  );
-  console.log(`[MOCK API] Auth token: ${userToken}`);
+  console.log("[MOCK API] getAvailableEmailTypes: Fetching email types configuration")
+  console.log(`[MOCK API] Auth token: ${userToken}`)
 
   // In production, this would fetch the email types configuration from your backend
   // TODO: Replace with actual API endpoint
@@ -229,59 +217,58 @@ export async function getAvailableEmailTypes(
     return (
       await axios({
         method: "GET",
-        url: `/api/email-types`,
+        url: "/api/email-types",
         headers: {
-          Authorization: userToken,
-        },
+          Authorization: userToken
+        }
       })
-    ).data;
+    ).data
   } catch (error) {
-    console.error("[MOCK API] Error in getAvailableEmailTypes:", error);
+    console.error("[MOCK API] Error in getAvailableEmailTypes:", error)
     // For the mock implementation, we're returning a default configuration
     // This should match the EMAIL_TYPES array in page.tsx
     return [
       {
         id: "usage-reports",
         name: "Usage Reports",
-        description:
-          "Monthly reports on your Meeting BaaS usage and statistics.",
+        description: "Monthly reports on your Meeting BaaS usage and statistics.",
         domain: "reports",
-        frequencies: ["daily", "weekly", "monthly"],
+        frequencies: ["daily", "weekly", "monthly"]
       },
       {
         id: "product-updates",
         name: "Product Updates",
         description: "New features and improvements to the platform.",
         domain: "announcements",
-        frequencies: ["weekly", "monthly"],
+        frequencies: ["weekly", "monthly"]
       },
       {
         id: "maintenance-notifications",
         name: "Maintenance Notifications",
         description: "Scheduled maintenance and system updates.",
         domain: "announcements",
-        frequencies: ["daily"],
+        frequencies: ["daily"]
       },
       {
         id: "company-news",
         name: "Company News",
         description: "News and announcements about Meeting BaaS.",
         domain: "announcements",
-        frequencies: ["monthly"],
+        frequencies: ["monthly"]
       },
       {
         id: "api-changes",
         name: "API Changes",
         description: "Updates and changes to the Meeting BaaS API.",
         domain: "developers",
-        frequencies: ["daily", "weekly", "monthly"],
+        frequencies: ["daily", "weekly", "monthly"]
       },
       {
         id: "developer-resources",
         name: "Developer Resources",
         description: "New resources, tutorials and documentation.",
         domain: "developers",
-        frequencies: ["daily", "weekly", "monthly"],
+        frequencies: ["daily", "weekly", "monthly"]
       },
       {
         id: "security-alerts",
@@ -289,7 +276,7 @@ export async function getAvailableEmailTypes(
         description: "Important security notifications about your account.",
         domain: "account",
         frequencies: ["daily"],
-        required: true,
+        required: true
       },
       {
         id: "billing-notifications",
@@ -297,8 +284,8 @@ export async function getAvailableEmailTypes(
         description: "Invoices and payment confirmations.",
         domain: "account",
         frequencies: ["daily", "weekly", "monthly"],
-        required: true,
-      },
-    ];
+        required: true
+      }
+    ]
   }
 }
