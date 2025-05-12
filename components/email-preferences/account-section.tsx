@@ -3,16 +3,16 @@
 import { AlertCircle } from "lucide-react"
 
 import { EmailPreference } from "@/components/email-preferences/email-preference-card"
-import { getEmailsByDomain } from "@/components/email-preferences/email-categories"
-import type { EmailDomain } from "@/lib/email-types"
+import type { EmailDomain, EmailType } from "@/lib/email-types"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 interface AccountSectionProps {
   domain: EmailDomain
+  emailTypes: EmailType[]
   onUnsubscribe: (emailId: string, emailName: string) => void
 }
 
-export const AccountSection = ({ domain, onUnsubscribe }: AccountSectionProps) => {
+export const AccountSection = ({ domain, emailTypes, onUnsubscribe }: AccountSectionProps) => {
   return (
     <>
       <Alert className="mb-6" variant="warning">
@@ -25,7 +25,7 @@ export const AccountSection = ({ domain, onUnsubscribe }: AccountSectionProps) =
       </Alert>
 
       <div className="space-y-4">
-        {getEmailsByDomain(domain).map((emailType) => (
+        {emailTypes.map((emailType) => (
           <EmailPreference key={emailType.id} emailType={emailType} onUnsubscribe={onUnsubscribe} />
         ))}
       </div>

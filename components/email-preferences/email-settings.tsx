@@ -3,16 +3,16 @@
 import { Badge } from "@/components/ui/badge"
 
 import { EmailPreference } from "./email-preference-card"
-import { getEmailsByDomain } from "./email-categories"
-import type { EmailDomain } from "@/lib/email-types"
+import type { EmailDomain, EmailType } from "@/lib/email-types"
 
 interface EmailSettingsProps {
   domain: EmailDomain
+  emailTypes: EmailType[]
   onUnsubscribe: (emailId: string, emailName: string) => void
 }
 
-export const EmailSettings = ({ domain, onUnsubscribe }: EmailSettingsProps) => {
-  const optionalEmails = getEmailsByDomain(domain).filter((e) => !e.required)
+export const EmailSettings = ({ domain, emailTypes, onUnsubscribe }: EmailSettingsProps) => {
+  const optionalEmails = emailTypes.filter((e) => !e.required)
 
   return (
     <>

@@ -5,11 +5,13 @@ import {
   updateEmailFrequency,
   resendLatestEmail,
   unsubscribeWithToken,
-  batchUpdatePreferences
-} from "@/lib/mock-email-api"
-import type { EmailDomain, EmailFrequency, EmailPreferences } from "@/lib/email-types"
+  batchUpdatePreferences,
+  updateServiceFrequency
+} from "@/lib/email-api"
+import type { EmailDomain, EmailFrequency, EmailPreferences, EmailType } from "@/lib/email-types"
 import { useJwt } from "@/hooks/use-jwt"
 import { getUpdatedDomainFrequency } from "@/components/email-preferences/domain-frequency"
+import { clearEmailTypesCache, getEmailCategories } from "@/components/email-preferences/email-categories"
 
 export function useEmailPreferences() {
   const queryClient = useQueryClient()
@@ -18,7 +20,16 @@ export function useEmailPreferences() {
   // Query for fetching email preferences
   const { data: preferences, isLoading } = useQuery({
     queryKey: ["email-preferences"],
-    queryFn: () => getEmailPreferences(jwt)
+    queryFn: () => getEmailPreferences(jwt),
+    retry: 2,
+    staleTime: 5 * 60 * 1000 // 5 minutes
+  })
+
+  // Query for fetching email types
+  const { data: emailTypes = [] } = useQuery<EmailType[]>({
+    queryKey: ["email-types"],
+    queryFn: () => getEmailCategories(jwt),
+    staleTime: 5 * 60 * 1000 // 5 minutes
   })
 
   // Mutation for updating individual email frequency
@@ -33,6 +44,8 @@ export function useEmailPreferences() {
     },
     onSuccess: () => {
       toast.success("Preference updated successfully")
+      // Clear email types cache to ensure we have fresh data
+      clearEmailTypesCache()
     },
     onError: (error, { id }) => {
       console.error("Failed to update preference", error)
@@ -52,23 +65,20 @@ export function useEmailPreferences() {
       const newPreferences = getUpdatedDomainFrequency(
         domain,
         frequency,
-        queryClient.getQueryData(["email-preferences"]) as EmailPreferences
+        queryClient.getQueryData(["email-preferences"]) as EmailPreferences,
+        emailTypes
       )
 
       // Update the cache optimistically
       queryClient.setQueryData(["email-preferences"], newPreferences)
 
-      // Convert the preferences object to an array format expected by the API
-      const preferencesArray = Object.entries(newPreferences).map(([id, frequency]) => ({
-        id,
-        frequency
-      }))
-
-      // Make the API call with the new preferences
-      return batchUpdatePreferences(jwt, preferencesArray)
+      // Make the API call to update service frequency
+      return updateServiceFrequency(jwt, { domain, frequency })
     },
     onSuccess: () => {
       toast.success("Preferences updated successfully")
+      // Clear email types cache to ensure we have fresh data
+      clearEmailTypesCache()
     },
     onError: (error, { domain }) => {
       console.error("Failed to update preferences", error)
@@ -81,8 +91,8 @@ export function useEmailPreferences() {
   // Mutation for resending latest email
   const resendLatestMutation = useMutation({
     mutationFn: (emailId: string) => resendLatestEmail(jwt, emailId),
-    onSuccess: () => {
-      toast.success("Latest email will be resent shortly")
+    onSuccess: (data) => {
+      toast.success(data.message || "Latest email will be resent shortly")
     },
     onError: (error) => {
       console.error("Failed to resend email", error)
@@ -91,23 +101,19 @@ export function useEmailPreferences() {
   })
 
   // Mutation for unsubscribing with token
-  const unsubscribeWithTokenMutation = useMutation({
-    mutationFn: ({ emailId, token }: { emailId: string; token: string }) => {
-      // Update the cache optimistically
-      queryClient.setQueryData(["email-preferences"], (old: EmailPreferences) => ({
-        ...old,
-        [emailId]: "none"
-      }))
-      return unsubscribeWithToken(emailId, token)
-    },
+  const unsubscribeMutation = useMutation({
+    mutationFn: ({ emailId, token }: { emailId: string; token: string }) =>
+      unsubscribeWithToken(emailId, token),
     onSuccess: () => {
-      toast.success("Successfully unsubscribed from email")
+      toast.success("Successfully unsubscribed")
+      // Invalidate preferences to refresh the data
+      queryClient.invalidateQueries({ queryKey: ["email-preferences"] })
+      // Clear email types cache to ensure we have fresh data
+      clearEmailTypesCache()
     },
     onError: (error) => {
-      console.error("Failed to unsubscribe with token", error)
-      // Revert the cache on error
-      queryClient.setQueryData(["email-preferences"], (old: EmailPreferences) => old)
-      toast.error("Invalid or expired unsubscribe link. Please try again.")
+      console.error("Failed to unsubscribe", error)
+      toast.error("Failed to unsubscribe. Please try again.")
     }
   })
 
@@ -117,7 +123,9 @@ export function useEmailPreferences() {
     updatePreference: updatePreferenceMutation.mutate,
     updateService: updateServiceMutation.mutate,
     resendLatest: resendLatestMutation.mutate,
-    unsubscribeWithToken: unsubscribeWithTokenMutation.mutate,
-    unsubscribeWithTokenSuccess: unsubscribeWithTokenMutation.isSuccess
+    unsubscribe: unsubscribeMutation.mutate,
+    isUpdating: updatePreferenceMutation.isPending || updateServiceMutation.isPending,
+    isResending: resendLatestMutation.isPending,
+    isUnsubscribing: unsubscribeMutation.isPending
   }
 }

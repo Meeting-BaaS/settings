@@ -6,28 +6,31 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent } from "@/components/ui/card"
 import { RadioGroup } from "@/components/ui/radio-group"
 
-import { getEmailsByDomain } from "@/components/email-preferences/email-categories"
 import { useEmailPreferences } from "@/hooks/use-email-preferences"
-import type { DomainConfig, EmailFrequency } from "@/lib/email-types"
+import type { DomainConfig, EmailDomain, EmailFrequency, EmailType } from "@/lib/email-types"
 import { cn } from "@/lib/utils"
 import { EmailFrequencyRadio } from "./email-frequency-radio"
 import { getDomainFrequency } from "./domain-frequency"
 
 const frequencies: EmailFrequency[] = ["daily", "weekly", "monthly", "none"]
 
+interface ServiceWideControlsProps {
+  domainConfig: DomainConfig
+  emailTypes: EmailType[]
+  onUnsubscribe: (emailId: string, emailName: string) => void
+}
+
 export const ServiceWideControls = ({
   domainConfig,
+  emailTypes,
   onUnsubscribe
-}: {
-  domainConfig: DomainConfig
-  onUnsubscribe: (emailId: string, emailName: string) => void
-}) => {
+}: ServiceWideControlsProps) => {
   const { preferences, updateService } = useEmailPreferences()
-  const optionalEmails = getEmailsByDomain(domainConfig.type).filter((e) => !e.required)
+  const optionalEmails = emailTypes.filter((e) => !e.required)
 
   if (optionalEmails.length <= 1) return null
 
-  const domainFrequency = getDomainFrequency(domainConfig.type, preferences)
+  const domainFrequency = getDomainFrequency(domainConfig.type, preferences, emailTypes)
 
   const handleServiceSubscription = (frequency: EmailFrequency) => {
     if (frequency === "none") {
@@ -64,11 +67,13 @@ export const ServiceWideControls = ({
             />
           ))}
         </RadioGroup>
-        {domainFrequency === "mixed" && (
-          <Alert variant="info" className="mt-3">
+
+        {domainFrequency !== "none" && domainFrequency !== "mixed" && (
+          <Alert className="mt-4" variant="info">
             <Info className="size-4" />
             <AlertDescription>
-              You have mixed frequency settings. Use the controls above to make them uniform.
+              You will receive {domainFrequency} emails for all optional {domainConfig.name.toLowerCase()}{" "}
+              notifications.
             </AlertDescription>
           </Alert>
         )}

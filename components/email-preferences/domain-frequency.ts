@@ -1,16 +1,17 @@
-import type { EmailDomain, EmailFrequency, EmailPreferences } from "@/lib/email-types"
+import type { EmailDomain, EmailFrequency, EmailPreferences, EmailType } from "@/lib/email-types"
 import { getEmailsByDomain } from "@/components/email-preferences/email-categories"
 
 // Function to check if all emails in a domain have the same frequency setting
 export const getDomainFrequency = (
   domain: EmailDomain,
-  preferences: EmailPreferences | undefined
+  preferences: EmailPreferences | undefined,
+  emailTypes: EmailType[]
 ): EmailFrequency | "mixed" => {
   // Edge case: Handle missing preferences or invalid domain
   if (!preferences || !domain) return "none"
 
   // Only consider non-required emails for domain frequency
-  const emailsInDomain = getEmailsByDomain(domain).filter((e) => !e.required)
+  const emailsInDomain = getEmailsByDomain(emailTypes, domain).filter((e) => !e.required)
 
   // If there are no non-required emails in this domain, return 'none'
   if (emailsInDomain.length === 0) return "none"
@@ -31,15 +32,17 @@ export const getDomainFrequency = (
  * @param domain - The domain to update
  * @param frequency - The frequency to set
  * @param old - The old preferences
+ * @param emailTypes - The list of all email types
  * @returns The new preferences
  */
 export const getUpdatedDomainFrequency = (
   domain: EmailDomain,
   frequency: EmailFrequency,
-  old: EmailPreferences
+  old: EmailPreferences,
+  emailTypes: EmailType[]
 ) => {
   const newPreferences = { ...old }
-  const emailsInDomain = getEmailsByDomain(domain)
+  const emailsInDomain = getEmailsByDomain(emailTypes, domain)
 
   // Define frequency hierarchy
   const frequencyHierarchy: EmailFrequency[] = ["daily", "weekly", "monthly"]

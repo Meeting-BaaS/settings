@@ -4,7 +4,6 @@
  * until the live API endpoints are available.
  */
 
-import { emailCategories } from "@/components/email-preferences/email-categories"
 import type {
   BatchUpdateResponse,
   EmailFrequency,
@@ -43,6 +42,68 @@ const setStoredPreferences = (preferences: EmailPreferences) => {
   localStorage.setItem(STORAGE_KEYS.PREFERENCES, JSON.stringify(preferences))
 }
 
+// Add a local EMAIL_CATEGORIES array for mock purposes
+const EMAIL_CATEGORIES: EmailType[] = [
+  {
+    id: "usage-reports",
+    name: "Usage Reports",
+    description: "Monthly reports on your Meeting BaaS usage and statistics.",
+    domain: "reports",
+    frequencies: ["daily", "weekly", "monthly"]
+  },
+  {
+    id: "product-updates",
+    name: "Product Updates",
+    description: "New features and improvements to the platform.",
+    domain: "announcements",
+    frequencies: ["weekly", "monthly"]
+  },
+  {
+    id: "maintenance-notifications",
+    name: "Maintenance Notifications",
+    description: "Scheduled maintenance and system updates.",
+    domain: "announcements",
+    frequencies: ["daily"]
+  },
+  {
+    id: "company-news",
+    name: "Company News",
+    description: "News and announcements about Meeting BaaS.",
+    domain: "announcements",
+    frequencies: ["monthly"]
+  },
+  {
+    id: "api-changes",
+    name: "API Changes",
+    description: "Updates and changes to the Meeting BaaS API.",
+    domain: "developers",
+    frequencies: ["daily", "weekly", "monthly"]
+  },
+  {
+    id: "developer-resources",
+    name: "Developer Resources",
+    description: "New resources, tutorials and documentation.",
+    domain: "developers",
+    frequencies: ["daily", "weekly", "monthly"]
+  },
+  {
+    id: "security-alerts",
+    name: "Security Alerts",
+    description: "Important security notifications about your account.",
+    domain: "account",
+    frequencies: ["daily"],
+    required: true
+  },
+  {
+    id: "billing-notifications",
+    name: "Billing Notifications",
+    description: "Invoices and payment confirmations.",
+    domain: "account",
+    frequencies: ["daily", "weekly", "monthly"],
+    required: true
+  }
+]
+
 // Update email frequency for a single email type
 export async function updateEmailFrequency(
   userToken: string,
@@ -63,7 +124,7 @@ export async function updateServiceFrequency(
   const preferences = getStoredPreferences()
   const updatedEmails: string[] = []
 
-  for (const type of emailCategories) {
+  for (const type of EMAIL_CATEGORIES) {
     if (type.domain === data.domain) {
       preferences[type.id] = data.frequency
       updatedEmails.push(type.id)
@@ -120,5 +181,5 @@ export async function batchUpdatePreferences(
 
 // Get a list of available email types and their configuration
 export async function getAvailableEmailTypes(userToken: string): Promise<EmailType[]> {
-  return emailCategories
+  return EMAIL_CATEGORIES
 }

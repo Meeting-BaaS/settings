@@ -1,6 +1,10 @@
+import { Suspense } from "react"
+import { Loader2 } from "lucide-react"
+
 import DomainEmailPreferences from "@/components/email-preferences"
 import { getDomainConfig } from "@/components/email-preferences/domains"
-import { findEmailTypeById } from "@/components/email-preferences/email-categories"
+import { getEmailCategories, findEmailTypeById } from "@/components/email-preferences/email-categories"
+import { getJwt } from "@/lib/auth"
 
 export default async function DomainPage({
   params,
@@ -17,21 +21,49 @@ export default async function DomainPage({
     return <div>Invalid email preferences category</div>
   }
 
+  // Get JWT for API calls
+  const jwt = await getJwt()
+  if (!jwt) {
+    return <div>Authentication required</div>
+  }
+
+  // Fetch email categories
+  const emailTypes = await getEmailCategories(jwt)
+
   // If there's an unsubscribe parameter, handle the unsubscribe flow
   if (unsubscribe && token) {
-    const emailType = findEmailTypeById(unsubscribe)
+    const emailType = findEmailTypeById(emailTypes, unsubscribe)
 
     // If we found the email type, return the page with unsubscribed email type and token
     if (emailType && emailType.domain !== "account") {
       return (
-        <DomainEmailPreferences
-          domainConfig={domainConfig}
-          unsubscribeEmailType={emailType}
-          token={token}
-        />
+        <Suspense
+          fallback={
+            <div className="flex h-40 items-center justify-center">
+              <Loader2 className="size-4 animate-spin stroke-primary" />
+            </div>
+          }
+        >
+          <DomainEmailPreferences
+            domainConfig={domainConfig}
+            unsubscribeEmailType={emailType}
+            token={token}
+            emailTypes={emailTypes}
+          />
+        </Suspense>
       )
     }
   }
 
-  return <DomainEmailPreferences domainConfig={domainConfig} />
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-40 items-center justify-center">
+          <Loader2 className="size-4 animate-spin stroke-primary" />
+        </div>
+      }
+    >
+      <DomainEmailPreferences domainConfig={domainConfig} emailTypes={emailTypes} />
+    </Suspense>
+  )
 }
