@@ -14,7 +14,7 @@ export default async function CredentialsPage() {
     <>
       <PageTitle
         title="Credentials"
-        description="Configure your credentials for for all things BaaS."
+        description="Configure your credentials for all things BaaS."
       />
       <Credentials apiKey={apiKey} />
     </>

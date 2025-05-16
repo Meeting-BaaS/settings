@@ -52,23 +52,23 @@ export function WebhookForm() {
       toast.success("Webhook url updated successfully.")
       reset({ webhook_url: data.webhook_url })
     } catch (error) {
-      console.error("error updating webhook url", error)
-      toast.error("Failed to update webhook url. Please try again.")
+      console.error("Error updating webhook path", error)
+      toast.error("Failed to update webhook path. Please try again.")
     } finally {
       setIsUpdating(false)
     }
   }
 
-  const copyToClipboard = () => {
+  const copyToClipboard = async () => {
     try {
-      navigator.clipboard.writeText(form.getValues("webhook_url"))
+      await navigator.clipboard.writeText(form.getValues("webhook_url"))
       setIsCopied(true)
       setTimeout(() => {
         setIsCopied(false)
       }, 2000)
     } catch (error) {
-      console.error("error copying webhook url to clipboard", error)
-      toast.error("Failed to copy webhook url. Please try again.")
+      console.error("Error copying webhook path to clipboard", error)
+      toast.error("Failed to copy webhook path. Please try again.")
     }
   }
 
@@ -122,8 +122,8 @@ export function WebhookForm() {
           <Button type="submit" disabled={!isDirty} className="w-full md:w-auto">
             {isUpdating ? (
               <>
-                Saving
                 <Loader2 className="animate-spin" />
+                Saving
               </>
             ) : (
               "Save Webhook"

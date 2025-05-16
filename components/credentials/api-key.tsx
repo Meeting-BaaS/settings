@@ -25,7 +25,7 @@ export function ApiKey({ apiKey }: ApiKeyProps) {
       setIsCopied(true)
       setTimeout(() => setIsCopied(false), 2000)
     } catch (err) {
-      console.error("error copying api key to clipboard", err)
+      console.error("Error copying API key to clipboard", err)
       toast.error("Failed to copy API key. Please try again.")
     }
   }

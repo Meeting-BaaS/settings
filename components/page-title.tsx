@@ -1,6 +1,11 @@
 import { SidebarTrigger } from "./ui/sidebar"
 
-export const PageTitle = ({ title, description }: { title: string; description: string }) => {
+interface PageTitleProps {
+  title: string
+  description: string
+}
+
+export const PageTitle = ({ title, description }: PageTitleProps) => {
   return (
     <div className="mb-6">
       <div className="flex items-center gap-2">
