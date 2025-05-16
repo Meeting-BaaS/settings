@@ -16,12 +16,12 @@ import { getEmailsByDomain } from "@/components/email-preferences/email-categori
 
 type ConfirmDialog = {
   isOpen: boolean
-  emailId: string
+  emailType: string
   emailName: string
 }
 const defaultConfirmDialog: ConfirmDialog = {
   isOpen: false,
-  emailId: "",
+  emailType: "",
   emailName: ""
 }
 
@@ -36,27 +36,19 @@ export default function DomainEmailPreferences({
   token?: string
   emailTypes: EmailType[]
 }) {
-  const { preferences, isLoading, updateService, unsubscribe } = useEmailPreferences()
+  const { preferences, isLoading, updateService } = useEmailPreferences()
 
   // If there's an unsubscribe parameter, show the confirm dialog
   let initialConfirmDialog = { ...defaultConfirmDialog }
   if (unsubscribeEmailType && token) {
     initialConfirmDialog = {
       isOpen: true,
-      emailId: unsubscribeEmailType.id,
+      emailType: unsubscribeEmailType.id,
       emailName: unsubscribeEmailType.name
     }
   }
 
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialog>(initialConfirmDialog)
-
-  // Handle unsubscribe confirmation
-  const handleUnsubscribe = () => {
-    if (confirmDialog.emailId && token) {
-      unsubscribe({ emailId: confirmDialog.emailId, token })
-    }
-    setConfirmDialog(defaultConfirmDialog)
-  }
 
   // If preferences haven't loaded yet, show loading state
   if (isLoading) {
@@ -73,67 +65,66 @@ export default function DomainEmailPreferences({
   return (
     <>
       <DomainHeader config={domainConfig} />
-      {domainConfig.type !== "account" ? (
+      {domainConfig.type !== "Account" ? (
         <>
           <ServiceWideControls
             domainConfig={domainConfig}
             emailTypes={domainEmails}
-            onUnsubscribe={(emailId: string, emailName: string) =>
+            onUnsubscribe={(emailType: string, emailName: string) =>
               setConfirmDialog({
                 isOpen: true,
-                emailId,
+                emailType,
                 emailName
               })
             }
           />
 
-          {domainFrequency !== "none" ? (
+          {domainFrequency !== "Never" ? (
             <EmailSettings
-              domain={domainConfig.type}
               emailTypes={domainEmails}
-              onUnsubscribe={(emailId: string, emailName: string) =>
+              onUnsubscribe={(emailType: string, emailName: string) =>
                 setConfirmDialog({
                   isOpen: true,
-                  emailId,
+                  emailType,
                   emailName
                 })
               }
             />
           ) : (
-            <div className="space-y-4">
-              <UnsubscribedState
-                domainConfig={domainConfig}
-                onResubscribe={() =>
-                  updateService({ domain: domainConfig.type, frequency: "monthly" })
-                }
-              />
-              {/* Always show required emails, even when domain is set to 'none' */}
-              {domainEmails
-                .filter((email) => email.required)
-                .map((emailType) => (
-                  <EmailPreference
-                    key={emailType.id}
-                    emailType={emailType}
-                    onUnsubscribe={(emailId: string, emailName: string) =>
-                      setConfirmDialog({
-                        isOpen: true,
-                        emailId,
-                        emailName
-                      })
-                    }
-                  />
-                ))}
-            </div>
+            <UnsubscribedState
+              domainConfig={domainConfig}
+              onResubscribe={() =>
+                updateService({ domain: domainConfig.type, frequency: "Monthly", emailTypes })
+              }
+            />
           )}
+          <div className="mt-4 space-y-4">
+            {/* Always show required emails, even when domain is set to 'Never' */}
+            {domainEmails
+              .filter((email) => email.required)
+              .map((emailType) => (
+                <EmailPreference
+                  key={emailType.id}
+                  emailType={emailType}
+                  onUnsubscribe={(emailType: string, emailName: string) =>
+                    setConfirmDialog({
+                      isOpen: true,
+                      emailType,
+                      emailName
+                    })
+                  }
+                />
+              ))}
+          </div>
         </>
       ) : (
         <AccountSection
           domain={domainConfig.type}
           emailTypes={domainEmails}
-          onUnsubscribe={(emailId: string, emailName: string) =>
+          onUnsubscribe={(emailType: string, emailName: string) =>
             setConfirmDialog({
               isOpen: true,
-              emailId,
+              emailType,
               emailName
             })
           }
@@ -144,8 +135,7 @@ export default function DomainEmailPreferences({
       <UnsubscribeDialog
         isOpen={confirmDialog.isOpen}
         onDialogClose={() => setConfirmDialog(defaultConfirmDialog)}
-        onConfirm={handleUnsubscribe}
-        emailId={confirmDialog.emailId}
+        emailType={confirmDialog.emailType}
         emailName={confirmDialog.emailName}
       />
     </>

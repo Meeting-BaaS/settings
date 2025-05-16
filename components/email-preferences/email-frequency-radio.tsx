@@ -1,7 +1,7 @@
 import type { DomainConfig, EmailFrequency, EmailType } from "@/lib/email-types"
 import { cn } from "@/lib/utils"
-import { RadioGroupItem } from "../ui/radio-group"
-import { Label } from "../ui/label"
+import { RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
 
 interface EmailFrequencyRadioProps {
   frequency: EmailFrequency
@@ -31,7 +31,7 @@ export const EmailFrequencyRadio = ({
       htmlFor={id}
     >
       <RadioGroupItem value={frequency} id={id} />
-      <Label htmlFor={id} className="cursor-pointer font-medium text-sm">
+      <Label htmlFor={id} className="cursor-pointer font-medium text-sm capitalize">
         {frequency}
       </Label>
     </label>

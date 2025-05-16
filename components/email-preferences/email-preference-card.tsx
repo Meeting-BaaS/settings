@@ -4,25 +4,25 @@ import { RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { RadioGroup } from "@/components/ui/radio-group"
 
 import { useEmailPreferences } from "@/hooks/use-email-preferences"
 import type { EmailFrequency, EmailType } from "@/lib/email-types"
 import { Button } from "@/components/ui/button"
-import { EmailFrequencyRadio } from "./email-frequency-radio"
+import { EmailFrequencyRadio } from "@/components/email-preferences/email-frequency-radio"
 
 interface EmailPreferenceProps {
   emailType: EmailType
   onUnsubscribe: (emailId: string, emailName: string) => void
 }
 
+export const frequencies: EmailFrequency[] = ["Daily", "Weekly", "Monthly"]
+
 export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferenceProps) => {
   const { preferences, updatePreference, resendLatest } = useEmailPreferences()
 
   const currentFrequency = preferences?.[emailType.id]
-  const isSelectable =
-    !emailType.required || (emailType.required && emailType.frequencies.length > 1)
 
   const handleFrequencyChange = (frequency: EmailFrequency) => {
     // Same frequency selection
@@ -30,13 +30,13 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
       return
     }
     // required emails
-    if (emailType.required && frequency === "none") {
+    if (emailType.required && frequency === "Never") {
       toast.error(`${emailType.name} notifications cannot be disabled.`)
       return
     }
 
     // Unsubscribe confirmation
-    if (frequency === "none") {
+    if (frequency === "Never") {
       onUnsubscribe(emailType.id, emailType.name)
       return
     }
@@ -46,14 +46,11 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
   }
 
   const handleResendLatest = () => {
-    resendLatest(emailType.id)
+    resendLatest({ domain: emailType.domain, emailId: emailType.id })
   }
 
   return (
-    <Card
-      key={emailType.id}
-      className={isSelectable ? "transition-colors hover:border-primary/50" : ""}
-    >
+    <Card key={emailType.id} className={"transition-colors hover:border-primary/50"}>
       <CardHeader className="gap-0 py-0">
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
@@ -76,9 +73,9 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
             Resend Latest
           </Button>
         </div>
-        <CardDescription className="mt-1 text-muted-foreground text-sm">
+        {/* <CardDescription className="mt-1 text-muted-foreground text-sm">
           {emailType.description}
-        </CardDescription>
+        </CardDescription> */}
       </CardHeader>
 
       <CardContent className="p-4 pt-2">
@@ -88,24 +85,24 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
           onValueChange={(value) => handleFrequencyChange(value as EmailFrequency)}
           className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         >
-          {emailType.frequencies.map((frequency) => (
+          {frequencies.map((frequency) => (
             <EmailFrequencyRadio
               key={frequency}
               frequency={frequency}
-              currentFrequency={currentFrequency ?? "none"}
+              currentFrequency={currentFrequency ?? "Never"}
               emailType={emailType}
             />
           ))}
           {!emailType.required && (
             <EmailFrequencyRadio
-              frequency="none"
-              currentFrequency={currentFrequency ?? "none"}
+              frequency="Never"
+              currentFrequency={currentFrequency ?? "Never"}
               emailType={emailType}
             />
           )}
         </RadioGroup>
 
-        {currentFrequency !== "none" && (
+        {currentFrequency !== "Never" && (
           <p className="text-muted-foreground text-xs">
             You will receive {currentFrequency} emails.
           </p>

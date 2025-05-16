@@ -7,11 +7,17 @@ import { cn } from "@/lib/utils"
 
 interface DomainHeaderProps {
   config: DomainConfig
+  className?: string
 }
 
-export const DomainHeader = ({ config }: DomainHeaderProps) => {
+export const DomainHeader = ({ config, className }: DomainHeaderProps) => {
   return (
-    <Card className="mb-6 dark:bg-[linear-gradient(238deg,#161616,hsla(0,0%,9%,0))] dark:bg-baas-black">
+    <Card
+      className={cn(
+        "mb-6 dark:bg-[linear-gradient(238deg,#161616,hsla(0,0%,9%,0))] dark:bg-baas-black",
+        className
+      )}
+    >
       <CardContent>
         <h3 className="mb-1 flex items-center justify-center gap-2 font-medium text-lg sm:justify-start">
           <div className={cn("size-3 rounded-full", config.color)} />

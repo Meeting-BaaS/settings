@@ -2,7 +2,7 @@
 
 import type { DomainConfig } from "@/lib/email-types"
 import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "../ui/button"
+import { Button } from "@/components/ui/button"
 
 interface UnsubscribedStateProps {
   domainConfig: DomainConfig

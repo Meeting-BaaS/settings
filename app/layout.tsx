@@ -5,9 +5,11 @@ import type { Metadata, Viewport } from "next"
 import { Sofia_Sans } from "next/font/google"
 import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
-import LayoutRoot from "./layout-root"
+import { cache } from "react"
+import LayoutRoot from "@/app/layout-root"
 import Providers from "@/components/providers"
 import { getAuthAppUrl } from "@/lib/auth/auth-app-url"
+import { getEmailTypes } from "@/lib/email-type-api"
 
 const sofiaSans = Sofia_Sans({
   subsets: ["latin"],
@@ -27,12 +29,19 @@ export const viewport: Viewport = {
 
 const authAppUrl = getAuthAppUrl()
 
+// Cache the getEmailTypes call
+const getCachedEmailTypes = cache(getEmailTypes)
+
 export default async function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const [requestHeaders, requestCookies] = await Promise.all([headers(), cookies()])
+  const [requestHeaders, requestCookies, emailTypes] = await Promise.all([
+    headers(),
+    cookies(),
+    getCachedEmailTypes()
+  ])
   // RSCs need to pass cookies to getAuthSession
   const session = await getAuthSession(requestCookies.toString())
   const jwt = requestCookies.get("jwt")?.value || ""
@@ -48,7 +57,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${sofiaSans.className} antialiased`}>
-        <Providers jwt={jwt}>
+        <Providers jwt={jwt} emailTypes={emailTypes}>
           <LayoutRoot session={session}>{children}</LayoutRoot>
           <Toaster />
         </Providers>

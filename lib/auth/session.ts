@@ -1,5 +1,5 @@
 import type { Session } from "@/lib/auth/types"
-import { getAuthAppUrl } from "./auth-app-url"
+import { getAuthAppUrl } from "@/lib/auth/auth-app-url"
 
 /**
  * Function to get session from auth app.

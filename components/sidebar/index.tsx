@@ -72,7 +72,7 @@ export default function AppSidebar({ className, ...props }: React.ComponentProps
                           isActive={pathName.endsWith(`${item.href}/${menuItem.type}`)}
                         >
                           <Link
-                            href={`${item.href}/${menuItem.type}`}
+                            href={`${item.href}/${menuItem.type.toLowerCase()}`}
                             onClick={() => setOpenMobile(false)}
                           >
                             {menuItem.name}

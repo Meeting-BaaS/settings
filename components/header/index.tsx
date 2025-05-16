@@ -1,9 +1,9 @@
-import { menuOptions } from "@/components/header/menu-options"
 import { ThemeToggle } from "@/components/header/theme-toggle"
 import { UserAvatar } from "@/components/header/user-avatar"
 import { GitHubLogo } from "@/components/icons/github"
 import { Button } from "@/components/ui/button"
 import type { User } from "@/lib/auth/types"
+import { GITHUB_REPO_URL } from "@/lib/external-urls"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -31,17 +31,13 @@ export default function Header({ user }: { user: User }) {
               asChild
               aria-label="Github repository"
             >
-              <Link
-                href="https://github.com/Meeting-Baas/settings"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href={GITHUB_REPO_URL} target="_blank" rel="noopener noreferrer">
                 <GitHubLogo />
               </Link>
             </Button>
             <ThemeToggle className="hidden md:flex" />
           </div>
-          <UserAvatar user={user} menuOptions={menuOptions} />
+          <UserAvatar user={user} />
         </div>
       </nav>
     </header>

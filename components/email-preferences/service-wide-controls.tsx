@@ -7,12 +7,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { RadioGroup } from "@/components/ui/radio-group"
 
 import { useEmailPreferences } from "@/hooks/use-email-preferences"
-import type { DomainConfig, EmailDomain, EmailFrequency, EmailType } from "@/lib/email-types"
+import type { DomainConfig, EmailFrequency, EmailType } from "@/lib/email-types"
 import { cn } from "@/lib/utils"
-import { EmailFrequencyRadio } from "./email-frequency-radio"
-import { getDomainFrequency } from "./domain-frequency"
+import { EmailFrequencyRadio } from "@/components/email-preferences/email-frequency-radio"
+import { getDomainFrequency } from "@/components/email-preferences/domain-frequency"
+import { frequencies } from "@/components/email-preferences/email-preference-card"
 
-const frequencies: EmailFrequency[] = ["daily", "weekly", "monthly", "none"]
+const ServiceWideFrequencies: EmailFrequency[] = [...frequencies, "Never"]
 
 interface ServiceWideControlsProps {
   domainConfig: DomainConfig
@@ -33,11 +34,11 @@ export const ServiceWideControls = ({
   const domainFrequency = getDomainFrequency(domainConfig.type, preferences, emailTypes)
 
   const handleServiceSubscription = (frequency: EmailFrequency) => {
-    if (frequency === "none") {
+    if (frequency === "Never") {
       onUnsubscribe(`service-${domainConfig.type}`, `all optional ${domainConfig.name}`)
       return
     }
-    updateService({ domain: domainConfig.type, frequency })
+    updateService({ domain: domainConfig.type, frequency, emailTypes })
   }
 
   return (
@@ -54,26 +55,26 @@ export const ServiceWideControls = ({
         </p>
 
         <RadioGroup
-          value={domainFrequency === "mixed" ? undefined : domainFrequency}
+          value={domainFrequency === "Mixed" ? undefined : domainFrequency}
           onValueChange={(value) => handleServiceSubscription(value as EmailFrequency)}
           className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         >
-          {frequencies.map((frequency) => (
+          {ServiceWideFrequencies.map((frequency) => (
             <EmailFrequencyRadio
               key={frequency}
               frequency={frequency}
-              currentFrequency={domainFrequency === "mixed" ? undefined : domainFrequency}
+              currentFrequency={domainFrequency === "Mixed" ? undefined : domainFrequency}
               domainConfig={domainConfig}
             />
           ))}
         </RadioGroup>
 
-        {domainFrequency !== "none" && domainFrequency !== "mixed" && (
+        {!["Never", "Mixed"].includes(domainFrequency) && (
           <Alert className="mt-4" variant="info">
             <Info className="size-4" />
             <AlertDescription>
-              You will receive {domainFrequency} emails for all optional {domainConfig.name.toLowerCase()}{" "}
-              notifications.
+              You will receive {domainFrequency.toLowerCase()} emails for all optional{" "}
+              {domainConfig.name.toLowerCase()} notifications.
             </AlertDescription>
           </Alert>
         )}

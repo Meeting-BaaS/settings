@@ -19,7 +19,7 @@ export function useSession(initialSession?: Session) {
     retry: false
   })
 
-  // Force page reload if userId changes
+  // Force page reload if userId changes. This ensures that the jwt is updated
   const [prevUserId, setPrevUserId] = useState(session?.session?.userId)
   useEffect(() => {
     if (session?.session?.userId !== prevUserId) {
