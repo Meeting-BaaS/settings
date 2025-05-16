@@ -14,18 +14,12 @@ import { Fragment, useState } from "react"
 import { toast } from "sonner"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/header/theme-toggle"
-import type { MenuOption } from "@/components/header/menu-options"
+import { menuOptions } from "@/components/header/menu-options"
 import type { User } from "@/lib/auth/types"
 import { signOut } from "@/lib/auth/sign-out"
 import { genericError } from "@/lib/errors"
 
-export const UserAvatar = ({
-  user,
-  menuOptions
-}: {
-  user: User
-  menuOptions: MenuOption[]
-}) => {
+export const UserAvatar = ({ user }: { user: User }) => {
   const [loading, setLoading] = useState(false)
 
   const onSignOut = async () => {
@@ -43,7 +37,7 @@ export const UserAvatar = ({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          size="icon"
+          size="sm"
           className="h-7 w-7 rounded-full border-0 bg-transparent p-0"
           aria-label="User menu"
         >

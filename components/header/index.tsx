@@ -1,16 +1,16 @@
-import { UserAvatar } from "@/components/header/user-avatar"
-import Image from "next/image"
 import { ThemeToggle } from "@/components/header/theme-toggle"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { UserAvatar } from "@/components/header/user-avatar"
 import { GitHubLogo } from "@/components/icons/github"
-import { menuOptions } from "@/components/header/menu-options"
+import { Button } from "@/components/ui/button"
 import type { User } from "@/lib/auth/types"
+import { GITHUB_REPO_URL } from "@/lib/external-urls"
+import Image from "next/image"
+import Link from "next/link"
 
 export default function Header({ user }: { user: User }) {
   return (
-    <header className="sticky top-2 z-40 mx-auto box-content w-full max-w-container border-b bg-background/15 backdrop-blur-md lg:mt-2 lg:w-[calc(100%-4rem)] lg:rounded-2xl lg:border">
-      <nav className="flex h-12 w-full flex-row items-center justify-between px-4">
+    <header className="-translate-x-1/2 fixed top-0 left-1/2 z-50 mx-auto box-content w-full max-w-container border-b bg-background lg:mt-2 lg:w-[calc(100%-4rem)] lg:rounded-2xl lg:border">
+      <nav className="flex h-[var(--header-height)] w-full flex-row items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Image
             src="/logo.svg"
@@ -31,17 +31,13 @@ export default function Header({ user }: { user: User }) {
               asChild
               aria-label="Github repository"
             >
-              <Link
-                href="https://github.com/Yusuf023/meeting-baas-logs"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href={GITHUB_REPO_URL} target="_blank" rel="noopener noreferrer">
                 <GitHubLogo />
               </Link>
             </Button>
             <ThemeToggle className="hidden md:flex" />
           </div>
-          <UserAvatar user={user} menuOptions={menuOptions} />
+          <UserAvatar user={user} />
         </div>
       </nav>
     </header>
