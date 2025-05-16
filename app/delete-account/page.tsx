@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { SidebarTrigger } from "@/components/ui/sidebar"
+import { PageTitle } from "@/components/page-title"
 
 export default function DeleteAccountPage() {
   const [showConfirmation, setShowConfirmation] = useState(false)
@@ -28,16 +28,10 @@ export default function DeleteAccountPage() {
 
   return (
     <>
-      <div>
-        <div className="flex items-center gap-2">
-          <SidebarTrigger className="block px-1 md:hidden" />
-          <h1 className="font-bold text-3xl">Delete Account</h1>
-        </div>
-        <p className="mt-1 text-muted-foreground text-sm">
-          Permanently delete your Meeting BaaS account and all associated data.
-        </p>
-      </div>
-
+      <PageTitle
+        title="Delete Account"
+        description="Permanently delete your Meeting BaaS account and all associated data."
+      />
       <div className="mt-6 space-y-6">
         <div className="rounded-md border border-destructive bg-destructive/10 p-4">
           <h2 className="mb-2 font-semibold text-destructive text-lg">

@@ -6,7 +6,7 @@ import {
   updateServiceFrequency,
   resendLatestEmail,
   unsubscribeWithToken
-} from "@/lib/email-api"
+} from "@/lib/api/email-api"
 import type { EmailDomain, EmailFrequency, EmailPreferences, EmailType } from "@/lib/email-types"
 import { getUpdatedDomainFrequency } from "@/components/email-preferences/domain-frequency"
 

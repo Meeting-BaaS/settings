@@ -23,3 +23,6 @@ export const BILLING_URL = `${SETTINGS_URL}/billing`
 
 // Github
 export const GITHUB_REPO_URL = "https://github.com/Meeting-Baas/settings"
+
+// Webhook testing URL
+export const WEBHOOK_TEST_URL = "https://webhook.cool"

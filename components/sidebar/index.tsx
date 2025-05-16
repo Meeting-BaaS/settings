@@ -14,18 +14,35 @@ import {
   SidebarMenuSubItem,
   useSidebar
 } from "@/components/ui/sidebar"
-import { domains } from "@/components/email-preferences/domains"
+// import { domains } from "@/components/email-preferences/domains"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { Mail, Trash } from "lucide-react"
+import {
+  KeyRound,
+  Trash
+  // Mail
+} from "lucide-react"
+import type { DomainConfig } from "@/lib/email-types"
 
-const sidebarNavItems = [
+type SidebarNavItem = {
+  title: string
+  href: string
+  icon: React.ReactNode
+  menuItems?: DomainConfig[]
+}
+
+const sidebarNavItems: SidebarNavItem[] = [
   {
-    title: "Email Preferences",
-    href: "/email-preferences",
-    menuItems: domains,
-    icon: <Mail />
+    title: "Credentials",
+    href: "/credentials",
+    icon: <KeyRound />
   },
+  // {
+  //   title: "Email Preferences",
+  //   href: "/email-preferences",
+  //   menuItems: domains,
+  //   icon: <Mail />
+  // },
   {
     title: "Delete Account",
     href: "/delete-account",
