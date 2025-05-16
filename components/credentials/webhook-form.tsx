@@ -108,7 +108,15 @@ export function WebhookForm() {
                 </FormControl>
                 {field.value && (
                   <div className="absolute top-0 right-0">
-                    <Button variant="ghost" size="icon" type="button" onClick={copyToClipboard}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      type="button"
+                      onClick={copyToClipboard}
+                      aria-label={
+                        isCopied ? "Copied to clipboard" : "Copy webhook path to clipboard"
+                      }
+                    >
                       {isCopied ? <Check className="stroke-primary" /> : <Copy />}
                     </Button>
                   </div>

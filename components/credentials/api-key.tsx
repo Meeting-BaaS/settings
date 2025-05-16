@@ -44,10 +44,20 @@ export function ApiKey({ apiKey }: ApiKeyProps) {
           id="api-key"
         />
         <div className="-translate-y-1/2 absolute top-1/2 right-0 flex items-center gap-1">
-          <Button variant="ghost" size="icon" onClick={toggleVisibility}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleVisibility}
+            aria-label={isVisible ? "Hide API key" : "Show API key"}
+          >
             {isVisible ? <EyeOff /> : <Eye />}
           </Button>
-          <Button variant="ghost" size="icon" onClick={copyToClipboard}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={copyToClipboard}
+            aria-label={isCopied ? "Copied to clipboard" : "Copy API key to clipboard"}
+          >
             {isCopied ? <Check className="stroke-primary" /> : <Copy />}
           </Button>
         </div>
