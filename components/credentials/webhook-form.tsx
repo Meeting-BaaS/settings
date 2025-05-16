@@ -49,7 +49,7 @@ export function WebhookForm() {
     setIsUpdating(true)
     try {
       await updateWebhookUrl(data.webhook_url)
-      toast.success("Webhook url updated successfully.")
+      toast.success("Webhook path updated successfully.")
       reset({ webhook_url: data.webhook_url })
     } catch (error) {
       console.error("Error updating webhook path", error)
