@@ -2,7 +2,7 @@ import { cache } from "react"
 import DomainEmailPreferences from "@/components/email-preferences"
 import { getDomainConfig } from "@/components/email-preferences/domains"
 import { findEmailTypeById } from "@/components/email-preferences/email-categories"
-import { getEmailTypes } from "@/lib/email-type-api"
+import { getEmailTypes } from "@/lib/api/email-type-api"
 
 // Cache the getEmailTypes call
 const getCachedEmailTypes = cache(getEmailTypes)

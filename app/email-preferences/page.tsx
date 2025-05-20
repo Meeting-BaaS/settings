@@ -2,11 +2,11 @@ import { cache } from "react"
 import { redirect } from "next/navigation"
 
 import { findEmailTypeById } from "@/components/email-preferences/email-categories"
-import { getEmailTypes } from "@/lib/email-type-api"
-import { SidebarTrigger } from "@/components/ui/sidebar"
+import { getEmailTypes } from "@/lib/api/email-type-api"
 import { domains } from "@/components/email-preferences/domains"
 import { DomainHeader } from "@/components/email-preferences/domain-header"
 import Link from "next/link"
+import { PageTitle } from "@/components/page-title"
 
 // Cache the getEmailTypes call
 const getCachedEmailTypes = cache(getEmailTypes)
@@ -36,16 +36,10 @@ export default async function EmailPreferencesPage({
   // If no unsubscribe parameter or invalid email type, show the main preferences page
   return (
     <>
-      <div className="mb-6">
-        <div className="flex items-center gap-2">
-          <SidebarTrigger className="block px-1 md:hidden" />
-          <h1 className="font-bold text-3xl">Email Preferences</h1>
-        </div>
-        <p className="mt-1 text-muted-foreground">
-          Manage your email notification preferences for different types of communications from
-          Meeting BaaS.
-        </p>
-      </div>
+      <PageTitle
+        title="Email Preferences"
+        description="Manage your email notification preferences for different types of communications from Meeting BaaS."
+      />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {domains.map((domain) => (
           <Link href={`/email-preferences/${domain.type.toLowerCase()}`} key={domain.type}>
