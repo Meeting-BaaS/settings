@@ -6,6 +6,7 @@ export const webhookSchema = z.object({
     .string()
     .trim()
     .min(1, "Please enter a URL")
+    .max(2048, "URL must be less than 2048 characters")
     .refine((url) => isURL(url, { require_protocol: true }), "Please enter a valid URL")
 })
 

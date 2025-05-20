@@ -104,7 +104,12 @@ export function WebhookForm() {
               </FormDescription>
               <div className="relative">
                 <FormControl className="relative">
-                  <Input placeholder="https://example.com/webhook" {...field} className="pr-10" />
+                  <Input
+                    placeholder="https://example.com/webhook"
+                    {...field}
+                    className="pr-10"
+                    maxLength={2048}
+                  />
                 </FormControl>
                 {field.value && (
                   <div className="absolute top-0 right-0">
