@@ -81,8 +81,8 @@ export async function getEmailPreferences(): Promise<EmailPreferences> {
   if (!response.ok) {
     throw new Error(`Failed to get email preferences: ${response.status} ${response.statusText}`)
   }
-
-  return response.json()
+  const data = await response.json()
+  return data.preferences
 }
 
 // Request to resend the latest email of a specific type
