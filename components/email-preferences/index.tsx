@@ -94,7 +94,7 @@ export default function DomainEmailPreferences({
             <UnsubscribedState
               domainConfig={domainConfig}
               onResubscribe={() =>
-                updateService({ domain: domainConfig.type, frequency: "Monthly", emailTypes })
+                updateService({ domain: domainConfig.type, frequency: "Weekly", emailTypes })
               }
             />
           )}
