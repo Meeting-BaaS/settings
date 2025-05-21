@@ -82,7 +82,9 @@ export default function AppSidebar({ className, ...props }: React.ComponentProps
                       <SidebarMenuSubItem key={menuItem.name}>
                         <SidebarMenuSubButton
                           asChild
-                          isActive={pathName.endsWith(`${item.href}/${menuItem.type}`)}
+                          isActive={pathName.endsWith(
+                            `${item.href}/${menuItem.type.toLowerCase()}`
+                          )}
                         >
                           <Link
                             href={`${item.href}/${menuItem.type.toLowerCase()}`}
