@@ -13,10 +13,16 @@ This document describes the current backend API endpoints for email preferences 
 - `POST /email/insufficient_tokens` — Send insufficient tokens notification
 
 ### 2. Email Preferences Endpoints (JWT Auth Required)
-- `GET /email/preferences` — Get all email preferences
+- `GET /email/preferences` — Get all email preferences 
+Comment - This should always return a response for users. If someone is landing on the email preferences page for the first time, this API should first save a default preference for them. 
+This could be a fixed (let's say Monthly for required types) and frequency as 'Never' for non required ones.
+In the future when a new email type is added, this API should be able to check that a new email type has been added to the system and the payload for the user doesn't have any. In such a case, it should automatically save 
+a default (logic as given above) and then return the updated payload.
+
 - `POST /email/preferences` — Update all preferences
 - `POST /email/preferences/:email_type` — Update frequency for a single email type
 - `POST /email/preferences/service/:service_name` — Update frequency for all emails in a service domain
+Comment - Doesn't look like the POST calls whether single email or service domain, are persisting the data in DB right now
 - `POST /email/preferences/batch` — Batch update preferences
 - `POST /email/preferences/unsubscribe` — Unsubscribe with token
 - `GET /email/types` — List available email types
@@ -30,7 +36,8 @@ This document describes the current backend API endpoints for email preferences 
 - `POST /email/developer/resources` — Send developer resources
 - `POST /email/account/security` — Send security alerts
 - `POST /email/account/billing` — Send billing notifications
-
+Comment - Two things, can you please explain what it requires in the body of these POST requests, if anything.
+Secondly, please ensure that the endpoints are as per the email types. For example, its called email/announcements/product-updates not product_updates. Additionally, some email types like email/reports/usage-reports are missing
 ---
 
 ## Mapping to Frontend API Spec
