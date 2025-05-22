@@ -45,7 +45,7 @@ export const ServiceWideControls = ({
     <Card className="mb-8 dark:bg-baas-neutral-500/30">
       <CardContent>
         <div className="mb-4 flex items-center gap-2">
-          <div className={cn("h-6 w-2 rounded-full", `bg-${domainConfig.color}`)} />
+          <div className={cn("h-6 w-2 rounded-full", domainConfig.color)} />
           <h3 className="font-medium text-lg">Service-wide Frequency</h3>
         </div>
 

@@ -88,14 +88,15 @@ export async function getEmailPreferences(): Promise<EmailPreferences> {
 // Request to resend the latest email of a specific type
 export async function resendLatestEmail(
   domain: EmailDomain,
-  emailId: string
+  emailId: string,
+  frequency: EmailFrequency
 ): Promise<ResendEmailResponse> {
   const response = await fetch(`/api/email/${domain.toLowerCase()}/${emailId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({})
+    body: JSON.stringify({ frequency })
   })
 
   if (!response.ok) {
