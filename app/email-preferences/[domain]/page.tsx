@@ -12,10 +12,10 @@ export default async function DomainPage({
   searchParams
 }: {
   params: Promise<{ domain: string }>
-  searchParams: Promise<{ unsubscribe?: string; token?: string }>
+  searchParams: Promise<{ unsubscribe?: string }>
 }) {
   const { domain } = await params
-  const { unsubscribe, token } = await searchParams
+  const { unsubscribe } = await searchParams
   const domainConfig = getDomainConfig(domain)
 
   if (!domainConfig) {
@@ -26,16 +26,15 @@ export default async function DomainPage({
   const emailTypes = await getCachedEmailTypes()
 
   // If there's an unsubscribe parameter, handle the unsubscribe flow
-  if (unsubscribe && token) {
+  if (unsubscribe) {
     const emailType = findEmailTypeById(emailTypes, unsubscribe)
 
-    // If we found the email type, return the page with unsubscribed email type and token
+    // If we found the email type, return the page with unsubscribed email type
     if (emailType && emailType.domain !== "Account") {
       return (
         <DomainEmailPreferences
           domainConfig={domainConfig}
           unsubscribeEmailType={emailType}
-          token={token}
           emailTypes={emailTypes}
         />
       )

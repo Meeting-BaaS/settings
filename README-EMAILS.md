@@ -23,8 +23,6 @@ a default (logic as given above) and then return the updated payload.
 - `POST /email/preferences/:email_type` — Update frequency for a single email type
 - `POST /email/preferences/service/:service_name` — Update frequency for all emails in a service domain
 Comment - Doesn't look like the POST calls whether single email or service domain, are persisting the data in DB right now
-- `POST /email/preferences/batch` — Batch update preferences
-- `POST /email/preferences/unsubscribe` — Unsubscribe with token
 - `GET /email/types` — List available email types
 - `POST /email/:email_type/resend` — Resend latest email of a given type
 
@@ -48,10 +46,8 @@ The following frontend API functions are supported by the backend:
 |-------------------------------|----------------------------------------------------|-------------|
 | updateEmailFrequency          | POST /email/preferences/:email_type                 | ✅ Working  |
 | updateServiceFrequency        | POST /email/preferences/service/:service_name       | ✅ Working  |
-| unsubscribeWithToken          | POST /email/preferences/unsubscribe                 | ✅ Working  |
 | getEmailPreferences           | GET /email/preferences                              | ✅ Working  |
 | resendLatestEmail             | POST /email/:email_type/resend                      | ✅ Working  |
-| batchUpdatePreferences        | POST /email/preferences/batch                       | ✅ Working  |
 | getAvailableEmailTypes        | GET /email/types                                    | ✅ Working  |
 
 ### Service-based Email Sending

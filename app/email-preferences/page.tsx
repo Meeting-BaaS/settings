@@ -14,9 +14,9 @@ const getCachedEmailTypes = cache(getEmailTypes)
 export default async function EmailPreferencesPage({
   searchParams
 }: {
-  searchParams: Promise<{ unsubscribe?: string; token?: string }>
+  searchParams: Promise<{ unsubscribe?: string }>
 }) {
-  const { unsubscribe, token } = await searchParams
+  const { unsubscribe } = await searchParams
   // Get email types
   const emailTypes = await getCachedEmailTypes()
 
@@ -24,12 +24,10 @@ export default async function EmailPreferencesPage({
   if (unsubscribe) {
     const emailType = findEmailTypeById(emailTypes, unsubscribe)
 
-    // If we found the email type, redirect to its domain page with the token
+    // If we found the email type, redirect to its domain page
     // We don't want to redirect to the account domain
     if (emailType && emailType.domain !== "Account") {
-      redirect(
-        `/email-preferences/${emailType.domain.toLowerCase()}?unsubscribe=${unsubscribe}${token ? `&token=${token}` : ""}`
-      )
+      redirect(`/email-preferences/${emailType.domain.toLowerCase()}?unsubscribe=${unsubscribe}`)
     }
   }
 

@@ -30,19 +30,14 @@ export function UnsubscribeDialog({
   emailType,
   emailName
 }: UnsubscribeDialogProps) {
-  const { updatePreference, updateService, unsubscribe } = useEmailPreferences()
+  const { updatePreference, updateService } = useEmailPreferences()
   const { emailTypes } = useEmailTypes()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const token = searchParams.get("token")
 
   const handleConfirmUnsubscribe = () => {
-    // If there's a token, unsubscribe with token
-    if (token) {
-      unsubscribe({ emailType, token })
-    }
     // Check if this is a service-level unsubscribe
-    else if (emailType.startsWith("service-")) {
+    if (emailType.startsWith("service-")) {
       const domain = emailType.replace("service-", "") as EmailDomain
       updateService({ domain, frequency: "Never", emailTypes })
     } else {
@@ -55,7 +50,6 @@ export function UnsubscribeDialog({
     // Clear search params and close dialog
     const params = new URLSearchParams(searchParams.toString())
     params.delete("unsubscribe")
-    params.delete("token")
     router.replace(window.location.pathname + (params.toString() ? `?${params.toString()}` : ""), {
       scroll: false
     })
