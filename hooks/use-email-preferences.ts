@@ -4,8 +4,7 @@ import {
   getEmailPreferences,
   updateEmailFrequency,
   updateServiceFrequency,
-  resendLatestEmail,
-  unsubscribeWithToken
+  resendLatestEmail
 } from "@/lib/api/email-api"
 import type { EmailDomain, EmailFrequency, EmailPreferences, EmailType } from "@/lib/email-types"
 import { getUpdatedDomainFrequency } from "@/components/email-preferences/domain-frequency"
@@ -102,28 +101,12 @@ export function useEmailPreferences() {
     }
   })
 
-  // Mutation for unsubscribing with token
-  const unsubscribeMutation = useMutation({
-    mutationFn: ({ emailType, token }: { emailType: string; token: string }) =>
-      unsubscribeWithToken(emailType, token),
-    onSuccess: () => {
-      toast.success("Successfully unsubscribed")
-      // Invalidate preferences to refresh the data
-      queryClient.invalidateQueries({ queryKey: ["email-preferences"] })
-    },
-    onError: (error) => {
-      console.error("Failed to unsubscribe", error)
-      toast.error("Failed to unsubscribe. Please try again.")
-    }
-  })
-
   return {
     preferences,
     isLoading,
     updatePreference: updatePreferenceMutation.mutate,
     updateService: updateServiceMutation.mutate,
     resendLatest: resendLatestMutation.mutate,
-    unsubscribe: unsubscribeMutation.mutate,
     isResendingEmail: (emailId: string) =>
       resendLatestMutation.isPending && resendingEmailIds.includes(emailId)
   }

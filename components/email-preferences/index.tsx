@@ -28,19 +28,17 @@ const defaultConfirmDialog: ConfirmDialog = {
 export default function DomainEmailPreferences({
   domainConfig,
   unsubscribeEmailType,
-  token,
   emailTypes
 }: {
   domainConfig: DomainConfig
   unsubscribeEmailType?: EmailType
-  token?: string
   emailTypes: EmailType[]
 }) {
   const { preferences, isLoading, updateService } = useEmailPreferences()
 
   // If there's an unsubscribe parameter, show the confirm dialog
   let initialConfirmDialog = { ...defaultConfirmDialog }
-  if (unsubscribeEmailType && token) {
+  if (unsubscribeEmailType) {
     initialConfirmDialog = {
       isOpen: true,
       emailType: unsubscribeEmailType.id,

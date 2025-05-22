@@ -46,29 +46,6 @@ export async function updateServiceFrequency(
   return response.json()
 }
 
-// Unsubscribe from a specific email using unsubscribe token
-export async function unsubscribeWithToken(
-  emailType: string,
-  token: string
-): Promise<{ success: boolean }> {
-  const response = await fetch("/api/email/preferences/unsubscribe", {
-    method: "POST",
-    body: JSON.stringify({
-      email_type: emailType,
-      token
-    }),
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to unsubscribe: ${response.status} ${response.statusText}`)
-  }
-
-  return response.json()
-}
-
 // Get all email preferences for the user
 export async function getEmailPreferences(): Promise<EmailPreferences> {
   const response = await fetch("/api/email/preferences", {
