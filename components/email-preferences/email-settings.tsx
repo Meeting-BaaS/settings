@@ -18,7 +18,7 @@ export const EmailSettings = ({ emailTypes, onUnsubscribe }: EmailSettingsProps)
       <div className="mb-6 flex items-center justify-between">
         <h3 className="font-medium text-lg">Individual Email Settings</h3>
         <Badge variant="outline" className="text-xs">
-          {optionalEmails.length} Emails
+          {optionalEmails.length} Optional Emails
         </Badge>
       </div>
       <div className="space-y-4">

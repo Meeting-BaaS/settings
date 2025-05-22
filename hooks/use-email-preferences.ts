@@ -9,17 +9,18 @@ import {
 } from "@/lib/api/email-api"
 import type { EmailDomain, EmailFrequency, EmailPreferences, EmailType } from "@/lib/email-types"
 import { getUpdatedDomainFrequency } from "@/components/email-preferences/domain-frequency"
+import { useState } from "react"
 
 export function useEmailPreferences() {
   const queryClient = useQueryClient()
+  const [resendingEmailIds, setResendingEmailIds] = useState<string[]>([])
 
   // Query for fetching email preferences
   const { data: preferences, isLoading } = useQuery({
     queryKey: ["email-preferences"],
     queryFn: () => getEmailPreferences(),
     retry: 2,
-    refetchOnWindowFocus: true,
-    staleTime: 1000 * 60 * 5 // 5 minutes
+    refetchOnWindowFocus: true
   })
 
   // Mutation for updating individual email frequency
@@ -73,21 +74,31 @@ export function useEmailPreferences() {
     onError: (error, { domain }) => {
       console.error("Failed to update preferences", error)
       // Revert the cache on error
-      queryClient.setQueryData(["email-preferences"], (old: EmailPreferences) => old)
+      queryClient.setQueryData(["email-preferences"], (old: EmailPreferences) => {
+        return { ...old }
+      })
       toast.error(`Failed to update ${domain} preferences. Please try again.`)
     }
   })
 
   // Mutation for resending latest email
   const resendLatestMutation = useMutation({
-    mutationFn: ({ domain, emailId }: { domain: EmailDomain; emailId: string }) =>
-      resendLatestEmail(domain, emailId),
-    onSuccess: (data) => {
-      toast.success(data.message || "Latest email will be resent shortly")
+    mutationFn: ({
+      domain,
+      emailId,
+      frequency
+    }: { domain: EmailDomain; emailId: string; frequency: EmailFrequency }) => {
+      setResendingEmailIds((prev) => [...prev, emailId])
+      return resendLatestEmail(domain, emailId, frequency)
     },
-    onError: (error) => {
+    onSuccess: (data, { emailId }) => {
+      toast.success(data.message || "Latest email will be resent shortly")
+      setResendingEmailIds((prev) => prev.filter((id) => id !== emailId))
+    },
+    onError: (error, { emailId }) => {
       console.error("Failed to resend email", error)
       toast.error("Failed to resend email. Please try again.")
+      setResendingEmailIds((prev) => prev.filter((id) => id !== emailId))
     }
   })
 
@@ -112,6 +123,8 @@ export function useEmailPreferences() {
     updatePreference: updatePreferenceMutation.mutate,
     updateService: updateServiceMutation.mutate,
     resendLatest: resendLatestMutation.mutate,
-    unsubscribe: unsubscribeMutation.mutate
+    unsubscribe: unsubscribeMutation.mutate,
+    isResendingEmail: (emailId: string) =>
+      resendLatestMutation.isPending && resendingEmailIds.includes(emailId)
   }
 }

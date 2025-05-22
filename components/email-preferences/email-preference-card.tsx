@@ -1,6 +1,6 @@
 "use client"
 
-import { RefreshCw } from "lucide-react"
+import { Loader2, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 
 import { Badge } from "@/components/ui/badge"
@@ -20,9 +20,10 @@ interface EmailPreferenceProps {
 export const frequencies: EmailFrequency[] = ["Daily", "Weekly", "Monthly"]
 
 export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferenceProps) => {
-  const { preferences, updatePreference, resendLatest } = useEmailPreferences()
+  const { preferences, updatePreference, resendLatest, isResendingEmail } = useEmailPreferences()
 
   const currentFrequency = preferences?.[emailType.id]
+  const isResending = isResendingEmail(emailType.id)
 
   const handleFrequencyChange = (frequency: EmailFrequency) => {
     // Same frequency selection
@@ -46,7 +47,11 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
   }
 
   const handleResendLatest = () => {
-    resendLatest({ domain: emailType.domain, emailId: emailType.id })
+    resendLatest({
+      domain: emailType.domain,
+      emailId: emailType.id,
+      frequency: currentFrequency ?? "Weekly" // Fallback to weekly if no frequency is set
+    })
   }
 
   return (
@@ -67,10 +72,23 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
             type="button"
             onClick={handleResendLatest}
             className="text-primary hover:text-primary"
-            aria-label={`Resend latest ${emailType.name} email`}
+            aria-label={
+              isResending
+                ? `Resending ${emailType.name} email`
+                : `Resend latest ${emailType.name} email`
+            }
+            disabled={isResending}
           >
-            <RefreshCw className="size-3" />
-            Resend Latest
+            {isResending ? (
+              <>
+                <Loader2 className="size-3 animate-spin" /> Resending...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="size-3" />
+                Resend Latest
+              </>
+            )}
           </Button>
         </div>
         {/* <CardDescription className="mt-1 text-muted-foreground text-sm">
