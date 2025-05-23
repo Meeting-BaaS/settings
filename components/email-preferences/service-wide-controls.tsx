@@ -50,12 +50,12 @@ export const ServiceWideControls = ({
         </div>
 
         <p className="mb-4 text-muted-foreground text-sm">
-          Control how often you receive all optional {domainConfig.name.toLowerCase()} in a single
-          place. This will affect all non-required emails in this category.
+          Control how often you receive all optional{" "}
+          <span className="font-bold">{domainConfig.name.toLowerCase()}</span> in a single place.
         </p>
 
         <RadioGroup
-          value={domainFrequency === "Mixed" ? undefined : domainFrequency}
+          value={domainFrequency === "Mixed" ? "" : domainFrequency}
           onValueChange={(value) => handleServiceSubscription(value as EmailFrequency)}
           className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         >

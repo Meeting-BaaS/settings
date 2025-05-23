@@ -135,6 +135,7 @@ export default function DomainEmailPreferences({
         onDialogClose={() => setConfirmDialog(defaultConfirmDialog)}
         emailType={confirmDialog.emailType}
         emailName={confirmDialog.emailName}
+        emailTypes={emailTypes}
       />
     </>
   )

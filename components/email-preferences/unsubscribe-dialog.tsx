@@ -14,24 +14,23 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import { useEmailPreferences } from "@/hooks/use-email-preferences"
-import type { EmailDomain } from "@/lib/email-types"
-import { useEmailTypes } from "@/hooks/use-email-types"
-
+import type { EmailDomain, EmailType } from "@/lib/email-types"
 interface UnsubscribeDialogProps {
   isOpen: boolean
   onDialogClose: () => void
   emailType: string
   emailName: string
+  emailTypes: EmailType[]
 }
 
 export function UnsubscribeDialog({
   isOpen,
   onDialogClose,
   emailType,
-  emailName
+  emailName,
+  emailTypes
 }: UnsubscribeDialogProps) {
   const { updatePreference, updateService } = useEmailPreferences()
-  const { emailTypes } = useEmailTypes()
   const router = useRouter()
   const searchParams = useSearchParams()
 

@@ -55,13 +55,13 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
   }
 
   return (
-    <Card key={emailType.id} className={"transition-colors hover:border-primary/50"}>
-      <CardHeader className="gap-0 py-0">
+    <Card key={emailType.id} className={"transition-colors hover:border-baas-primary-700"}>
+      <CardHeader>
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
             <h4 className="font-medium">{emailType.name}</h4>
             {emailType.required && (
-              <Badge variant="primary" className="text-xs">
+              <Badge variant="default" className="text-xs">
                 Required
               </Badge>
             )}
@@ -91,12 +91,11 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
             )}
           </Button>
         </div>
-        {/* <CardDescription className="mt-1 text-muted-foreground text-sm">
-          {emailType.description}
+        {/* <CardDescription className="text-muted-foreground text-sm">
+          {emailType?.description}
         </CardDescription> */}
       </CardHeader>
-
-      <CardContent className="p-4 pt-2">
+      <CardContent>
         <div className="mb-2 block font-medium text-sm">Email Frequency</div>
         <RadioGroup
           value={currentFrequency}

@@ -10,7 +10,7 @@ import Link from "next/link"
 
 export default function Header({ user }: { user: User }) {
   return (
-    <header className="-translate-x-1/2 fixed top-0 left-1/2 z-50 mx-auto box-content w-full max-w-container border-b bg-background lg:mt-2 lg:w-[calc(100%-4rem)] lg:rounded-2xl lg:border">
+    <header className="-translate-x-1/2 fixed top-0 left-1/2 z-50 mx-auto box-content w-full max-w-container border-b bg-background/15 backdrop-blur-md lg:mt-2 lg:w-[calc(100%-4rem)] lg:rounded-2xl lg:border">
       <nav className="flex h-[var(--header-height)] w-full flex-row items-center justify-between px-4">
         <Link href={`${getAuthAppUrl()}/home`} target="_blank" rel="noopener noreferrer">
           <div className="flex items-center gap-2">
