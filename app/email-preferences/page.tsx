@@ -38,10 +38,13 @@ export default async function EmailPreferencesPage({
         title="Email Preferences"
         description="Manage your email notification preferences for different types of communications from Meeting BaaS."
       />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {domains.map((domain) => (
           <Link href={`/email-preferences/${domain.type.toLowerCase()}`} key={domain.type}>
-            <DomainHeader config={domain} className="transition-colors hover:border-primary" />
+            <DomainHeader
+              config={domain}
+              className="transition-colors hover:border-baas-primary-700"
+            />
           </Link>
         ))}
       </div>
