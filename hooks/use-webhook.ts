@@ -23,6 +23,7 @@ export function useWebhook() {
 
   return {
     webhookUrl,
-    isLoadingWebhookUrl: isLoading || isRefetching
+    isLoadingWebhookUrl: isLoading || isRefetching,
+    isErrorWebhookUrl: isErrorWebhookUrl || isRefetchError
   }
 }
