@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input"
 import { webhookSchema, type WebhookFormData } from "@/lib/schemas/webhook"
 import Link from "next/link"
 import { WEBHOOK_TEST_URL } from "@/lib/external-urls"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useWebhook } from "@/hooks/use-webhook"
 import { Check, Copy, Loader2 } from "lucide-react"
 import { updateWebhookUrl } from "@/lib/api/webhook-api"
@@ -25,7 +25,9 @@ import { toast } from "sonner"
 export function WebhookForm() {
   const [isCopied, setIsCopied] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
-  const { webhookUrl, isLoadingWebhookUrl } = useWebhook()
+  const { webhookUrl, isLoadingWebhookUrl, isErrorWebhookUrl } = useWebhook()
+  const submitButtonRef = useRef<HTMLButtonElement>(null)
+  const effectRunRef = useRef(false)
 
   const form = useForm<WebhookFormData>({
     resolver: zodResolver(webhookSchema),
@@ -43,6 +45,22 @@ export function WebhookForm() {
       reset({ webhook_url: webhookUrl })
     }
   }, [webhookUrl, reset])
+
+  // When the webhook URL is not present, submit button is clicked to trigger the form validations upon page load
+  useEffect(() => {
+    // Wait for the webhook URL and button to be loaded without errors
+    if (isLoadingWebhookUrl || isErrorWebhookUrl || !submitButtonRef.current) return
+
+    // If the webhook URL is not present and the submit button has not been clicked, click the submit button
+    if (!webhookUrl && !effectRunRef.current) {
+      // Because the form is not dirty, the submit button is disabled by default
+      // Enable the submit button to click it and then disable it again
+      submitButtonRef.current.disabled = false
+      submitButtonRef.current.click()
+      submitButtonRef.current.disabled = true
+      effectRunRef.current = true
+    }
+  }, [isLoadingWebhookUrl, webhookUrl, isErrorWebhookUrl])
 
   const onSubmit = async (data: WebhookFormData) => {
     if (isUpdating) return
@@ -132,7 +150,12 @@ export function WebhookForm() {
           )}
         />
         <div className="flex w-full justify-end md:w-auto">
-          <Button type="submit" disabled={!isDirty} className="w-full md:w-auto">
+          <Button
+            type="submit"
+            ref={submitButtonRef}
+            disabled={!isDirty}
+            className="w-full md:w-auto"
+          >
             {isUpdating ? (
               <>
                 <Loader2 className="animate-spin" />
