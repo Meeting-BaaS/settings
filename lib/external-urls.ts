@@ -14,7 +14,7 @@ const createUrl = (subdomain: string) => {
 }
 
 // Main app URLs
-export const MEETING_BAAS_HOMEPAGE_URL = createUrl("")
+export const MEETING_BAAS_HOMEPAGE_URL = "https://meetingbaas.com"
 export const TERMS_AND_CONDITIONS_URL = `${MEETING_BAAS_HOMEPAGE_URL}/terms-and-conditions`
 export const PRIVACY_POLICY_URL = `${MEETING_BAAS_HOMEPAGE_URL}/privacy`
 
