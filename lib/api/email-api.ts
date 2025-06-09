@@ -69,12 +69,12 @@ export async function resendLatestEmail(
   emailId: string,
   frequency: EmailFrequency
 ): Promise<ResendEmailResponse> {
-  const response = await fetch(`/api/email/resend/${domain.toLowerCase()}/${emailId}`, {
+  const response = await fetch("/api/email/resend", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ frequency })
+    body: JSON.stringify({ frequency, emailId })
   })
 
   if (response.status === 429) {
@@ -83,6 +83,11 @@ export async function resendLatestEmail(
     // Attach the next available at to the error
     ;(error as ResendError).nextAvailableAt = data.nextAvailableAt
     throw error
+  }
+
+  if (response.status === 422) {
+    // API responds with a 422 if the email is not found
+    throw new Error(response.status.toString())
   }
 
   if (!response.ok) {

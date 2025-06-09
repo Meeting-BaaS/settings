@@ -131,6 +131,8 @@ export function useEmailPreferences() {
             .local()
             .format("D MMM YYYY hh:mm:ss A")}`
         )
+      } else if (error.message === "422") {
+        toast.error("No email found. Please wait for an email to be sent.")
       } else {
         toast.error("Failed to resend email. Please try again.")
       }
