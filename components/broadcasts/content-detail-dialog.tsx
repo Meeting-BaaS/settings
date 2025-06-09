@@ -26,14 +26,13 @@ export function ContentDetailDialog({ content }: { content: Content["content"] }
         <div
           // Same styles as the editor
           className={cn(
-            "p-4",
-            "[&_.h1]:text-3xl [&_.h2]:text-2xl [&_.h3]:text-xl [&_.h4]:text-lg [&_.h5]:text-base [&_.h6]:text-sm",
-            "[&_.ul]:my-2 [&_.ul]:list-disc [&_.ul]:pl-6",
-            "[&_.ol]:my-2 [&_.ol]:list-decimal [&_.ol]:pl-6",
-            "[&_.blockquote]:mt-2 [&_.blockquote]:border-border [&_.blockquote]:border-l-2 [&_.blockquote]:pl-4 [&_.blockquote]:italic",
-            "[&_.code]:rounded [&_.code]:bg-muted [&_.code]:px-1 [&_.code]:py-0.5 [&_.code]:font-mono [&_.code]:text-sm",
-            "[&_.pre]:mt-2 [&_.pre]:whitespace-break-spaces [&_.pre]:rounded-md [&_.pre]:bg-muted [&_.pre]:p-4 [&_.pre]:font-mono [&_.pre]:text-sm",
-            "[&_.a]:text-primary [&_.a]:underline [&_.a]:underline-offset-4 [&_.a]:hover:text-primary/80"
+            "[&_h1]:text-3xl [&_h2]:text-2xl [&_h3]:text-xl [&_h4]:text-lg [&_h5]:text-base [&_h6]:text-sm",
+            "[&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-6",
+            "[&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-6",
+            "[&_blockquote]:mt-2 [&_blockquote]:border-border [&_blockquote]:border-l-2 [&_blockquote]:pl-4 [&_blockquote]:italic",
+            "[&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm",
+            "[&_pre]:mt-2 [&_pre]:whitespace-break-spaces [&_pre]:rounded-md [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:font-mono [&_pre]:text-sm",
+            "[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary/80"
           )}
           // biome-ignore lint/security/noDangerouslySetInnerHtml: This is sanitised content from the backend
           dangerouslySetInnerHTML={{
