@@ -6,11 +6,21 @@ if (!process.env.API_SERVER_BASEURL) {
   )
 }
 
+if (!process.env.EMAIL_API_SERVER_BASEURL) {
+  throw new Error(
+    "EMAIL_API_SERVER_BASEURL environment variable is required. Please set it in your .env file."
+  )
+}
+
 const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/:path*",
+        source: "/api/email/:path*",
+        destination: `${process.env.EMAIL_API_SERVER_BASEURL}/:path*`
+      },
+      {
+        source: "/api/baas/:path*",
         destination: `${process.env.API_SERVER_BASEURL}/:path*`
       }
     ]

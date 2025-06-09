@@ -98,3 +98,17 @@ export interface ResendEmailResponse extends ApiResponse {
   message: string
   queuedAt?: string
 }
+
+/**
+ * Error type for mutation errors
+ */
+export interface MutationError extends Error {
+  previousState?: EmailPreferences
+}
+
+/**
+ * Error type for resend errors
+ */
+export interface ResendError extends Error {
+  nextAvailableAt?: string
+}

@@ -1,5 +1,5 @@
 export async function getWebhookUrl(): Promise<string> {
-  const response = await fetch("/api/accounts/webhook_url", {
+  const response = await fetch("/api/baas/accounts/webhook_url", {
     method: "GET",
     headers: {
       "Content-Type": "application/json"
@@ -15,7 +15,7 @@ export async function getWebhookUrl(): Promise<string> {
 }
 
 export async function updateWebhookUrl(webhook_url: string): Promise<void> {
-  const response = await fetch("/api/accounts/webhook_url", {
+  const response = await fetch("/api/baas/accounts/webhook_url", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

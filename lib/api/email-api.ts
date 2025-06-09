@@ -1,6 +1,7 @@
 import type {
   EmailDomain,
   EmailFrequency,
+  ResendError,
   EmailPreferences,
   ResendEmailResponse,
   ServiceUpdateResponse
@@ -31,7 +32,7 @@ export async function updateServiceFrequency(
   domain: EmailDomain,
   frequency: EmailFrequency
 ): Promise<ServiceUpdateResponse> {
-  const response = await fetch(`/api/email/preferences/service/${domain.toLowerCase()}`, {
+  const response = await fetch("/api/email/preferences/service", {
     method: "POST",
     body: JSON.stringify({ frequency, domain }),
     headers: {
@@ -68,13 +69,21 @@ export async function resendLatestEmail(
   emailId: string,
   frequency: EmailFrequency
 ): Promise<ResendEmailResponse> {
-  const response = await fetch(`/api/email/${domain.toLowerCase()}/${emailId}`, {
+  const response = await fetch(`/api/email/resend/${domain.toLowerCase()}/${emailId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({ frequency })
   })
+
+  if (response.status === 429) {
+    const data = await response.json()
+    const error = new Error("Too many requests")
+    // Attach the next available at to the error
+    ;(error as ResendError).nextAvailableAt = data.nextAvailableAt
+    throw error
+  }
 
   if (!response.ok) {
     throw new Error(`Failed to resend latest email: ${response.status} ${response.statusText}`)
