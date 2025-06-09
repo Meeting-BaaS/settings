@@ -44,7 +44,7 @@ export async function getRecipients(params: RecipientParams): Promise<Recipient[
 }
 
 export async function sendBroadcast(data: BroadcastParams) {
-  const response = await fetch(`/api/email/admin/send-email/${data.emailId}`, {
+  const response = await fetch("/api/email/admin/send-email", {
     method: "POST",
     body: JSON.stringify(data),
     headers: {

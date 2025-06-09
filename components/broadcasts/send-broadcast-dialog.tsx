@@ -133,7 +133,14 @@ export function SendBroadcastDialog({
           </Button>
           {!showResults && (
             <Button onClick={() => handleSend()} disabled={isSending || recipients.length === 0}>
-              {isSending ? `Sending... ${progress.current}/${progress.total}` : "Confirm"}
+              {isSending ? (
+                <>
+                  <Loader2 className="animate-spin" />
+                  {`Sending... ${progress.current}/${progress.total}`}
+                </>
+              ) : (
+                "Confirm"
+              )}
             </Button>
           )}
         </DialogFooter>

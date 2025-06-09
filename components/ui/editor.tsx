@@ -18,7 +18,8 @@ import {
   AlignCenter,
   AlignRight,
   Code,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Heading3
 } from "lucide-react"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import {
@@ -119,7 +120,7 @@ export function Editor({ value, onChange, className }: EditorProps) {
             data-state={editor.isActive("bold") ? "on" : "off"}
             type="button"
           >
-            <Bold className="h-4 w-4" />
+            <Bold />
           </ToggleGroupItem>
           <ToggleGroupItem
             value="italic"
@@ -128,7 +129,7 @@ export function Editor({ value, onChange, className }: EditorProps) {
             data-state={editor.isActive("italic") ? "on" : "off"}
             type="button"
           >
-            <Italic className="h-4 w-4" />
+            <Italic />
           </ToggleGroupItem>
           <ToggleGroupItem
             value="underline"
@@ -137,7 +138,21 @@ export function Editor({ value, onChange, className }: EditorProps) {
             data-state={editor.isActive("underline") ? "on" : "off"}
             type="button"
           >
-            <UnderlineIcon className="h-4 w-4" />
+            <UnderlineIcon />
+          </ToggleGroupItem>
+        </ToggleGroup>
+
+        <Separator orientation="vertical" className="mx-2 h-full" />
+
+        <ToggleGroup type="single" className="flex-wrap">
+          <ToggleGroupItem
+            value="h2"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            data-state={editor.isActive("heading", { level: 3 }) ? "on" : "off"}
+            type="button"
+          >
+            <Heading3 />
           </ToggleGroupItem>
         </ToggleGroup>
 
@@ -151,7 +166,7 @@ export function Editor({ value, onChange, className }: EditorProps) {
             data-state={editor.isActive("bulletList") ? "on" : "off"}
             type="button"
           >
-            <List className="h-4 w-4" />
+            <List />
           </ToggleGroupItem>
           <ToggleGroupItem
             value="ordered"
@@ -160,7 +175,7 @@ export function Editor({ value, onChange, className }: EditorProps) {
             data-state={editor.isActive("orderedList") ? "on" : "off"}
             type="button"
           >
-            <ListOrdered className="h-4 w-4" />
+            <ListOrdered />
           </ToggleGroupItem>
         </ToggleGroup>
 
@@ -174,7 +189,7 @@ export function Editor({ value, onChange, className }: EditorProps) {
             data-state={editor.isActive({ textAlign: "left" }) ? "on" : "off"}
             type="button"
           >
-            <AlignLeft className="h-4 w-4" />
+            <AlignLeft />
           </ToggleGroupItem>
           <ToggleGroupItem
             value="center"
@@ -183,7 +198,7 @@ export function Editor({ value, onChange, className }: EditorProps) {
             data-state={editor.isActive({ textAlign: "center" }) ? "on" : "off"}
             type="button"
           >
-            <AlignCenter className="h-4 w-4" />
+            <AlignCenter />
           </ToggleGroupItem>
           <ToggleGroupItem
             value="right"
@@ -192,7 +207,7 @@ export function Editor({ value, onChange, className }: EditorProps) {
             data-state={editor.isActive({ textAlign: "right" }) ? "on" : "off"}
             type="button"
           >
-            <AlignRight className="h-4 w-4" />
+            <AlignRight />
           </ToggleGroupItem>
         </ToggleGroup>
 
@@ -206,7 +221,7 @@ export function Editor({ value, onChange, className }: EditorProps) {
             data-state={editor.isActive("codeBlock") ? "on" : "off"}
             type="button"
           >
-            <Code className="h-4 w-4" />
+            <Code />
           </ToggleGroupItem>
           <Dialog open={isLinkDialogOpen} onOpenChange={setIsLinkDialogOpen}>
             <DialogTrigger asChild>
@@ -216,7 +231,7 @@ export function Editor({ value, onChange, className }: EditorProps) {
                 data-state={editor.isActive("link") ? "on" : "off"}
                 type="button"
               >
-                <LinkIcon className="h-4 w-4" />
+                  <LinkIcon />
               </ToggleGroupItem>
             </DialogTrigger>
             <DialogContent>
@@ -248,7 +263,17 @@ export function Editor({ value, onChange, className }: EditorProps) {
       </div>
       <EditorContent
         editor={editor}
-        className="p-4 [&_.ProseMirror]:min-h-[160px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:text-sm [&_.ProseMirror]:text-foreground [&_.ProseMirror]:placeholder:text-muted-foreground/40 [&_.ProseMirror_p]:leading-7 [&_.ProseMirror_ul]:my-2 [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-6 [&_.ProseMirror_ol]:my-2 [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-6 [&_.ProseMirror_blockquote]:mt-2 [&_.ProseMirror_blockquote]:border-l-2 [&_.ProseMirror_blockquote]:border-border [&_.ProseMirror_blockquote]:pl-4 [&_.ProseMirror_blockquote]:italic [&_.ProseMirror_code]:rounded [&_.ProseMirror_code]:bg-muted [&_.ProseMirror_code]:px-1 [&_.ProseMirror_code]:py-0.5 [&_.ProseMirror_code]:text-sm [&_.ProseMirror_code]:font-mono [&_.ProseMirror_pre]:mt-2 [&_.ProseMirror_pre]:rounded-md [&_.ProseMirror_pre]:bg-muted [&_.ProseMirror_pre]:p-4 [&_.ProseMirror_pre]:font-mono [&_.ProseMirror_pre]:text-sm [&_.ProseMirror_a]:text-primary [&_.ProseMirror_a]:underline [&_.ProseMirror_a]:underline-offset-4 [&_.ProseMirror_a]:hover:text-primary/80"
+        className={cn(
+          "p-4",
+          "[&_.ProseMirror]:min-h-[160px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:text-sm [&_.ProseMirror]:text-foreground",
+          "[&_.ProseMirror_h1]:text-3xl [&_.ProseMirror_h2]:text-2xl [&_.ProseMirror_h3]:text-xl [&_.ProseMirror_h4]:text-lg [&_.ProseMirror_h5]:text-base [&_.ProseMirror_h6]:text-sm",
+          "[&_.ProseMirror_ul]:my-2 [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-6",
+          "[&_.ProseMirror_ol]:my-2 [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-6",
+          "[&_.ProseMirror_blockquote]:mt-2 [&_.ProseMirror_blockquote]:border-l-2 [&_.ProseMirror_blockquote]:border-border [&_.ProseMirror_blockquote]:pl-4 [&_.ProseMirror_blockquote]:italic",
+          "[&_.ProseMirror_code]:rounded [&_.ProseMirror_code]:bg-muted [&_.ProseMirror_code]:px-1 [&_.ProseMirror_code]:py-0.5 [&_.ProseMirror_code]:text-sm [&_.ProseMirror_code]:font-mono",
+          "[&_.ProseMirror_pre]:mt-2 [&_.ProseMirror_pre]:rounded-md [&_.ProseMirror_pre]:bg-muted [&_.ProseMirror_pre]:p-4 [&_.ProseMirror_pre]:font-mono [&_.ProseMirror_pre]:text-sm",
+          "[&_.ProseMirror_a]:text-primary [&_.ProseMirror_a]:underline [&_.ProseMirror_a]:underline-offset-4 [&_.ProseMirror_a]:hover:text-primary/80"
+        )}
       />
     </div>
   )
