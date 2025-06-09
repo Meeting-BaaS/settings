@@ -78,7 +78,7 @@ export function ContentSelectionTable({
       },
       {
         accessorKey: "createdAt",
-        header: ({ column }) => <SortableHeader column={column} title="Created At" />,
+        header: ({ column }) => <SortableHeader column={column} title="Created At" isNumber />,
         cell: ({ row }) => (
           <div>{dayjs.utc(row.original.createdAt).local().format("D MMM YYYY hh:mm A")}</div>
         )
