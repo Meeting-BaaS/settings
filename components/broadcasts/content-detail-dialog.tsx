@@ -32,7 +32,7 @@ export function ContentDetailDialog({ content }: { content: Content["content"] }
             "[&_.ol]:my-2 [&_.ol]:list-decimal [&_.ol]:pl-6",
             "[&_.blockquote]:mt-2 [&_.blockquote]:border-border [&_.blockquote]:border-l-2 [&_.blockquote]:pl-4 [&_.blockquote]:italic",
             "[&_.code]:rounded [&_.code]:bg-muted [&_.code]:px-1 [&_.code]:py-0.5 [&_.code]:font-mono [&_.code]:text-sm",
-            "[&_.pre]:mt-2 [&_.pre]:rounded-md [&_.pre]:bg-muted [&_.pre]:p-4 [&_.pre]:font-mono [&_.pre]:text-sm",
+            "[&_.pre]:mt-2 [&_.pre]:whitespace-break-spaces [&_.pre]:rounded-md [&_.pre]:bg-muted [&_.pre]:p-4 [&_.pre]:font-mono [&_.pre]:text-sm",
             "[&_.a]:text-primary [&_.a]:underline [&_.a]:underline-offset-4 [&_.a]:hover:text-primary/80"
           )}
           // biome-ignore lint/security/noDangerouslySetInnerHtml: This is sanitised content from the backend
