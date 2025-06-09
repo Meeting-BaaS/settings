@@ -17,14 +17,19 @@ import {
 import { domains } from "@/components/email-preferences/domains"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { KeyRound, Trash, Mail } from "lucide-react"
+import { KeyRound, Trash, Mail, Inbox } from "lucide-react"
 import type { DomainConfig } from "@/lib/email-types"
+
+type MenuItem = {
+  name: string
+  type: string
+}
 
 type SidebarNavItem = {
   title: string
   href: string
   icon: React.ReactNode
-  menuItems?: DomainConfig[]
+  menuItems?: DomainConfig[] | MenuItem[]
 }
 
 const sidebarNavItems: SidebarNavItem[] = [
@@ -46,9 +51,30 @@ const sidebarNavItems: SidebarNavItem[] = [
   }
 ]
 
-export default function AppSidebar({ className, ...props }: React.ComponentProps<typeof Sidebar>) {
+const meetingBaasNavItems: SidebarNavItem[] = [
+  {
+    title: "Broadcasts",
+    href: "/broadcasts",
+    icon: <Inbox />,
+    menuItems: [
+      {
+        name: "Create Content",
+        type: "create"
+      }
+    ]
+  }
+]
+
+export default function AppSidebar({
+  className,
+  meetingBaasUser,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & { meetingBaasUser: boolean }) {
   const pathName = usePathname()
   const { setOpenMobile } = useSidebar()
+
+  const navItems = meetingBaasUser ? [...meetingBaasNavItems, ...sidebarNavItems] : sidebarNavItems
+
   return (
     <Sidebar
       className={cn(
@@ -65,7 +91,7 @@ export default function AppSidebar({ className, ...props }: React.ComponentProps
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {sidebarNavItems.map((item) => (
+            {navItems.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild isActive={pathName.endsWith(item.href)}>
                   <Link

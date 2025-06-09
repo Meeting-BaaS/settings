@@ -29,7 +29,8 @@ export function useEmailPreferences() {
     queryKey: ["email-preferences"],
     queryFn: () => getEmailPreferences(),
     retry: 2,
-    refetchOnWindowFocus: true
+    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 5 // 5 minutes
   })
 
   // Mutation for updating individual email frequency

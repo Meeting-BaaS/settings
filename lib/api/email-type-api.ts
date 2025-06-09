@@ -11,6 +11,9 @@ export async function getEmailTypes(): Promise<EmailType[]> {
     headers: {
       Cookie: requestCookies,
       "Content-Type": "application/json"
+    },
+    next: {
+      revalidate: 60 * 60 // 1 hour
     }
   })
 
