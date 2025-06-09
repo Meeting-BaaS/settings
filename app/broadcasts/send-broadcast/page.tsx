@@ -5,12 +5,12 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { cache } from "react"
 import { getBroadcastTypes } from "@/lib/api/broadcast-type-api"
-import { ContentForm } from "@/components/broadcasts/content-form"
+import { SendBroadcast } from "@/components/broadcasts/send-broadcast"
 
 // Cache the getBroadcastTypes call
 const getCachedBroadcastTypes = cache(getBroadcastTypes)
 
-export default async function CreateContentPage() {
+export default async function SendBroadcastPage() {
   const requestCookies = await cookies()
   // RSCs need to pass cookies to getAuthSession
   const [session, broadcastTypes] = await Promise.all([
@@ -26,8 +26,8 @@ export default async function CreateContentPage() {
 
   return (
     <>
-      <PageTitle title="Broadcasts" description="Create a new content block." />
-      <ContentForm broadcastTypes={broadcastTypes} />
+      <PageTitle title="Broadcasts" description="Send a broadcast to subscribed users." />
+      <SendBroadcast broadcastTypes={broadcastTypes} />
     </>
   )
 }

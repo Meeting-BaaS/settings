@@ -1,8 +1,10 @@
 import { z } from "zod"
 
+export const emailTypeField = z.string().min(1, "Please select a broadcast type")
+
 export const contentFormSchema = z
   .object({
-    emailType: z.string().min(1, "Please select a broadcast type"),
+    emailType: emailTypeField,
     content: z.string().min(1, "Please enter content"),
     contentText: z.string().optional().nullable()
   })

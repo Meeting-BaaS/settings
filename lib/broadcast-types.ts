@@ -1,0 +1,29 @@
+import type { EmailFrequency, EmailType } from "@/lib/email-types"
+
+export type Content = {
+  id: string
+  emailType: EmailType["id"]
+  content: string
+  contentText: string
+  createdAt: string
+  accountId: string
+  name: string
+}
+
+export type RecipientParams = {
+  emailId: EmailType["id"]
+  frequency: EmailFrequency
+}
+
+export type Recipient = {
+  email: string
+  firstname: string
+  lastname: string
+}
+
+export type BroadcastParams = {
+  emailId: EmailType["id"]
+  frequency: EmailFrequency
+  contentIds: Content["id"][]
+  recipient: Recipient
+}
