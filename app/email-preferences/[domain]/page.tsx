@@ -30,7 +30,7 @@ export default async function DomainPage({
     const emailType = findEmailTypeById(emailTypes, unsubscribe)
 
     // If we found the email type, return the page with unsubscribed email type
-    if (emailType && emailType.domain !== "Account") {
+    if (emailType && emailType.domain !== "account") {
       return (
         <DomainEmailPreferences
           domainConfig={domainConfig}

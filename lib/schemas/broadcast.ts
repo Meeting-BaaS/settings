@@ -8,7 +8,8 @@ export const broadcastFormSchema = z.object({
   emailType: emailTypeField,
   frequency: z.enum(frequencyOptions as [string, ...string[]], {
     required_error: "Please select a frequency"
-  })
+  }),
+  subject: z.string().trim().optional()
 })
 
 export type BroadcastFormValues = z.infer<typeof broadcastFormSchema>

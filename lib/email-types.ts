@@ -13,7 +13,7 @@ export type EmailFrequency = "Daily" | "Weekly" | "Monthly" | "Never"
 /**
  * Available service/domain categories
  */
-export type EmailDomain = "Reports" | "Announcements" | "Developers" | "Account"
+export type EmailDomain = "reports" | "announcements" | "developers" | "account"
 
 /**
  * Email type definition as returned by the backend API

@@ -6,6 +6,7 @@ import { broadcastFormSchema, type BroadcastFormValues } from "@/lib/schemas/bro
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import type { EmailType } from "@/lib/email-types"
+import { Input } from "../ui/input"
 
 interface BroadcastFormProps {
   broadcastTypes: EmailType[]
@@ -81,6 +83,18 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
                   <SelectItem value="Monthly">Monthly subscribers</SelectItem>
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="subject"
+          render={({ field }) => (
+            <FormItem className="md:col-span-2">
+              <FormLabel>Subject</FormLabel>
+              <Input value={field.value} onChange={field.onChange} />
+              <FormDescription>If not provided, a generic subject will be used.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

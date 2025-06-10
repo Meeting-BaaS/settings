@@ -16,7 +16,8 @@ interface SendBroadcastProps {
 
 const initialBroadcastFormValues: BroadcastFormValues = {
   emailType: "",
-  frequency: "Daily"
+  frequency: "Daily",
+  subject: ""
 }
 
 export function SendBroadcast({ broadcastTypes }: SendBroadcastProps) {
@@ -87,6 +88,7 @@ export function SendBroadcast({ broadcastTypes }: SendBroadcastProps) {
         open={showSendDialog}
         onOpenChange={setShowSendDialog}
         emailId={broadcastFormValues.emailType}
+        subject={broadcastFormValues.subject ?? ""}
         broadcastTypes={broadcastTypes}
         frequency={broadcastFormValues.frequency as EmailFrequency}
         selectedContent={selectedContent}

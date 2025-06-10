@@ -63,7 +63,7 @@ export default function DomainEmailPreferences({
   return (
     <>
       <DomainHeader config={domainConfig} />
-      {domainConfig.type !== "Account" ? (
+      {domainConfig.type !== "account" ? (
         <>
           <ServiceWideControls
             domainConfig={domainConfig}

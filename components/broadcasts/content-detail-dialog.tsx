@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger
@@ -22,10 +23,14 @@ export function ContentDetailDialog({ content }: { content: Content["content"] }
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Content Details</DialogTitle>
+          <DialogDescription className="sr-only">
+            View the entire content from this content block
+          </DialogDescription>
         </DialogHeader>
         <div
           // Same styles as the editor
           className={cn(
+            "max-h-[400px] overflow-y-auto",
             "[&_h1]:text-3xl [&_h2]:text-2xl [&_h3]:text-xl [&_h4]:text-lg [&_h5]:text-base [&_h6]:text-sm",
             "[&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-6",
             "[&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-6",

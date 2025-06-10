@@ -24,6 +24,7 @@ export type Recipient = {
 export type BroadcastParams = {
   emailId: EmailType["id"]
   frequency: EmailFrequency
+  subject: string
   contentIds: Content["id"][]
   recipient: Recipient
 }

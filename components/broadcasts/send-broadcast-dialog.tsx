@@ -6,7 +6,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter
+  DialogFooter,
+  DialogDescription
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import type { Content, Recipient } from "@/lib/broadcast-types"
@@ -25,6 +26,7 @@ interface SendBroadcastDialogProps {
   broadcastTypes: EmailType[]
   frequency: EmailFrequency
   selectedContent: Content["id"][]
+  subject: string
 }
 
 export function SendBroadcastDialog({
@@ -33,7 +35,8 @@ export function SendBroadcastDialog({
   emailId,
   broadcastTypes,
   frequency,
-  selectedContent
+  selectedContent,
+  subject
 }: SendBroadcastDialogProps) {
   const session = useSession()
   const [isTestEmailLoading, setIsTestEmailLoading] = useState(false)
@@ -49,7 +52,8 @@ export function SendBroadcastDialog({
     useBroadcastSender({
       emailId,
       frequency,
-      selectedContent
+      selectedContent,
+      subject
     })
 
   useEffect(() => {
@@ -81,6 +85,10 @@ export function SendBroadcastDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Send Broadcast</DialogTitle>
+          <DialogDescription className="sr-only">
+            Send {broadcastTypes.find((type) => type.id === emailId)?.name} to {recipients.length}{" "}
+            recipient(s)
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">

@@ -26,7 +26,7 @@ export default async function EmailPreferencesPage({
 
     // If we found the email type, redirect to its domain page
     // We don't want to redirect to the account domain
-    if (emailType && emailType.domain !== "Account") {
+    if (emailType && emailType.domain !== "account") {
       redirect(`/email-preferences/${emailType.domain.toLowerCase()}?unsubscribe=${unsubscribe}`)
     }
   }

@@ -10,6 +10,7 @@ interface UseBroadcastSenderProps {
   emailId: string
   frequency: EmailFrequency
   selectedContent: Content["id"][]
+  subject: string
 }
 
 interface BroadcastProgress {
@@ -25,7 +26,8 @@ interface BroadcastResult {
 export function useBroadcastSender({
   emailId,
   frequency,
-  selectedContent
+  selectedContent,
+  subject
 }: UseBroadcastSenderProps) {
   const [isSending, setIsSending] = useState(false)
   const [progress, setProgress] = useState<BroadcastProgress>({ current: 0, total: 0 })
@@ -53,7 +55,8 @@ export function useBroadcastSender({
             emailId,
             contentIds: selectedContent,
             recipient,
-            frequency
+            frequency,
+            subject
           })
         )
 
@@ -85,7 +88,8 @@ export function useBroadcastSender({
         emailId,
         contentIds: selectedContent,
         recipient,
-        frequency
+        frequency,
+        subject
       })
       toast.success("Test email sent successfully")
       return true
