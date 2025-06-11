@@ -11,8 +11,12 @@ import { Eye } from "lucide-react"
 import DOMPurify from "dompurify"
 import type { Content } from "@/lib/broadcast-types"
 import { cn } from "@/lib/utils"
+import { useMemo } from "react"
 
 export function ContentDetailDialog({ content }: { content: Content["content"] }) {
+  const contentHtml = useMemo(() => {
+    return DOMPurify.sanitize(content ?? "")
+  }, [content])
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -41,7 +45,7 @@ export function ContentDetailDialog({ content }: { content: Content["content"] }
           )}
           // biome-ignore lint/security/noDangerouslySetInnerHtml: This is sanitised content from the backend
           dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(content ?? "")
+            __html: contentHtml
           }}
         />
       </DialogContent>

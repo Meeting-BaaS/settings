@@ -15,7 +15,7 @@ import { ContentDetailDialog } from "@/components/broadcasts/content-detail-dial
 
 interface ContentSelectionTableProps {
   broadcastTypes: EmailType[]
-  emailTypeId?: EmailType["id"]
+  emailTypeId: EmailType["id"]
   contents: Content[]
   isLoadingContents: boolean
   onBack: (selectedContent: Content["id"][]) => void
@@ -51,8 +51,9 @@ export function ContentSelectionTable({
         cell: ({ row }) => (
           <Checkbox
             checked={selectedRows.includes(row.original.id)}
-            onCheckedChange={(value: boolean) => {
-              if (value) {
+            onCheckedChange={(value) => {
+              const checked = value === true
+              if (checked) {
                 setSelectedRows((prev) => [...prev, row.original.id])
               } else {
                 setSelectedRows((prev) => prev.filter((id) => id !== row.original.id))

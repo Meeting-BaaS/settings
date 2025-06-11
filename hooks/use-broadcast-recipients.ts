@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { getRecipients } from "@/lib/api/broadcast-api"
 import type { Recipient, RecipientParams } from "@/lib/broadcast-types"
 import type { EmailFrequency } from "@/lib/email-types"
@@ -30,7 +30,7 @@ export function useBroadcastRecipients({
     }
   }, [isOpen])
 
-  const fetchRecipients = async () => {
+  const fetchRecipients = useCallback(async () => {
     setIsLoading(true)
     try {
       const params: RecipientParams = {
@@ -47,7 +47,7 @@ export function useBroadcastRecipients({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [emailId, frequency, botCountLessThan, lastBotMoreThanDays])
 
   return {
     isLoading,

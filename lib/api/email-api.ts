@@ -79,9 +79,8 @@ export async function resendLatestEmail(
 
   if (response.status === 429) {
     const data = await response.json()
-    const error = new Error("Too many requests")
-    // Attach the next available at to the error
-    ;(error as ResendError).nextAvailableAt = data.nextAvailableAt
+    const error = new Error("Too many requests") as ResendError
+    error.nextAvailableAt = data.nextAvailableAt
     throw error
   }
 

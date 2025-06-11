@@ -25,6 +25,8 @@ export function SortableHeader({
         variant="ghost"
         className={sortButtonClasses}
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        type="button"
+        aria-label={`Sort by ${title}`}
       >
         {title}
         <SortIcon isSorted={column.getIsSorted()} isNumber={isNumber} />

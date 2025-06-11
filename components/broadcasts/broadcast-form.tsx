@@ -77,7 +77,7 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
           render={({ field }) => (
             <FormItem className="col-span-1">
               <FormLabel>Type</FormLabel>
-              <Select onValueChange={field.onChange} {...field}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select email type" />
@@ -101,7 +101,7 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
           render={({ field }) => (
             <FormItem className="col-span-1">
               <FormLabel>Target Audience</FormLabel>
-              <Select onValueChange={field.onChange} {...field}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select frequency preference" />
@@ -140,7 +140,7 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
           render={({ field }) => (
             <FormItem className="col-span-1">
               <FormLabel>Bot Count Filter (Optional)</FormLabel>
-              <Select onValueChange={(value) => field.onChange(value)} {...field}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select bot count filter" />
@@ -164,7 +164,7 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
           render={({ field }) => (
             <FormItem className="col-span-1">
               <FormLabel>Last Bot Activity (Optional)</FormLabel>
-              <Select onValueChange={field.onChange} {...field}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select last bot activity" />
