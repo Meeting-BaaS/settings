@@ -16,7 +16,7 @@ export function ContentDetailDialog({ content }: { content: Content["content"] }
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" aria-label="View content details">
           <Eye />
         </Button>
       </DialogTrigger>

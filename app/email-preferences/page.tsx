@@ -27,7 +27,7 @@ export default async function EmailPreferencesPage({
     // If we found the email type, redirect to its domain page
     // We don't want to redirect to the account domain
     if (emailType && emailType.domain !== "account") {
-      redirect(`/email-preferences/${emailType.domain.toLowerCase()}?unsubscribe=${unsubscribe}`)
+      redirect(`/email-preferences/${emailType.domain}?unsubscribe=${unsubscribe}`)
     }
   }
 
@@ -40,7 +40,7 @@ export default async function EmailPreferencesPage({
       />
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {domains.map((domain) => (
-          <Link href={`/email-preferences/${domain.type.toLowerCase()}`} key={domain.type}>
+          <Link href={`/email-preferences/${domain.type}`} key={domain.type}>
             <DomainHeader
               config={domain}
               className="transition-colors hover:border-baas-primary-700"

@@ -112,12 +112,10 @@ export default function AppSidebar({
                       <SidebarMenuSubItem key={menuItem.name}>
                         <SidebarMenuSubButton
                           asChild
-                          isActive={pathName.endsWith(
-                            `${item.href}/${menuItem.type.toLowerCase()}`
-                          )}
+                          isActive={pathName.endsWith(`${item.href}/${menuItem.type}`)}
                         >
                           <Link
-                            href={`${item.href}/${menuItem.type.toLowerCase()}`}
+                            href={`${item.href}/${menuItem.type}`}
                             onClick={() => setOpenMobile(false)}
                           >
                             {menuItem.name}

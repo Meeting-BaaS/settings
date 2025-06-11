@@ -64,7 +64,7 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
             <FormItem className="md:col-span-2">
               <FormLabel>Subject</FormLabel>
               <FormControl>
-                <Input value={field.value} onChange={field.onChange} />
+                <Input {...field} />
               </FormControl>
               <FormDescription>If not provided, a generic subject will be used.</FormDescription>
               <FormMessage />
@@ -77,7 +77,7 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
           render={({ field }) => (
             <FormItem className="col-span-1">
               <FormLabel>Type</FormLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select onValueChange={field.onChange} {...field}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select email type" />
@@ -101,7 +101,7 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
           render={({ field }) => (
             <FormItem className="col-span-1">
               <FormLabel>Target Audience</FormLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select onValueChange={field.onChange} {...field}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select frequency preference" />
@@ -140,7 +140,7 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
           render={({ field }) => (
             <FormItem className="col-span-1">
               <FormLabel>Bot Count Filter (Optional)</FormLabel>
-              <Select value={field.value ?? ""} onValueChange={(value) => field.onChange(value)}>
+              <Select onValueChange={(value) => field.onChange(value)} {...field}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select bot count filter" />
@@ -164,7 +164,7 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
           render={({ field }) => (
             <FormItem className="col-span-1">
               <FormLabel>Last Bot Activity (Optional)</FormLabel>
-              <Select value={field.value ?? ""} onValueChange={(value) => field.onChange(value)}>
+              <Select onValueChange={field.onChange} {...field}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select last bot activity" />

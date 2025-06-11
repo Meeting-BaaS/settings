@@ -101,6 +101,7 @@ export function ContentForm({ broadcastTypes }: ContentFormProps) {
             className="w-full md:w-auto"
             disabled={isLoading}
             aria-disabled={isLoading}
+            aria-busy={isLoading}
           >
             {isLoading ? (
               <>

@@ -11,10 +11,8 @@ import { cookies } from "next/headers"
 export async function getBroadcastTypes(): Promise<EmailType[]> {
   const requestCookies = (await cookies()).toString()
   const response = await fetch(`${process.env.EMAIL_API_SERVER_BASEURL}/admin/broadcast-types`, {
-    method: "GET",
     headers: {
-      Cookie: requestCookies,
-      "Content-Type": "application/json"
+      Cookie: requestCookies
     },
     next: {
       revalidate: 60 * 60 // 1 hour

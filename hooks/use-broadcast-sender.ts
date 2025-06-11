@@ -49,6 +49,7 @@ export function useBroadcastSender({
         const start = i * BATCH_SIZE
         const end = Math.min(start + BATCH_SIZE, recipients.length)
         const batchRecipients = recipients.slice(start, end)
+        let successesInBatch = 0
 
         const promises = batchRecipients.map((recipient) =>
           sendBroadcast({
@@ -63,12 +64,13 @@ export function useBroadcastSender({
         const results = await Promise.allSettled(promises)
         results.forEach((r, index) => {
           if (r.status === "fulfilled") {
-            currentSuccessCount++
+            successesInBatch++
           } else {
             currentErrorRecipients.push(batchRecipients[index])
           }
         })
-        setProgress((prev) => ({ ...prev, current: prev.current + currentSuccessCount }))
+        currentSuccessCount += successesInBatch
+        setProgress((prev) => ({ ...prev, current: prev.current + successesInBatch }))
       }
 
       setResult({

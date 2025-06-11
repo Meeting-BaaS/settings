@@ -17,7 +17,10 @@ export function SortableHeader({
   centered?: boolean
 }) {
   return (
-    <div className={cn("flex justify-start", centered && "justify-center")}>
+    <div
+      className={cn("flex justify-start", centered && "justify-center")}
+      aria-sort={column.getIsSorted() ? (column.getIsSorted() === "asc" ? "ascending" : "descending") : "none"}
+    >
       <Button
         variant="ghost"
         className={sortButtonClasses}

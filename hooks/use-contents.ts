@@ -2,6 +2,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { getContents } from "@/lib/api/broadcast-api"
 import type { Content } from "@/lib/broadcast-types"
+import { useEffect } from "react"
 
 export function useContents() {
   // Query for fetching contents
@@ -19,9 +20,11 @@ export function useContents() {
     placeholderData: keepPreviousData
   })
 
-  if (isErrorContents || isRefetchError) {
-    toast.error("Failed to fetch contents. Please try again.")
-  }
+  useEffect(() => {
+    if (isErrorContents || isRefetchError) {
+      toast.error("Failed to fetch contents. Please try again.")
+    }
+  }, [isErrorContents, isRefetchError])
 
   return {
     contents,

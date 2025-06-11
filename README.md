@@ -92,18 +92,6 @@ export interface EmailType {
 }
 ```
 
-### Email Preferences API
-
-The application provides a mock API in `lib/api.ts` for working with email preferences:
-
-| Function                 | Description                                  |
-| ------------------------ | -------------------------------------------- |
-| `updateEmailFrequency`   | Update frequency for a single email type     |
-| `updateServiceFrequency` | Update frequency for all emails in a service |
-| `getEmailPreferences`    | Get all user preferences                     |
-| `resendLatestEmail`      | Request resend of the latest email           |
-| `getAvailableEmailTypes` | Get configuration for all email types        |
-
 
 ### Unsubscribe Links
 

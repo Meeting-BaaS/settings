@@ -129,7 +129,7 @@ export function useEmailPreferences() {
           `Too many requests. Please try again at ${dayjs
             .utc(error.nextAvailableAt)
             .local()
-            .format("D MMM YYYY hh:mm:ss A")}`
+            .format("D MMM YYYY h:mm:ss A")}`
         )
       } else if (error.message === "422") {
         toast.error("No email found. Please wait for an email to be sent.")

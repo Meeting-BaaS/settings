@@ -9,10 +9,9 @@ import {
   import { AnimatePresence, motion } from "motion/react";
   
   export const SortIcon = ({ isSorted, isNumber }: {isSorted: false | SortDirection, isNumber?: boolean}) => {
-    const iconClasses = "h-4 w-4";
-    const upIcon = isNumber ? <ArrowUp01 className={iconClasses} /> : <ArrowUpAZ />;
+    const upIcon = isNumber ? <ArrowUp01 /> : <ArrowUpAZ />;
     const downIcon = isNumber ? (
-      <ArrowDown10 className={iconClasses} />
+      <ArrowDown10 />
     ) : (
       <ArrowDownZA />
     );
@@ -21,7 +20,7 @@ import {
       if (isSorted) {
         return isSorted === "asc" ? upIcon : downIcon;
       }
-      return <ArrowUpDown className={iconClasses} />;
+      return <ArrowUpDown />;
     };
   
     return (

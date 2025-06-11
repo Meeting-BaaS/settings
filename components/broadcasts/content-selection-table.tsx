@@ -83,7 +83,7 @@ export function ContentSelectionTable({
         accessorKey: "createdAt",
         header: ({ column }) => <SortableHeader column={column} title="Created At" isNumber />,
         cell: ({ row }) => (
-          <div>{dayjs.utc(row.original.createdAt).local().format("D MMM YYYY hh:mm A")}</div>
+          <div>{dayjs.utc(row.original.createdAt).local().format("D MMM YYYY h:mm A")}</div>
         )
       },
       {
@@ -95,15 +95,10 @@ export function ContentSelectionTable({
     [broadcastTypes, selectedRows]
   )
 
-  const tableRowSelection = useMemo(() => {
-    return selectedRows.reduce(
-      (acc, id) => {
-        acc[String(id)] = true
-        return acc
-      },
-      {} as Record<string, boolean>
-    )
-  }, [selectedRows])
+  const tableRowSelection = useMemo(
+    () => Object.fromEntries(selectedRows.map((id) => [String(id), true])),
+    [selectedRows]
+  )
 
   return (
     <div className="space-y-4">

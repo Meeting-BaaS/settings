@@ -91,9 +91,6 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
             )}
           </Button>
         </div>
-        {/* <CardDescription className="text-muted-foreground text-sm">
-          {emailType?.description}
-        </CardDescription> */}
       </CardHeader>
       <CardContent>
         <div className="mb-2 block font-medium text-sm">Email Frequency</div>

@@ -39,7 +39,6 @@ export function useBroadcastRecipients({
         botCountLessThan,
         lastBotMoreThanDays
       }
-      console.log("params", params)
       const data = await getRecipients(params)
       setRecipients(data)
     } catch (error) {

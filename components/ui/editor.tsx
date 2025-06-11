@@ -146,9 +146,9 @@ export function Editor({ value, onChange, className }: EditorProps) {
 
         <ToggleGroup type="single" className="flex-wrap">
           <ToggleGroupItem
-            value="h2"
+            value="h3"
             size="sm"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
             data-state={editor.isActive("heading", { level: 3 }) ? "on" : "off"}
             type="button"
           >
