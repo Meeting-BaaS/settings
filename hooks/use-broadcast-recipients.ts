@@ -22,14 +22,6 @@ export function useBroadcastRecipients({
   const [isLoading, setIsLoading] = useState(false)
   const [recipients, setRecipients] = useState<Recipient[]>([])
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchRecipients()
-    } else {
-      setRecipients([])
-    }
-  }, [isOpen])
-
   const fetchRecipients = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -48,6 +40,14 @@ export function useBroadcastRecipients({
       setIsLoading(false)
     }
   }, [emailId, frequency, botCountLessThan, lastBotMoreThanDays, isOpen])
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchRecipients()
+    } else {
+      setRecipients([])
+    }
+  }, [isOpen, fetchRecipients])
 
   return {
     isLoading,

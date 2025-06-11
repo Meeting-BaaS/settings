@@ -47,6 +47,8 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
   }
 
   const handleResendLatest = () => {
+    if (isResending) return
+
     resendLatest({
       emailId: emailType.id,
       frequency: currentFrequency ?? "Weekly" // Fallback to weekly if no frequency is set
@@ -76,6 +78,7 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
                 ? `Resending ${emailType.name} email`
                 : `Resend latest ${emailType.name} email`
             }
+            aria-busy={isResending}
             disabled={isResending}
           >
             {isResending ? (
