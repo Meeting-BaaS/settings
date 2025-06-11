@@ -40,14 +40,14 @@ export function useBroadcastRecipients({
         lastBotMoreThanDays
       }
       const data = await getRecipients(params)
-      setRecipients(data)
+      if (isOpen) setRecipients(data)
     } catch (error) {
       console.error("Failed to fetch recipients", error)
       toast.error("Failed to fetch recipients")
     } finally {
       setIsLoading(false)
     }
-  }, [emailId, frequency, botCountLessThan, lastBotMoreThanDays])
+  }, [emailId, frequency, botCountLessThan, lastBotMoreThanDays, isOpen])
 
   return {
     isLoading,

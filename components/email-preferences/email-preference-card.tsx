@@ -48,7 +48,6 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
 
   const handleResendLatest = () => {
     resendLatest({
-      domain: emailType.domain,
       emailId: emailType.id,
       frequency: currentFrequency ?? "Weekly" // Fallback to weekly if no frequency is set
     })

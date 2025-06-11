@@ -65,7 +65,6 @@ export async function getEmailPreferences(): Promise<EmailPreferences> {
 
 // Request to resend the latest email of a specific type
 export async function resendLatestEmail(
-  domain: EmailDomain,
   emailId: string,
   frequency: EmailFrequency
 ): Promise<ResendEmailResponse> {

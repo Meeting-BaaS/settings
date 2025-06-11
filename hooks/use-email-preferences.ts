@@ -109,13 +109,9 @@ export function useEmailPreferences() {
 
   // Mutation for resending latest email
   const resendLatestMutation = useMutation({
-    mutationFn: ({
-      domain,
-      emailId,
-      frequency
-    }: { domain: EmailDomain; emailId: string; frequency: EmailFrequency }) => {
+    mutationFn: ({ emailId, frequency }: { emailId: string; frequency: EmailFrequency }) => {
       setResendingEmailIds((prev) => [...prev, emailId])
-      return resendLatestEmail(domain, emailId, frequency)
+      return resendLatestEmail(emailId, frequency)
     },
     onSuccess: (data, { emailId }) => {
       toast.success(data.message || "Latest email will be resent shortly")
