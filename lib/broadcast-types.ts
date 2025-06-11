@@ -1,7 +1,7 @@
 import type { EmailFrequency, EmailType } from "@/lib/email-types"
 
 export type Content = {
-  id: string
+  id: number
   emailType: EmailType["id"]
   content: string
   contentText: string

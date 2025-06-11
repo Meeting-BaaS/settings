@@ -31,11 +31,15 @@ export function SendBroadcast({ broadcastTypes }: SendBroadcastProps) {
   const [showSendDialog, setShowSendDialog] = useState(false)
 
   const handleFormSubmit = (data: BroadcastFormValues) => {
+    if (data.emailType !== broadcastFormValues.emailType) {
+      setSelectedContent([])
+    }
     setBroadcastFormValues(data)
     setStep("content")
   }
 
-  const handleContentBack = () => {
+  const handleContentBack = (selectedContent: Content["id"][]) => {
+    setSelectedContent(selectedContent)
     setStep("form")
   }
 
@@ -62,6 +66,7 @@ export function SendBroadcast({ broadcastTypes }: SendBroadcastProps) {
             contents={contents ?? []}
             isLoadingContents={isLoadingContents}
             onBack={handleContentBack}
+            selectedContent={selectedContent}
             onSend={handleSend}
           />
         )

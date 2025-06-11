@@ -2,6 +2,7 @@
 
 import {
   type ColumnDef,
+  type RowSelectionState,
   type SortingState,
   flexRender,
   getCoreRowModel,
@@ -19,20 +20,23 @@ import {
   TableRow
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends { id: string | number }, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   noDataMessage?: string
+  parentRowSelection?: RowSelectionState
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends { id: string | number }, TValue>({
   columns,
   data,
-  noDataMessage = "No results."
+  noDataMessage = "No results.",
+  parentRowSelection = {}
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>(parentRowSelection)
   const table = useReactTable({
     data,
     columns,
@@ -40,10 +44,17 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    onRowSelectionChange: setRowSelection,
+    getRowId: (row) => String(row.id),
     state: {
-      sorting
+      sorting,
+      rowSelection
     }
   })
+
+  useEffect(() => {
+    setRowSelection(parentRowSelection)
+  }, [parentRowSelection])
 
   return (
     <div>

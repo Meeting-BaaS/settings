@@ -18,8 +18,9 @@ interface ContentSelectionTableProps {
   emailTypeId?: EmailType["id"]
   contents: Content[]
   isLoadingContents: boolean
-  onBack: () => void
+  onBack: (selectedContent: Content["id"][]) => void
   onSend: (selectedContent: Content["id"][]) => void
+  selectedContent: Content["id"][]
 }
 
 export function ContentSelectionTable({
@@ -28,19 +29,20 @@ export function ContentSelectionTable({
   contents,
   isLoadingContents,
   onBack,
-  onSend
+  onSend,
+  selectedContent
 }: ContentSelectionTableProps) {
-  const [selectedRows, setSelectedRows] = useState<string[]>([])
+  const [selectedRows, setSelectedRows] = useState<Content["id"][]>(selectedContent)
+
+  // Update selected rows when selectedContent changes
+  useEffect(() => {
+    setSelectedRows(selectedContent)
+  }, [selectedContent])
 
   const filteredContents = useMemo(
     () => contents.filter((content) => content.emailType === emailTypeId),
     [contents, emailTypeId]
   )
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: We want to reset the selected rows when the email type changes
-  useEffect(() => {
-    setSelectedRows([])
-  }, [emailTypeId])
 
   const columns: ColumnDef<Content>[] = useMemo(
     () => [
@@ -48,12 +50,13 @@ export function ContentSelectionTable({
         id: "select",
         cell: ({ row }) => (
           <Checkbox
-            checked={row.getIsSelected()}
+            checked={selectedRows.includes(row.original.id)}
             onCheckedChange={(value: boolean) => {
-              row.toggleSelected(value)
-              setSelectedRows((prev) =>
-                value ? [...prev, row.original.id] : prev.filter((id) => id !== row.original.id)
-              )
+              if (value) {
+                setSelectedRows((prev) => [...prev, row.original.id])
+              } else {
+                setSelectedRows((prev) => prev.filter((id) => id !== row.original.id))
+              }
             }}
             aria-label="Select row"
           />
@@ -89,8 +92,18 @@ export function ContentSelectionTable({
         cell: ({ row }) => <ContentDetailDialog content={row.original.content} />
       }
     ],
-    [broadcastTypes]
+    [broadcastTypes, selectedRows]
   )
+
+  const tableRowSelection = useMemo(() => {
+    return selectedRows.reduce(
+      (acc, id) => {
+        acc[String(id)] = true
+        return acc
+      },
+      {} as Record<string, boolean>
+    )
+  }, [selectedRows])
 
   return (
     <div className="space-y-4">
@@ -100,9 +113,10 @@ export function ContentSelectionTable({
         noDataMessage={
           isLoadingContents ? "Loading..." : "No content found for this broadcast type."
         }
+        parentRowSelection={tableRowSelection}
       />
       <div className="flex justify-end gap-2">
-        <Button variant="outline" className="grow md:grow-0" onClick={onBack}>
+        <Button variant="outline" className="grow md:grow-0" onClick={() => onBack(selectedRows)}>
           Back
         </Button>
         <Button
