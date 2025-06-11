@@ -13,47 +13,53 @@ import { Button } from "@/components/ui/button"
 import type { Content, Recipient } from "@/lib/broadcast-types"
 import type { EmailFrequency, EmailType } from "@/lib/email-types"
 import { AlertCircle, Loader2 } from "lucide-react"
-import { Alert, AlertDescription } from "../ui/alert"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useSession } from "@/hooks/use-session"
 import { useBroadcastSender } from "@/hooks/use-broadcast-sender"
 import { useBroadcastRecipients } from "@/hooks/use-broadcast-recipients"
-import { BroadcastStatus } from "./broadcast-status"
+import { BroadcastStatus } from "@/components/broadcasts/broadcast-status"
+import type { BroadcastFormValues } from "@/lib/schemas/broadcast"
 
 interface SendBroadcastDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  emailId: string
+  broadcastFormValues: BroadcastFormValues
   broadcastTypes: EmailType[]
-  frequency: EmailFrequency
   selectedContent: Content["id"][]
-  subject: string
 }
 
 export function SendBroadcastDialog({
   open,
   onOpenChange,
-  emailId,
+  broadcastFormValues,
   broadcastTypes,
-  frequency,
-  selectedContent,
-  subject
+  selectedContent
 }: SendBroadcastDialogProps) {
   const session = useSession()
   const [isTestEmailLoading, setIsTestEmailLoading] = useState(false)
   const [showResults, setShowResults] = useState(false)
+  const {
+    emailType: emailId,
+    frequency,
+    subject,
+    botCountLessThan,
+    lastBotMoreThanDays
+  } = broadcastFormValues
 
   const { isLoading: isLoadingRecipients, recipients } = useBroadcastRecipients({
     emailId,
-    frequency,
+    frequency: frequency as EmailFrequency,
+    botCountLessThan,
+    lastBotMoreThanDays,
     isOpen: open
   })
 
   const { isSending, progress, result, sendBroadcastToRecipients, sendTestEmail } =
     useBroadcastSender({
       emailId,
-      frequency,
+      frequency: frequency as EmailFrequency,
       selectedContent,
-      subject
+      subject: subject ?? ""
     })
 
   useEffect(() => {

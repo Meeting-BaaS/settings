@@ -11,7 +11,7 @@ import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 dayjs.extend(utc)
 import type { EmailType } from "@/lib/email-types"
-import { ContentDetailDialog } from "./content-detail-dialog"
+import { ContentDetailDialog } from "@/components/broadcasts/content-detail-dialog"
 
 interface ContentSelectionTableProps {
   broadcastTypes: EmailType[]

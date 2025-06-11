@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import type { EmailFrequency, EmailType } from "@/lib/email-types"
-import { BroadcastForm } from "./broadcast-form"
+import type { EmailType } from "@/lib/email-types"
+import { BroadcastForm } from "@/components/broadcasts/broadcast-form"
 import { ContentSelectionTable } from "@/components/broadcasts/content-selection-table"
-import { SendBroadcastDialog } from "./send-broadcast-dialog"
+import { SendBroadcastDialog } from "@/components/broadcasts/send-broadcast-dialog"
 import type { BroadcastFormValues } from "@/lib/schemas/broadcast"
 import type { Content } from "@/lib/broadcast-types"
 import { useContents } from "@/hooks/use-contents"
@@ -17,7 +17,9 @@ interface SendBroadcastProps {
 const initialBroadcastFormValues: BroadcastFormValues = {
   emailType: "",
   frequency: "Daily",
-  subject: ""
+  subject: "",
+  botCountLessThan: "",
+  lastBotMoreThanDays: ""
 }
 
 export function SendBroadcast({ broadcastTypes }: SendBroadcastProps) {
@@ -92,10 +94,8 @@ export function SendBroadcast({ broadcastTypes }: SendBroadcastProps) {
       <SendBroadcastDialog
         open={showSendDialog}
         onOpenChange={setShowSendDialog}
-        emailId={broadcastFormValues.emailType}
-        subject={broadcastFormValues.subject ?? ""}
+        broadcastFormValues={broadcastFormValues}
         broadcastTypes={broadcastTypes}
-        frequency={broadcastFormValues.frequency as EmailFrequency}
         selectedContent={selectedContent}
       />
     </>

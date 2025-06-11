@@ -4,7 +4,7 @@ import type { Recipient, Content } from "@/lib/broadcast-types"
 import { toast } from "sonner"
 import type { EmailFrequency } from "@/lib/email-types"
 
-const BATCH_SIZE = 20
+const BATCH_SIZE = Number(process.env.NEXT_PUBLIC_EMAIL_BATCH_SIZE) || 20
 
 interface UseBroadcastSenderProps {
   emailId: string

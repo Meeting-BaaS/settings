@@ -32,7 +32,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
 import { Separator } from "@/components/ui/separator"
-import { useFormField } from "./form"
+import { useFormField } from "@/components/ui/form"
 import { useFormContext } from "react-hook-form"
 
 interface EditorProps {

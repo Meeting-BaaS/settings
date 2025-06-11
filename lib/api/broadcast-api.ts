@@ -1,4 +1,4 @@
-import type { ContentFormValues } from "../schemas/content"
+import type { ContentFormValues } from "@/lib/schemas/content"
 import type { BroadcastParams, Content, Recipient, RecipientParams } from "@/lib/broadcast-types"
 
 export async function saveContent(data: ContentFormValues) {
@@ -30,7 +30,16 @@ export async function getContents(): Promise<Content[]> {
 }
 
 export async function getRecipients(params: RecipientParams): Promise<Recipient[]> {
-  const queryParams = new URLSearchParams(params)
+  const queryParams = new URLSearchParams()
+  queryParams.append("emailId", params.emailId)
+  queryParams.append("frequency", params.frequency)
+
+  if (params.botCountLessThan) {
+    queryParams.append("botCountLessThan", params.botCountLessThan)
+  }
+  if (params.lastBotMoreThanDays) {
+    queryParams.append("lastBotMoreThanDays", params.lastBotMoreThanDays)
+  }
 
   const response = await fetch(`/api/email/admin/recipients?${queryParams.toString()}`)
 

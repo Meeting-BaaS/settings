@@ -9,7 +9,9 @@ export const broadcastFormSchema = z.object({
   frequency: z.enum(frequencyOptions as [string, ...string[]], {
     required_error: "Please select a frequency"
   }),
-  subject: z.string().trim().optional()
+  subject: z.string().trim().optional(),
+  botCountLessThan: z.string().optional(),
+  lastBotMoreThanDays: z.string().optional()
 })
 
 export type BroadcastFormValues = z.infer<typeof broadcastFormSchema>

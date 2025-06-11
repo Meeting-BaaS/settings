@@ -21,7 +21,13 @@ import {
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import type { EmailType } from "@/lib/email-types"
-import { Input } from "../ui/input"
+import { Input } from "@/components/ui/input"
+import {
+  FrequencySelectOptions,
+  botCountOptions,
+  lastBotDaysOptions
+} from "@/components/broadcasts/broadcast-form-options"
+import { Separator } from "../ui/separator"
 
 interface BroadcastFormProps {
   broadcastTypes: EmailType[]
@@ -35,12 +41,36 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
     defaultValues: values
   })
 
+  const { watch } = form
+  const botCountLessThan = watch("botCountLessThan")
+  const lastBotMoreThanDays = watch("lastBotMoreThanDays")
+  const isFiltersSet = botCountLessThan || lastBotMoreThanDays
+
+  const clearFilters = () => {
+    form.setValue("botCountLessThan", "")
+    form.setValue("lastBotMoreThanDays", "")
+  }
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="grid grid-cols-1 items-start gap-4 md:grid-cols-2"
+        className="grid grid-cols-1 items-start gap-6 md:grid-cols-2"
       >
+        <FormField
+          control={form.control}
+          name="subject"
+          render={({ field }) => (
+            <FormItem className="md:col-span-2">
+              <FormLabel>Subject</FormLabel>
+              <FormControl>
+                <Input value={field.value} onChange={field.onChange} />
+              </FormControl>
+              <FormDescription>If not provided, a generic subject will be used.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="emailType"
@@ -78,9 +108,50 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Daily">Daily subscribers</SelectItem>
-                  <SelectItem value="Weekly">Weekly subscribers</SelectItem>
-                  <SelectItem value="Monthly">Monthly subscribers</SelectItem>
+                  {FrequencySelectOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="col-span-2">
+          <Separator className="my-4" />
+          <div className="flex items-center gap-2">
+            <p className="text-md">Filters</p>
+            <Button
+              variant="outline"
+              size="sm"
+              type="button"
+              onClick={clearFilters}
+              disabled={!isFiltersSet}
+            >
+              Clear
+            </Button>
+          </div>
+        </div>
+        <FormField
+          control={form.control}
+          name="botCountLessThan"
+          render={({ field }) => (
+            <FormItem className="col-span-1">
+              <FormLabel>Bot Count Filter (Optional)</FormLabel>
+              <Select value={field.value ?? ""} onValueChange={(value) => field.onChange(value)}>
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select bot count filter" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {botCountOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -89,12 +160,24 @@ export function BroadcastForm({ broadcastTypes, values, onSubmit }: BroadcastFor
         />
         <FormField
           control={form.control}
-          name="subject"
+          name="lastBotMoreThanDays"
           render={({ field }) => (
-            <FormItem className="md:col-span-2">
-              <FormLabel>Subject</FormLabel>
-              <Input value={field.value} onChange={field.onChange} />
-              <FormDescription>If not provided, a generic subject will be used.</FormDescription>
+            <FormItem className="col-span-1">
+              <FormLabel>Last Bot Activity (Optional)</FormLabel>
+              <Select value={field.value ?? ""} onValueChange={(value) => field.onChange(value)}>
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select last bot activity" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {lastBotDaysOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

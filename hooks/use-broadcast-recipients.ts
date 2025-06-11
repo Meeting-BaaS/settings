@@ -7,12 +7,16 @@ import { toast } from "sonner"
 interface UseBroadcastRecipientsProps {
   emailId: string
   frequency: EmailFrequency
+  botCountLessThan?: string
+  lastBotMoreThanDays?: string
   isOpen: boolean
 }
 
 export function useBroadcastRecipients({
   emailId,
   frequency,
+  botCountLessThan,
+  lastBotMoreThanDays,
   isOpen
 }: UseBroadcastRecipientsProps) {
   const [isLoading, setIsLoading] = useState(false)
@@ -31,8 +35,11 @@ export function useBroadcastRecipients({
     try {
       const params: RecipientParams = {
         emailId,
-        frequency
+        frequency,
+        botCountLessThan,
+        lastBotMoreThanDays
       }
+      console.log("params", params)
       const data = await getRecipients(params)
       setRecipients(data)
     } catch (error) {

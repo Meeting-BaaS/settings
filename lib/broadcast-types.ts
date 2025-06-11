@@ -13,6 +13,8 @@ export type Content = {
 export type RecipientParams = {
   emailId: EmailType["id"]
   frequency: EmailFrequency
+  botCountLessThan?: string
+  lastBotMoreThanDays?: string
 }
 
 export type Recipient = {

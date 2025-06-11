@@ -1,6 +1,6 @@
 import { AlertCircle, CheckCircle } from "lucide-react"
-import { Alert, AlertDescription } from "../ui/alert"
-import { Button } from "../ui/button"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 import type { Recipient } from "@/lib/broadcast-types"
 
 interface BroadcastStatusProps {
