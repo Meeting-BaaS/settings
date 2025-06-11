@@ -33,7 +33,6 @@ export function ContentSelectionTable({
   selectedContent
 }: ContentSelectionTableProps) {
   const [selectedRows, setSelectedRows] = useState<Content["id"][]>(selectedContent)
-
   // Update selected rows when selectedContent changes
   useEffect(() => {
     setSelectedRows(selectedContent)
@@ -42,6 +41,11 @@ export function ContentSelectionTable({
   const filteredContents = useMemo(
     () => contents.filter((content) => content.emailType === emailTypeId),
     [contents, emailTypeId]
+  )
+
+  const emailType = useMemo(
+    () => broadcastTypes.find((type) => type.id === emailTypeId),
+    [broadcastTypes, emailTypeId]
   )
 
   const columns: ColumnDef<Content>[] = useMemo(
@@ -66,9 +70,7 @@ export function ContentSelectionTable({
       {
         accessorKey: "emailType",
         header: ({ column }) => <SortableHeader column={column} title="Email Type" />,
-        cell: ({ row }) => (
-          <div>{broadcastTypes.find((type) => type.id === row.original.emailType)?.name}</div>
-        )
+        cell: () => <div>{emailType?.name}</div>
       },
       {
         accessorKey: "contentText",
@@ -93,7 +95,7 @@ export function ContentSelectionTable({
         cell: ({ row }) => <ContentDetailDialog content={row.original.content} />
       }
     ],
-    [broadcastTypes, selectedRows]
+    [emailType, selectedRows]
   )
 
   const tableRowSelection = useMemo(
