@@ -30,7 +30,8 @@ export function useEmailPreferences() {
     queryFn: () => getEmailPreferences(),
     retry: 2,
     refetchOnWindowFocus: true,
-    staleTime: 1000 * 60 * 5 // 5 minutes
+    staleTime: 1000 * 60 * 5, // 5 minutes,
+    throwOnError: true // Page needs to show error boundary if this fails
   })
 
   // Mutation for updating individual email frequency

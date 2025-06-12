@@ -1,6 +1,6 @@
 "use client"
 
-import { spotlightVariant } from "@/lib/animations/background"
+import { spotlightAnimation } from "@/lib/animations/background"
 import { Button } from "@/components/ui/button"
 import { motion } from "motion/react"
 import Image from "next/image"
@@ -36,7 +36,7 @@ export default function ErrorBoundary({ error }: ErrorProps) {
         <div className="max-w-4xl text-lg">
           <p className="mb-1">
             {/* If there's a digest, it could be a sensitive error that took place in server components (and is already logged)
-                        In such a case we don't want to show the actual error message */}
+            In such a case we don't want to show the actual error message */}
             {error.digest ? genericErrorMessage : error.message || genericErrorMessage}
           </p>
           If the error persists, please contact us on{" "}
@@ -52,7 +52,7 @@ export default function ErrorBoundary({ error }: ErrorProps) {
             "radial-gradient(circle, rgba(0, 219, 205, 0.3) 10%, rgba(0, 219, 205, 0.2) 80%, transparent 100%)"
         }}
         initial={{ opacity: 0 }}
-        animate={spotlightVariant}
+        animate={spotlightAnimation}
         aria-hidden="true"
       />
     </div>
