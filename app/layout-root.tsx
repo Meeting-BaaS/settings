@@ -28,7 +28,7 @@ export default function LayoutRoot({ children, session: initialSession }: Layout
       <div className="flex min-h-svh flex-1">
         <AppSidebar meetingBaasUser={meetingBaasUser} />
         <SidebarInset className="mt-[var(--header-height)]">
-          <div className="grow p-4 md:p-10">{children}</div>
+          <div className="flex grow flex-col p-4 md:p-10">{children}</div>
           <Footer />
         </SidebarInset>
       </div>
