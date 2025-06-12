@@ -23,10 +23,8 @@ export const EmailFrequencyRadio = ({
     <label
       key={frequency}
       className={cn(
-        "flex cursor-pointer items-center space-x-2 rounded-md border bg-transparent p-4 transition-colors hover:bg-muted/80",
-        currentFrequency === frequency
-          ? "border-primary ring-2 ring-primary"
-          : "border-muted-foreground/10"
+        "flex cursor-pointer items-center space-x-2 rounded-md border border-muted-foreground/10 bg-transparent p-4 transition-colors hover:bg-muted/80",
+        currentFrequency === frequency ? "bg-muted/80" : "bg-transparent"
       )}
       htmlFor={id}
     >

@@ -1,6 +1,7 @@
 import type {
   EmailDomain,
   EmailFrequency,
+  ResendError,
   EmailPreferences,
   ResendEmailResponse,
   ServiceUpdateResponse
@@ -31,7 +32,7 @@ export async function updateServiceFrequency(
   domain: EmailDomain,
   frequency: EmailFrequency
 ): Promise<ServiceUpdateResponse> {
-  const response = await fetch(`/api/email/preferences/service/${domain.toLowerCase()}`, {
+  const response = await fetch("/api/email/preferences/service", {
     method: "POST",
     body: JSON.stringify({ frequency, domain }),
     headers: {
@@ -41,29 +42,6 @@ export async function updateServiceFrequency(
 
   if (!response.ok) {
     throw new Error(`Failed to update service frequency: ${response.status} ${response.statusText}`)
-  }
-
-  return response.json()
-}
-
-// Unsubscribe from a specific email using unsubscribe token
-export async function unsubscribeWithToken(
-  emailType: string,
-  token: string
-): Promise<{ success: boolean }> {
-  const response = await fetch("/api/email/preferences/unsubscribe", {
-    method: "POST",
-    body: JSON.stringify({
-      email_type: emailType,
-      token
-    }),
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to unsubscribe: ${response.status} ${response.statusText}`)
   }
 
   return response.json()
@@ -81,22 +59,34 @@ export async function getEmailPreferences(): Promise<EmailPreferences> {
   if (!response.ok) {
     throw new Error(`Failed to get email preferences: ${response.status} ${response.statusText}`)
   }
-
-  return response.json()
+  const data = await response.json()
+  return data.preferences
 }
 
 // Request to resend the latest email of a specific type
 export async function resendLatestEmail(
-  domain: EmailDomain,
-  emailId: string
+  emailId: string,
+  frequency: EmailFrequency
 ): Promise<ResendEmailResponse> {
-  const response = await fetch(`/api/email/${domain.toLowerCase()}/${emailId}`, {
+  const response = await fetch("/api/email/resend", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({})
+    body: JSON.stringify({ frequency, emailId })
   })
+
+  if (response.status === 429) {
+    const data = await response.json()
+    const error = new Error("Too many requests") as ResendError
+    error.nextAvailableAt = data.nextAvailableAt
+    throw error
+  }
+
+  if (response.status === 422) {
+    // API responds with a 422 if the email is not found
+    throw new Error(response.status.toString())
+  }
 
   if (!response.ok) {
     throw new Error(`Failed to resend latest email: ${response.status} ${response.statusText}`)

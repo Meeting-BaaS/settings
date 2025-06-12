@@ -1,7 +1,7 @@
 "use client"
 
-import { ApiKey } from "./api-key"
-import { WebhookForm } from "./webhook-form"
+import { ApiKey } from "@/components/credentials/api-key"
+import { WebhookForm } from "@/components/credentials/webhook-form"
 
 interface CredentialsProps {
   apiKey: string

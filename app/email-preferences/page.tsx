@@ -14,9 +14,9 @@ const getCachedEmailTypes = cache(getEmailTypes)
 export default async function EmailPreferencesPage({
   searchParams
 }: {
-  searchParams: Promise<{ unsubscribe?: string; token?: string }>
+  searchParams: Promise<{ unsubscribe?: string }>
 }) {
-  const { unsubscribe, token } = await searchParams
+  const { unsubscribe } = await searchParams
   // Get email types
   const emailTypes = await getCachedEmailTypes()
 
@@ -24,12 +24,10 @@ export default async function EmailPreferencesPage({
   if (unsubscribe) {
     const emailType = findEmailTypeById(emailTypes, unsubscribe)
 
-    // If we found the email type, redirect to its domain page with the token
+    // If we found the email type, redirect to its domain page
     // We don't want to redirect to the account domain
-    if (emailType && emailType.domain !== "Account") {
-      redirect(
-        `/email-preferences/${emailType.domain.toLowerCase()}?unsubscribe=${unsubscribe}${token ? `&token=${token}` : ""}`
-      )
+    if (emailType && emailType.domain !== "account") {
+      redirect(`/email-preferences/${emailType.domain}?unsubscribe=${unsubscribe}`)
     }
   }
 
@@ -40,10 +38,13 @@ export default async function EmailPreferencesPage({
         title="Email Preferences"
         description="Manage your email notification preferences for different types of communications from Meeting BaaS."
       />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {domains.map((domain) => (
-          <Link href={`/email-preferences/${domain.type.toLowerCase()}`} key={domain.type}>
-            <DomainHeader config={domain} className="transition-colors hover:border-primary" />
+          <Link href={`/email-preferences/${domain.type}`} key={domain.type}>
+            <DomainHeader
+              config={domain}
+              className="transition-colors hover:border-baas-primary-700"
+            />
           </Link>
         ))}
       </div>

@@ -13,7 +13,7 @@ export type EmailFrequency = "Daily" | "Weekly" | "Monthly" | "Never"
 /**
  * Available service/domain categories
  */
-export type EmailDomain = "Reports" | "Announcements" | "Developers" | "Account"
+export type EmailDomain = "reports" | "announcements" | "developers" | "account"
 
 /**
  * Email type definition as returned by the backend API
@@ -97,4 +97,18 @@ export interface ServiceUpdateResponse extends ApiResponse {
 export interface ResendEmailResponse extends ApiResponse {
   message: string
   queuedAt?: string
+}
+
+/**
+ * Error type for mutation errors
+ */
+export interface MutationError extends Error {
+  previousState?: EmailPreferences
+}
+
+/**
+ * Error type for resend errors
+ */
+export interface ResendError extends Error {
+  nextAvailableAt?: string
 }

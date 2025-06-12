@@ -92,41 +92,25 @@ export interface EmailType {
 }
 ```
 
-### Email Preferences API
-
-The application provides a mock API in `lib/email-api.ts` for working with email preferences:
-
-| Function                 | Description                                  |
-| ------------------------ | -------------------------------------------- |
-| `updateEmailFrequency`   | Update frequency for a single email type     |
-| `updateServiceFrequency` | Update frequency for all emails in a service |
-| `unsubscribeWithToken`   | Unsubscribe using token from email link      |
-| `getEmailPreferences`    | Get all user preferences                     |
-| `resendLatestEmail`      | Request resend of the latest email           |
-| `batchUpdatePreferences` | Update multiple preferences at once          |
-| `getAvailableEmailTypes` | Get configuration for all email types        |
-
-In production, replace the mock implementations with actual API calls to your backend.
 
 ### Unsubscribe Links
 
 When sending emails to users, you can include unsubscribe links in the following format:
 
 ```
-https://settings.meetingbaas.com/email-preferences?unsubscribe=EMAIL_TYPE_ID&token=SECURITY_TOKEN
+https://settings.meetingbaas.com/email-preferences?unsubscribe=EMAIL_TYPE_ID
 ```
 
 Where:
 
 - `EMAIL_TYPE_ID` is the identifier for the specific email type (e.g., `product-updates`, `meeting-summaries`)
-- `SECURITY_TOKEN` is a JWT or other authentication token that validates the user's identity
 
 #### Example Unsubscribe URLs:
 
 For individual email types:
 
 ```
-https://settings.meetingbaas.com/email-preferences?unsubscribe=product-updates&token=eyJhbGciOiJIUzI1NiJ9...
+https://settings.meetingbaas.com/email-preferences?unsubscribe=product-updates
 ```
 
 When a user clicks an unsubscribe link:

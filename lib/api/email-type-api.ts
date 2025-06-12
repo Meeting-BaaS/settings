@@ -5,12 +5,13 @@ import { cookies } from "next/headers"
 
 // This is called from RSCs and requires the complete URL + needs the cookies to be passed
 export async function getEmailTypes(): Promise<EmailType[]> {
-  const jwt = (await cookies()).get("jwt")?.value || ""
-  const response = await fetch(`${process.env.API_SERVER_BASEURL}/email/types`, {
-    method: "GET",
+  const requestCookies = (await cookies()).toString()
+  const response = await fetch(`${process.env.EMAIL_API_SERVER_BASEURL}/types`, {
     headers: {
-      Cookie: `jwt=${jwt}`,
-      "Content-Type": "application/json"
+      Cookie: requestCookies
+    },
+    next: {
+      revalidate: 60 * 60 // 1 hour
     }
   })
 

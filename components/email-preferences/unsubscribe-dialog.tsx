@@ -14,35 +14,29 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import { useEmailPreferences } from "@/hooks/use-email-preferences"
-import type { EmailDomain } from "@/lib/email-types"
-import { useEmailTypes } from "@/hooks/use-email-types"
-
+import type { EmailDomain, EmailType } from "@/lib/email-types"
 interface UnsubscribeDialogProps {
   isOpen: boolean
   onDialogClose: () => void
   emailType: string
   emailName: string
+  emailTypes: EmailType[]
 }
 
 export function UnsubscribeDialog({
   isOpen,
   onDialogClose,
   emailType,
-  emailName
+  emailName,
+  emailTypes
 }: UnsubscribeDialogProps) {
-  const { updatePreference, updateService, unsubscribe } = useEmailPreferences()
-  const { emailTypes } = useEmailTypes()
+  const { updatePreference, updateService } = useEmailPreferences()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const token = searchParams.get("token")
 
   const handleConfirmUnsubscribe = () => {
-    // If there's a token, unsubscribe with token
-    if (token) {
-      unsubscribe({ emailType, token })
-    }
     // Check if this is a service-level unsubscribe
-    else if (emailType.startsWith("service-")) {
+    if (emailType.startsWith("service-")) {
       const domain = emailType.replace("service-", "") as EmailDomain
       updateService({ domain, frequency: "Never", emailTypes })
     } else {
@@ -55,7 +49,6 @@ export function UnsubscribeDialog({
     // Clear search params and close dialog
     const params = new URLSearchParams(searchParams.toString())
     params.delete("unsubscribe")
-    params.delete("token")
     router.replace(window.location.pathname + (params.toString() ? `?${params.toString()}` : ""), {
       scroll: false
     })

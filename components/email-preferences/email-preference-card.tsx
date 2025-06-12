@@ -1,6 +1,6 @@
 "use client"
 
-import { RefreshCw } from "lucide-react"
+import { Loader2, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 
 import { Badge } from "@/components/ui/badge"
@@ -20,9 +20,10 @@ interface EmailPreferenceProps {
 export const frequencies: EmailFrequency[] = ["Daily", "Weekly", "Monthly"]
 
 export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferenceProps) => {
-  const { preferences, updatePreference, resendLatest } = useEmailPreferences()
+  const { preferences, updatePreference, resendLatest, isResendingEmail } = useEmailPreferences()
 
   const currentFrequency = preferences?.[emailType.id]
+  const isResending = isResendingEmail(emailType.id)
 
   const handleFrequencyChange = (frequency: EmailFrequency) => {
     // Same frequency selection
@@ -46,17 +47,22 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
   }
 
   const handleResendLatest = () => {
-    resendLatest({ domain: emailType.domain, emailId: emailType.id })
+    if (isResending) return
+
+    resendLatest({
+      emailId: emailType.id,
+      frequency: currentFrequency ?? "Weekly" // Fallback to weekly if no frequency is set
+    })
   }
 
   return (
-    <Card key={emailType.id} className={"transition-colors hover:border-primary/50"}>
-      <CardHeader className="gap-0 py-0">
+    <Card key={emailType.id} className={"transition-colors hover:border-baas-primary-700"}>
+      <CardHeader>
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
             <h4 className="font-medium">{emailType.name}</h4>
             {emailType.required && (
-              <Badge variant="primary" className="text-xs">
+              <Badge variant="default" className="text-xs">
                 Required
               </Badge>
             )}
@@ -67,18 +73,28 @@ export const EmailPreference = ({ emailType, onUnsubscribe }: EmailPreferencePro
             type="button"
             onClick={handleResendLatest}
             className="text-primary hover:text-primary"
-            aria-label={`Resend latest ${emailType.name} email`}
+            aria-label={
+              isResending
+                ? `Resending ${emailType.name} email`
+                : `Resend latest ${emailType.name} email`
+            }
+            aria-busy={isResending}
+            disabled={isResending}
           >
-            <RefreshCw className="size-3" />
-            Resend Latest
+            {isResending ? (
+              <>
+                <Loader2 className="size-3 animate-spin" /> Resending...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="size-3" />
+                Resend Latest
+              </>
+            )}
           </Button>
         </div>
-        {/* <CardDescription className="mt-1 text-muted-foreground text-sm">
-          {emailType.description}
-        </CardDescription> */}
       </CardHeader>
-
-      <CardContent className="p-4 pt-2">
+      <CardContent>
         <div className="mb-2 block font-medium text-sm">Email Frequency</div>
         <RadioGroup
           value={currentFrequency}
