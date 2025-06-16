@@ -4,7 +4,7 @@ import type { Recipient, Content } from "@/lib/broadcast-types"
 import { toast } from "sonner"
 import type { EmailFrequency } from "@/lib/email-types"
 
-const BATCH_SIZE = Number(process.env.NEXT_PUBLIC_EMAIL_BATCH_SIZE) || 20
+const BATCH_SIZE = Number(process.env.NEXT_PUBLIC_EMAIL_BATCH_SIZE) || 100
 
 interface UseBroadcastSenderProps {
   emailId: string
@@ -51,24 +51,19 @@ export function useBroadcastSender({
         const batchRecipients = recipients.slice(start, end)
         let successesInBatch = 0
 
-        const promises = batchRecipients.map((recipient) =>
-          sendBroadcast({
+        try {
+          await sendBroadcast({
             emailId,
             contentIds: selectedContent,
-            recipient,
+            recipients: batchRecipients,
             frequency,
             subject
           })
-        )
+          successesInBatch = batchRecipients.length
+        } catch (error) {
+          currentErrorRecipients.push(...batchRecipients)
+        }
 
-        const results = await Promise.allSettled(promises)
-        results.forEach((r, index) => {
-          if (r.status === "fulfilled") {
-            successesInBatch++
-          } else {
-            currentErrorRecipients.push(batchRecipients[index])
-          }
-        })
         currentSuccessCount += successesInBatch
         setProgress((prev) => ({ ...prev, current: prev.current + successesInBatch }))
       }
@@ -89,7 +84,7 @@ export function useBroadcastSender({
       await sendBroadcast({
         emailId,
         contentIds: selectedContent,
-        recipient,
+        recipients: [recipient],
         frequency,
         subject
       })

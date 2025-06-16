@@ -28,7 +28,7 @@ export type BroadcastParams = {
   frequency: EmailFrequency
   subject: string
   contentIds: Content["id"][]
-  recipient: Recipient
+  recipients: Recipient[]
 }
 
 export interface MutationError extends Error {
