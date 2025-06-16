@@ -7,18 +7,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogDescription
+  DialogDescription,
+  DialogClose
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import type { Content, Recipient } from "@/lib/broadcast-types"
 import type { EmailFrequency, EmailType } from "@/lib/email-types"
-import { AlertCircle, Loader2 } from "lucide-react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Loader2 } from "lucide-react"
 import { useSession } from "@/hooks/use-session"
 import { useBroadcastSender } from "@/hooks/use-broadcast-sender"
 import { useBroadcastRecipients } from "@/hooks/use-broadcast-recipients"
 import { BroadcastStatus } from "@/components/broadcasts/broadcast-status"
 import type { BroadcastFormValues } from "@/lib/schemas/broadcast"
+import { NoRecipientsAlert } from "@/components/broadcasts/no-recipients-alert"
 
 interface SendBroadcastDialogProps {
   open: boolean
@@ -86,9 +87,14 @@ export function SendBroadcastDialog({
     setIsTestEmailLoading(false)
   }
 
+  const handleOpenChange = (open: boolean) => {
+    if (isSending) return
+    onOpenChange(open)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent showCloseButton={!isSending}>
         <DialogHeader>
           <DialogTitle>Send Broadcast</DialogTitle>
           <DialogDescription className="sr-only">
@@ -103,18 +109,7 @@ export function SendBroadcastDialog({
               <Loader2 className="size-4 animate-spin stroke-primary" />
             </div>
           ) : recipients.length === 0 ? (
-            <Alert variant="destructive" className="border-destructive">
-              <AlertCircle className="size-4" />
-              <AlertDescription>
-                <div>
-                  No recipients have subscribed to receive{" "}
-                  <span className="font-bold">
-                    {broadcastTypes.find((type) => type.id === emailId)?.name}
-                  </span>{" "}
-                  on this frequency.
-                </div>
-              </AlertDescription>
-            </Alert>
+            <NoRecipientsAlert broadcastTypes={broadcastTypes} emailId={emailId} />
           ) : (
             <>
               <p className="text-muted-foreground text-sm">
@@ -142,9 +137,11 @@ export function SendBroadcastDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSending}>
-            Cancel
-          </Button>
+          <DialogClose asChild>
+            <Button variant="outline" disabled={isSending}>
+              {showResults ? "Close" : "Cancel"}
+            </Button>
+          </DialogClose>
           {!showResults && (
             <Button onClick={() => handleSend()} disabled={isSending || recipients.length === 0}>
               {isSending ? (

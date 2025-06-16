@@ -8,6 +8,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import type { EmailType } from "@/lib/email-types"
 import { baseContentColumns } from "@/components/broadcasts/content/columns"
+import { SendToSelectedRecipientsDialog } from "@/components/broadcasts/send-to-selected-recipients-dialog"
+import type { BroadcastFormValues } from "@/lib/schemas/broadcast"
+import { SendBroadcastDialog } from "@/components/broadcasts/send-broadcast-dialog"
 
 interface ContentSelectionTableProps {
   broadcastTypes: EmailType[]
@@ -15,8 +18,8 @@ interface ContentSelectionTableProps {
   contents: Content[]
   isLoadingContents: boolean
   onBack: (selectedContent: Content["id"][]) => void
-  onSend: (selectedContent: Content["id"][]) => void
   selectedContent: Content["id"][]
+  broadcastFormValues: BroadcastFormValues
 }
 
 export function ContentSelectionTable({
@@ -25,10 +28,13 @@ export function ContentSelectionTable({
   contents,
   isLoadingContents,
   onBack,
-  onSend,
-  selectedContent
+  selectedContent,
+  broadcastFormValues
 }: ContentSelectionTableProps) {
   const [selectedRows, setSelectedRows] = useState<Content["id"][]>(selectedContent)
+  const [showSendDialog, setShowSendDialog] = useState(false)
+  const [showSelectedRecipientsDialog, setShowSelectedRecipientsDialog] = useState(false)
+
   // Update selected rows when selectedContent changes
   useEffect(() => {
     setSelectedRows(selectedContent)
@@ -83,13 +89,36 @@ export function ContentSelectionTable({
           Back
         </Button>
         <Button
+          variant="outline"
+          className="grow md:grow-0"
+          onClick={() => setShowSelectedRecipientsDialog(true)}
+          disabled={selectedRows.length === 0}
+        >
+          Send to Selected Recipients
+        </Button>
+        <Button
           disabled={selectedRows.length === 0}
           className="grow md:grow-0"
-          onClick={() => onSend(selectedRows)}
+          onClick={() => setShowSendDialog(true)}
         >
-          Send
+          Send to All
         </Button>
       </div>
+
+      <SendToSelectedRecipientsDialog
+        open={showSelectedRecipientsDialog}
+        onOpenChange={setShowSelectedRecipientsDialog}
+        broadcastFormValues={broadcastFormValues}
+        broadcastTypes={broadcastTypes}
+        selectedContent={selectedRows}
+      />
+      <SendBroadcastDialog
+        open={showSendDialog}
+        onOpenChange={setShowSendDialog}
+        broadcastFormValues={broadcastFormValues}
+        broadcastTypes={broadcastTypes}
+        selectedContent={selectedContent}
+      />
     </div>
   )
 }

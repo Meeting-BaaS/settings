@@ -23,6 +23,12 @@ export type Recipient = {
   lastname: string
 }
 
+export type RecipientStatus = "sent" | "error" | "skipped"
+
+export type RecipientWithStatus = Recipient & {
+  status: RecipientStatus
+}
+
 export type BroadcastParams = {
   emailId: EmailType["id"]
   frequency: EmailFrequency
