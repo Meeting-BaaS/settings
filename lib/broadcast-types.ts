@@ -37,6 +37,30 @@ export type BroadcastParams = {
   recipients: Recipient[]
 }
 
+export type EmailLogParams = {
+  offset: number
+  limit: number
+  startDate: string | null
+  endDate: string | null
+  emailId?: string
+  accountEmail?: string
+}
+
+export type EmailLog = {
+  id: number
+  emailType: EmailType["id"]
+  sentAt: string
+  subject: string
+  triggeredBy: string
+  email: string
+  fullName: string
+}
+
+export type EmailLogResponse = {
+  data: EmailLog[]
+  hasMore: boolean
+}
+
 export interface MutationError extends Error {
   previousState?: Content[]
 }

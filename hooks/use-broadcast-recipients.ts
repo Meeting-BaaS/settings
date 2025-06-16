@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { getRecipients } from "@/lib/api/broadcast-api"
 import type { Recipient, RecipientParams } from "@/lib/broadcast-types"
-import type { EmailFrequency } from "@/lib/email-types"
+import type { EmailFrequency, EmailId } from "@/lib/email-types"
 import { toast } from "sonner"
 
 interface UseBroadcastRecipientsProps {
@@ -26,7 +26,7 @@ export function useBroadcastRecipients({
     setIsLoading(true)
     try {
       const params: RecipientParams = {
-        emailId,
+        emailId: emailId as EmailId,
         frequency,
         botCountLessThan,
         lastBotMoreThanDays

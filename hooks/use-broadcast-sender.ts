@@ -2,12 +2,12 @@ import { useState } from "react"
 import { sendBroadcast } from "@/lib/api/broadcast-api"
 import type { Recipient, Content } from "@/lib/broadcast-types"
 import { toast } from "sonner"
-import type { EmailFrequency } from "@/lib/email-types"
+import type { EmailFrequency, EmailType } from "@/lib/email-types"
 
 const BATCH_SIZE = Number(process.env.NEXT_PUBLIC_EMAIL_BATCH_SIZE) || 100
 
 interface UseBroadcastSenderProps {
-  emailId: string
+  emailId: EmailType["id"]
   frequency: EmailFrequency
   selectedContent: Content["id"][]
   subject: string

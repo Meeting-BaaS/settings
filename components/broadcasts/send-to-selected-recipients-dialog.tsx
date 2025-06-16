@@ -87,7 +87,7 @@ export function SendToSelectedRecipientsDialog({
 
   const { isSending, progress, result, sendBroadcastToRecipients, sendTestEmail } =
     useBroadcastSender({
-      emailId,
+      emailId: emailId as EmailType["id"],
       frequency: frequency as EmailFrequency,
       selectedContent,
       subject: subject ?? ""

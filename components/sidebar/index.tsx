@@ -68,6 +68,10 @@ const meetingBaasNavItems: SidebarNavItem[] = [
       {
         name: "Send Broadcast",
         type: "send-broadcast"
+      },
+      {
+        name: "Email Logs",
+        type: "logs"
       }
     ]
   }

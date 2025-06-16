@@ -15,12 +15,31 @@ export type EmailFrequency = "Daily" | "Weekly" | "Monthly" | "Never"
  */
 export type EmailDomain = "reports" | "announcements" | "developers" | "account"
 
+export type EmailId =
+  // Legacy email types
+  | "insufficient_tokens_recording"
+  | "payment_activation"
+  | "usage_report"
+  | "welcome"
+  // New email types
+  | "usage-reports"
+  | "activity-updates"
+  | "error-report"
+  | "product-updates"
+  | "maintenance"
+  | "company-news"
+  | "api-changes"
+  | "developer-resources"
+  | "security"
+  | "billing"
+  | "custom"
+
 /**
  * Email type definition as returned by the backend API
  */
 export interface EmailType {
   /** Unique identifier for the email type */
-  id: string
+  id: EmailId
   /** Display name of the email type */
   name: string
   /** Which domain/service category this email belongs to */
@@ -36,26 +55,6 @@ export interface EmailType {
     /** Whether this email type is deprecated */
     deprecated?: boolean
   }
-}
-
-/**
- * Single email preference update payload
- */
-export interface EmailPreference {
-  /** Email type ID to update */
-  id: string
-  /** New frequency setting */
-  frequency: EmailFrequency
-}
-
-/**
- * Service-wide frequency update payload
- */
-export interface ServiceFrequencyUpdate {
-  /** Domain/service to update */
-  domain: EmailDomain
-  /** New frequency for all emails in this domain */
-  frequency: EmailFrequency
 }
 
 /**

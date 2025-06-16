@@ -21,6 +21,11 @@ const broadcastOptions = [
     title: "Send Broadcast",
     description: "Send broadcasts to subscribed users",
     href: "/broadcasts/send-broadcast"
+  },
+  {
+    title: "Email Logs",
+    description: "View all email logs",
+    href: "/broadcasts/logs"
   }
 ]
 

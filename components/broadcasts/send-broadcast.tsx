@@ -65,7 +65,7 @@ export function SendBroadcast({ broadcastTypes }: SendBroadcastProps) {
         return (
           <ContentSelectionTable
             broadcastTypes={broadcastTypes}
-            emailTypeId={broadcastFormValues?.emailType}
+            emailTypeId={broadcastFormValues?.emailType as EmailType["id"]}
             contents={contents ?? []}
             isLoadingContents={isLoadingContents}
             onBack={handleContentBack}
