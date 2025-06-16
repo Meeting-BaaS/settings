@@ -13,6 +13,11 @@ const broadcastOptions = [
     href: "/broadcasts/create"
   },
   {
+    title: "View Contents",
+    description: "View all content blocks for your broadcasts",
+    href: "/broadcasts/view"
+  },
+  {
     title: "Send Broadcast",
     description: "Send broadcasts to subscribed users",
     href: "/broadcasts/send-broadcast"

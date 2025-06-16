@@ -17,6 +17,34 @@ export async function saveContent(data: ContentFormValues) {
   return response.json()
 }
 
+export async function updateContent(data: ContentFormValues, id: number) {
+  const response = await fetch("/api/email/admin/content", {
+    method: "PUT",
+    body: JSON.stringify({ ...data, id }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to update content: ${response.status} ${response.statusText}`)
+  }
+
+  return response.json()
+}
+
+export async function deleteContent(id: number) {
+  const response = await fetch(`/api/email/admin/content/${id}`, {
+    method: "DELETE"
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to delete content: ${response.status} ${response.statusText}`)
+  }
+
+  return response.json()
+}
+
 export async function getContents(): Promise<Content[]> {
   const response = await fetch("/api/email/admin/content")
 

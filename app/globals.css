@@ -27,6 +27,7 @@
   --color-baas-warning-500: var(--baas-warning-500);
   --color-baas-primary-700: var(--baas-primary-700);
   --color-baas-black: var(--baas-black);
+  --color-baas-destructive: var(--baas-destructive);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -56,7 +57,7 @@
   --muted-foreground: var(--secondary-foreground);
   --accent: var(--secondary);
   --accent-foreground: var(--secondary-foreground);
-  --destructive: oklch(0.64 0.2465 18.31);
+  --destructive: var(--baas-destructive);
   --border: oklch(0.92 0.004 286.32);
   --input: var(--border);
   --ring: var(--border);
@@ -68,6 +69,7 @@
   --baas-warning-500: oklch(0.98 0.1298 108.58);
   --baas-primary-700: oklch(0.53 0.0548 187.47);
   --baas-black: oklch(0.26 0 0);
+  --baas-destructive: oklch(0.64 0.2465 18.31);
   /* Sidebar properties */
   --sidebar: var(--background);
   --sidebar-foreground: var(--foreground);

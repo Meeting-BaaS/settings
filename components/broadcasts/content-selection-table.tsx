@@ -6,12 +6,8 @@ import type { ColumnDef } from "@tanstack/react-table"
 import type { Content } from "@/lib/broadcast-types"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import { SortableHeader } from "@/components/ui/sortable-header"
-import dayjs from "dayjs"
-import utc from "dayjs/plugin/utc"
-dayjs.extend(utc)
 import type { EmailType } from "@/lib/email-types"
-import { ContentDetailDialog } from "@/components/broadcasts/content-detail-dialog"
+import { baseContentColumns } from "@/components/broadcasts/content/columns"
 
 interface ContentSelectionTableProps {
   broadcastTypes: EmailType[]
@@ -43,11 +39,6 @@ export function ContentSelectionTable({
     [contents, emailTypeId]
   )
 
-  const emailType = useMemo(
-    () => broadcastTypes.find((type) => type.id === emailTypeId),
-    [broadcastTypes, emailTypeId]
-  )
-
   const columns: ColumnDef<Content>[] = useMemo(
     () => [
       {
@@ -67,35 +58,9 @@ export function ContentSelectionTable({
           />
         )
       },
-      {
-        accessorKey: "emailType",
-        header: ({ column }) => <SortableHeader column={column} title="Email Type" />,
-        cell: () => <div>{emailType?.name}</div>
-      },
-      {
-        accessorKey: "contentText",
-        header: ({ column }) => <SortableHeader column={column} title="Content" />,
-        cell: ({ row }) => <div className="max-w-[300px] truncate">{row.original.contentText}</div>
-      },
-      {
-        accessorKey: "name",
-        header: ({ column }) => <SortableHeader column={column} title="Creator" />,
-        cell: ({ row }) => <div>{row.original.name}</div>
-      },
-      {
-        accessorKey: "createdAt",
-        header: ({ column }) => <SortableHeader column={column} title="Created At" isNumber />,
-        cell: ({ row }) => (
-          <div>{dayjs.utc(row.original.createdAt).local().format("D MMM YYYY h:mm A")}</div>
-        )
-      },
-      {
-        id: "actions",
-        header: "Details",
-        cell: ({ row }) => <ContentDetailDialog content={row.original.content} />
-      }
+      ...baseContentColumns(broadcastTypes)
     ],
-    [emailType, selectedRows]
+    [broadcastTypes, selectedRows]
   )
 
   const tableRowSelection = useMemo(

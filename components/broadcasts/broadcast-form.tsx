@@ -27,7 +27,7 @@ import {
   botCountOptions,
   lastBotDaysOptions
 } from "@/components/broadcasts/broadcast-form-options"
-import { Separator } from "../ui/separator"
+import { Separator } from "@/components/ui/separator"
 
 interface BroadcastFormProps {
   broadcastTypes: EmailType[]

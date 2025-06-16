@@ -30,3 +30,7 @@ export type BroadcastParams = {
   contentIds: Content["id"][]
   recipient: Recipient
 }
+
+export interface MutationError extends Error {
+  previousState?: Content[]
+}

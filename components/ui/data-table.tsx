@@ -53,7 +53,9 @@ export function DataTable<TData extends { id: string | number }, TValue>({
   })
 
   useEffect(() => {
-    setRowSelection(parentRowSelection)
+    if (Object.keys(parentRowSelection).length > 0) {
+      setRowSelection(parentRowSelection)
+    }
   }, [parentRowSelection])
 
   return (

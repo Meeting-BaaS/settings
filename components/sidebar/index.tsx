@@ -62,6 +62,10 @@ const meetingBaasNavItems: SidebarNavItem[] = [
         type: "create"
       },
       {
+        name: "View Contents",
+        type: "view"
+      },
+      {
         name: "Send Broadcast",
         type: "send-broadcast"
       }

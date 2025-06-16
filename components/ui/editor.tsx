@@ -30,7 +30,7 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Separator } from "@/components/ui/separator"
 import { useFormField } from "@/components/ui/form"
 import { useFormContext } from "react-hook-form"
@@ -47,6 +47,7 @@ export function Editor({ value, onChange, className }: EditorProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false)
   const [linkUrl, setLinkUrl] = useState("")
+  const isFirstRender = useRef(true)
 
   const editor = useEditor({
     extensions: [
@@ -77,8 +78,10 @@ export function Editor({ value, onChange, className }: EditorProps) {
   })
 
   useEffect(() => {
-    if (!value) {
-      editor?.commands.setContent("")
+    // Only set the content on the first render. onUpdate will handle updates.
+    if (isFirstRender.current) {
+      editor?.commands.setContent(value)
+      isFirstRender.current = false
     }
   }, [value, editor])
 
@@ -264,7 +267,7 @@ export function Editor({ value, onChange, className }: EditorProps) {
       <EditorContent
         editor={editor}
         className={cn(
-          "p-4",
+          "p-4 max-h-[400px] overflow-y-auto",
           "[&_.ProseMirror]:min-h-[160px] [&_.ProseMirror]:outline-none [&_.ProseMirror]:text-sm [&_.ProseMirror]:text-foreground",
           "[&_.ProseMirror_h1]:text-3xl [&_.ProseMirror_h2]:text-2xl [&_.ProseMirror_h3]:text-xl [&_.ProseMirror_h4]:text-lg [&_.ProseMirror_h5]:text-base [&_.ProseMirror_h6]:text-sm",
           "[&_.ProseMirror_ul]:my-2 [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-6",
