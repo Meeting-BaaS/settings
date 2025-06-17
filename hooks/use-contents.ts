@@ -33,7 +33,7 @@ export function useContents() {
   const updateContentMutation = useMutation({
     mutationFn: async ({ id, content }: { id: number; content: ContentFormValues }) => {
       // Store the current state before updating
-      const previousState = queryClient.getQueryData(["contents"]) as Content[]
+      const previousState = queryClient.getQueryData<Content[]>(["contents"])!
 
       // Update the cache optimistically
       queryClient.setQueryData(["contents"], (old: Content[]) =>

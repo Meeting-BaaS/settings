@@ -53,7 +53,9 @@ export function DeleteContent({ row, open, onOpenChange }: DeleteContentProps) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isLoading} aria-disabled={isLoading}>
+            Cancel
+          </AlertDialogCancel>
           <Button
             onClick={onDelete}
             disabled={isLoading}

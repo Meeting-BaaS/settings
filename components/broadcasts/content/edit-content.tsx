@@ -79,7 +79,7 @@ export function EditContent({ broadcastTypes, row, open, onOpenChange }: EditCon
         </Form>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" type="button">
+            <Button variant="outline" type="button" disabled={isLoading} aria-disabled={isLoading}>
               Cancel
             </Button>
           </DialogClose>

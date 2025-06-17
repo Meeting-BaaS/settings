@@ -28,8 +28,8 @@ export type RecipientFormValues = z.infer<typeof recipientFormSchema>
 export const csvRowsSchema = z.array(
   z.object({
     email: z.string().email("Invalid email address"),
-    firstname: z.string().nullable().default(""),
-    lastname: z.string().nullable().default(""),
+    firstname: z.string().optional().default(""),
+    lastname: z.string().optional().default(""),
     status: z.enum(["sent", "error", "skipped"], {
       errorMap: () => ({ message: "Status must be one of: sent, error, skipped" })
     })
