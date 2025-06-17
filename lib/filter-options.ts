@@ -38,6 +38,6 @@ export const filtersFields = [
   {
     name: "emailIdFilters",
     label: "Email Type",
-    options: allEmailTypes.sort((a, b) => a.label.localeCompare(b.label))
+    options: [...allEmailTypes].sort((a, b) => a.label.localeCompare(b.label))
   }
 ]

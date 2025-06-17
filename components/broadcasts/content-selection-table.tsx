@@ -83,6 +83,7 @@ export function ContentSelectionTable({
           isLoadingContents ? "Loading..." : "No content found for this broadcast type."
         }
         parentRowSelection={tableRowSelection}
+        enableParentRowSelection={true}
       />
       <div className="flex justify-end gap-2">
         <Button variant="outline" className="grow md:grow-0" onClick={() => onBack(selectedRows)}>
@@ -117,7 +118,7 @@ export function ContentSelectionTable({
         onOpenChange={setShowSendDialog}
         broadcastFormValues={broadcastFormValues}
         broadcastTypes={broadcastTypes}
-        selectedContent={selectedContent}
+        selectedContent={selectedRows}
       />
     </div>
   )

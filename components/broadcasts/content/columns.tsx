@@ -5,13 +5,9 @@ import type { Content } from "@/lib/broadcast-types"
 import { SortableHeader } from "@/components/ui/sortable-header"
 import type { EmailType } from "@/lib/email-types"
 import { TableActions } from "@/components/broadcasts/content/table-actions"
+import { EmailIdTypeMap } from "../logs/column-helpers"
 
 dayjs.extend(utc)
-
-export const getEmailTypeName = (emailTypeId: EmailType["id"], broadcastTypes: EmailType[]) => {
-  const emailType = broadcastTypes.find((type) => type.id === emailTypeId)
-  return emailType?.name
-}
 
 export const baseContentColumns: (
   broadcastTypes: EmailType[],
@@ -21,7 +17,7 @@ export const baseContentColumns: (
     {
       accessorKey: "emailType",
       header: ({ column }) => <SortableHeader column={column} title="Email Type" />,
-      cell: ({ row }) => <div>{getEmailTypeName(row.original.emailType, broadcastTypes)}</div>
+      cell: ({ row }) => <div>{EmailIdTypeMap[row.original.emailType]}</div>
     },
     {
       accessorKey: "contentText",

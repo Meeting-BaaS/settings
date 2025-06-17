@@ -51,6 +51,8 @@ export function RecipientFormFields({ csvError, csvParsing }: RecipientFormField
                 type="file"
                 accept=".csv"
                 multiple={false}
+                name={field.name}
+                ref={field.ref}
                 onChange={(e) => {
                   const file = e.target.files?.[0] || null
                   field.onChange(file)

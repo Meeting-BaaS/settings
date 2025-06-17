@@ -2,7 +2,6 @@
 
 import {
   type ColumnDef,
-  type RowSelectionState,
   type SortingState,
   flexRender,
   getCoreRowModel,
@@ -61,7 +60,6 @@ export function LogsDataTable<TData extends EmailLog, TValue>({
   setFilters
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
   const table = useReactTable({
     data,
@@ -69,7 +67,6 @@ export function LogsDataTable<TData extends EmailLog, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onRowSelectionChange: setRowSelection,
     getRowId: (row: TData) => row.id.toString(),
     manualPagination: true,
     pageCount,
@@ -78,8 +75,7 @@ export function LogsDataTable<TData extends EmailLog, TValue>({
       pagination: {
         pageIndex,
         pageSize
-      },
-      rowSelection
+      }
     }
   })
 
@@ -100,7 +96,12 @@ export function LogsDataTable<TData extends EmailLog, TValue>({
         </div>
         <div className="flex w-full items-center gap-2 md:w-1/3">
           <PageSizeSelector value={pageSize} onChange={onPageSizeChange} />
-          <Filters filters={filters} setFilters={setFilters} />
+          <Filters
+            filters={filters}
+            setFilters={setFilters}
+            pageIndex={pageIndex}
+            onPageChange={onPageChange}
+          />
         </div>
       </div>
       <div>

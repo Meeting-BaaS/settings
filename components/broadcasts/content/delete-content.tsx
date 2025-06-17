@@ -22,7 +22,7 @@ interface DeleteContentProps {
 export function DeleteContent({ row, open, onOpenChange }: DeleteContentProps) {
   const { deleteContent, isDeletingContent: isLoading } = useContents()
 
-  if (!open) {
+  if (open !== "delete") {
     return null
   }
 

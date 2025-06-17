@@ -5,9 +5,6 @@ export const FILE_SIZE_LIMIT = 2 * 1024 * 1024 // 2MB
 export const csvFileSchema = z
   .instanceof(File)
   .nullable()
-  .refine((val) => val === null || val instanceof File, {
-    message: "Must be a file"
-  })
   .refine((val) => val === null || val.name.toLowerCase().endsWith(".csv"), {
     message: "File must be a CSV"
   })

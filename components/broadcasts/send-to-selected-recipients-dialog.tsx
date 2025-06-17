@@ -233,7 +233,7 @@ export function SendToSelectedRecipientsDialog({
               <Loader2 className="size-4 animate-spin stroke-primary" />
             </div>
           ) : recipients.length === 0 ? (
-            <NoRecipientsAlert broadcastTypes={broadcastTypes} emailId={emailId} />
+            <NoRecipientsAlert emailId={emailId} />
           ) : showResults ? (
             <div className="space-y-4">
               <BroadcastStatus

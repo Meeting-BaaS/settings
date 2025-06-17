@@ -26,6 +26,7 @@ interface DataTableProps<TData extends { id: string | number }, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   noDataMessage?: string
+  enableParentRowSelection?: boolean
   parentRowSelection?: RowSelectionState
 }
 
@@ -33,7 +34,8 @@ export function DataTable<TData extends { id: string | number }, TValue>({
   columns,
   data,
   noDataMessage = "No results.",
-  parentRowSelection = {}
+  parentRowSelection = {},
+  enableParentRowSelection = false
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(parentRowSelection)
@@ -53,7 +55,7 @@ export function DataTable<TData extends { id: string | number }, TValue>({
   })
 
   useEffect(() => {
-    if (Object.keys(parentRowSelection).length > 0) {
+    if (enableParentRowSelection) {
       setRowSelection(parentRowSelection)
     }
   }, [parentRowSelection])

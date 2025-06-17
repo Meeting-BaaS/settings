@@ -44,7 +44,9 @@ export function filterStateToSearchValues(filters: FilterState): {
   accountEmail: string
 } {
   return {
-    emailIdFilters: filters.emailIdFilters,
+    emailIdFilters: filters.emailIdFilters
+      .map((value) => getSearchParamFromValue(allEmailTypes, value))
+      .filter((value): value is string => value !== undefined),
     accountEmail: filters.accountEmail
   }
 }

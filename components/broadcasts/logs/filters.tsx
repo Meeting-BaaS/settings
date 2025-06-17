@@ -27,6 +27,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
+import isEqual from "lodash-es/isEqual"
 
 const emptyFilters = {
   emailIdFilters: [],
@@ -36,9 +37,11 @@ const emptyFilters = {
 interface FiltersProps {
   filters: FilterState
   setFilters: (filters: FilterState) => void
+  pageIndex: number
+  onPageChange: (pageIndex: number) => void
 }
 
-export function Filters({ filters, setFilters }: FiltersProps) {
+export function Filters({ filters, setFilters, pageIndex, onPageChange }: FiltersProps) {
   const [open, setOpen] = useState(false)
 
   const form = useForm<FiltersFormData>({
@@ -49,8 +52,19 @@ export function Filters({ filters, setFilters }: FiltersProps) {
     }
   })
 
+  const resetPageIndex = () => {
+    // Reset the page index to 0 when the filters change
+    if (pageIndex !== 0) {
+      onPageChange(0)
+    }
+  }
+
   const onSubmit = (data: FiltersFormData) => {
     setOpen(false)
+    if (isEqual(data, filters)) {
+      return
+    }
+    resetPageIndex()
     setFilters({
       emailIdFilters: data.emailIdFilters ?? [],
       accountEmail: data.accountEmail ?? ""
@@ -65,7 +79,10 @@ export function Filters({ filters, setFilters }: FiltersProps) {
 
   const isFiltered = Object.keys(filters).some((key) => {
     const filterArray = filters[key as keyof FilterState]
-    return filterArray && filterArray.length > 0
+    if (Array.isArray(filterArray)) {
+      return filterArray.length > 0
+    }
+    return filterArray !== ""
   })
 
   return (
@@ -108,7 +125,6 @@ export function Filters({ filters, setFilters }: FiltersProps) {
                         <CheckboxFilter
                           options={filter.options}
                           label={filter.label}
-                          name={filter.name}
                           selectedValues={Array.isArray(field.value) ? field.value : []}
                           onFilterChange={(value) => field.onChange(value)}
                         />

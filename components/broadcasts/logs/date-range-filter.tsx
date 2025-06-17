@@ -3,7 +3,6 @@
 import Datepicker, { type DateValueType } from "react-tailwindcss-datepicker"
 import dayjs from "dayjs"
 import { CalendarIcon } from "lucide-react"
-import { useMemo } from "react"
 
 interface DateRangeFilterProps {
   value: DateValueType
@@ -22,32 +21,29 @@ export function DateRangeFilter({ value, onChange }: DateRangeFilterProps) {
     }
   }
 
-  const configs = useMemo(
-    () => ({
-      shortcuts: {
-        today: "Today",
-        yesterday: "Yesterday",
-        past2Days: {
-          text: "Last 2 days",
-          period: {
-            start: dayjs().subtract(2, "day").toDate(),
-            end: dayjs().toDate()
-          }
-        },
-        past3Days: {
-          text: "Last 3 days",
-          period: {
-            start: dayjs().subtract(3, "day").toDate(),
-            end: dayjs().toDate()
-          }
-        },
-        past: (period: number) => `Last ${period} days`,
-        currentMonth: "This month",
-        pastMonth: "Last month"
-      }
-    }),
-    []
-  )
+  const configs = {
+    shortcuts: {
+      today: "Today",
+      yesterday: "Yesterday",
+      past2Days: {
+        text: "Last 2 days",
+        period: {
+          start: dayjs().subtract(2, "day").toDate(),
+          end: dayjs().toDate()
+        }
+      },
+      past3Days: {
+        text: "Last 3 days",
+        period: {
+          start: dayjs().subtract(3, "day").toDate(),
+          end: dayjs().toDate()
+        }
+      },
+      past: (period: number) => `Last ${period} days`,
+      currentMonth: "This month",
+      pastMonth: "Last month"
+    }
+  }
 
   return (
     <div className="relative w-full md:max-w-sm">
@@ -62,7 +58,7 @@ export function DateRangeFilter({ value, onChange }: DateRangeFilterProps) {
         readOnly
         toggleClassName="hidden" // Date shouldn't be cleared out
         inputName="date-range-filter"
-        inputClassName="relative border border-input text-foreground h-9 rounded-md py2.5 pl-3 pr-8 w-full text-base shadow-xs transition-[color,box-shadow] outline-none cursor-pointer md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] dark:bg-input/30 placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground"
+        inputClassName="relative border border-input text-foreground h-9 rounded-md py-2.5 pl-3 pr-8 w-full text-base shadow-xs transition-[color,box-shadow] outline-none cursor-pointer md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] dark:bg-input/30 placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground"
       />
       <CalendarIcon className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-3 z-10 h-4 w-4 text-muted-foreground" />
     </div>

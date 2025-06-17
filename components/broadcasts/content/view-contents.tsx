@@ -23,7 +23,5 @@ export function ViewContents({ broadcastTypes }: ViewContentsProps) {
     )
   }
 
-  if (!contents) return null
-
-  return <DataTable columns={columns} data={contents} />
+  return <DataTable columns={columns} data={contents ?? []} noDataMessage="No contents found." />
 }

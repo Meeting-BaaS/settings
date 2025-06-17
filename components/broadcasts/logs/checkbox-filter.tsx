@@ -9,21 +9,23 @@ interface CheckboxFilterProps {
   label: string
   selectedValues: string[]
   onFilterChange: (value: string[]) => void
-  name: string
 }
 
 export function CheckboxFilter({
   options,
   label,
   selectedValues,
-  onFilterChange,
-  name
+  onFilterChange
 }: CheckboxFilterProps) {
   const handleOptionChange = (option: Option, checked: boolean) => {
     const newFilter = checked
       ? [...selectedValues, option.value]
       : selectedValues.filter((v) => v !== option.value)
     onFilterChange(newFilter)
+  }
+
+  const getId = (option: Option) => {
+    return `${encodeURIComponent(label)}-${encodeURIComponent(option.label)}`
   }
 
   return (
@@ -33,12 +35,12 @@ export function CheckboxFilter({
         {options.map((option) => (
           <div key={option.value} className="flex items-center space-x-2">
             <Checkbox
-              id={`${label}-${option.label}`}
-              name={`${label}-${option.label}`}
+              id={getId(option)}
+              name={getId(option)}
               checked={selectedValues.includes(option.value)}
               onCheckedChange={(checked) => handleOptionChange(option, checked === true)}
             />
-            <Label htmlFor={`${label}-${option.label}`} className="font-medium text-sm">
+            <Label htmlFor={getId(option)} className="font-medium text-sm">
               {option.label}
             </Label>
           </div>

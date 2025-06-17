@@ -4,12 +4,11 @@ import { deleteContent, getContents, updateContent } from "@/lib/api/broadcast-a
 import type { Content } from "@/lib/broadcast-types"
 import { useEffect } from "react"
 import type { ContentFormValues } from "@/lib/schemas/content"
-import type { MutationError } from "@/lib/broadcast-types"
+import type { ContentMutationError } from "@/lib/broadcast-types"
 
 export function useContents() {
   const queryClient = useQueryClient()
   // Query for fetching contents
-  // Ensures that the contents are always up to date
   const {
     data: contents,
     isLoading,
@@ -20,6 +19,7 @@ export function useContents() {
     queryKey: ["contents"],
     queryFn: () => getContents(),
     staleTime: 1000 * 60 * 15, // 15 minutes
+    refetchOnWindowFocus: false,
     placeholderData: keepPreviousData
   })
 
@@ -45,14 +45,14 @@ export function useContents() {
         return { result, previousState }
       } catch (error) {
         // Attach the previous state to the error
-        ;(error as MutationError).previousState = previousState
+        ;(error as ContentMutationError).previousState = previousState
         throw error
       }
     },
     onSuccess: () => {
       toast.success("Content updated successfully")
     },
-    onError: (error: MutationError, { id }) => {
+    onError: (error: ContentMutationError, { id }) => {
       console.error("Failed to update content", error)
       // Revert the cache on error using the stored previous state
       queryClient.setQueryData(["contents"], (old: Content[]) => {
@@ -79,14 +79,14 @@ export function useContents() {
         return { result, previousState }
       } catch (error) {
         // Attach the previous state to the error
-        ;(error as MutationError).previousState = previousState
+        ;(error as ContentMutationError).previousState = previousState
         throw error
       }
     },
     onSuccess: () => {
       toast.success("Content deleted successfully")
     },
-    onError: (error: MutationError, { id }) => {
+    onError: (error: ContentMutationError, { id }) => {
       console.error("Failed to delete content", error)
       // Revert the cache on error using the stored previous state
       queryClient.setQueryData(["contents"], (old: Content[]) => {

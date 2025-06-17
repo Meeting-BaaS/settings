@@ -29,7 +29,7 @@ interface EditContentProps {
 export function EditContent({ broadcastTypes, row, open, onOpenChange }: EditContentProps) {
   const { updateContent, isUpdatingContent: isLoading } = useContents()
 
-  if (!open) {
+  if (open !== "edit") {
     return null
   }
 

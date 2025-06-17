@@ -61,6 +61,6 @@ export type EmailLogResponse = {
   hasMore: boolean
 }
 
-export interface MutationError extends Error {
+export interface ContentMutationError extends Error {
   previousState?: Content[]
 }

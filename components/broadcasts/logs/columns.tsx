@@ -11,7 +11,6 @@ import { dateSort, EmailIdTypeMap } from "@/components/broadcasts/logs/column-he
 export const columns: ColumnDef<EmailLog>[] = [
   {
     id: "sentAt",
-    accessorKey: "sentAt",
     meta: { displayName: "Sent At" },
     header: ({ column }) => <SortableHeader column={column} title="Sent At" isNumber />,
     accessorFn: (row) => formatSentAt(row.sentAt),

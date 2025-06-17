@@ -22,8 +22,8 @@ export function ContentDetailDialog({ content, open, onOpenChange }: ContentDeta
     return DOMPurify.sanitize(content ?? "")
   }, [content])
 
-  const handleOpenChange = (open: boolean) => {
-    onOpenChange(open ? "view" : null)
+  const handleOpenChange = (isOpen: boolean) => {
+    onOpenChange(isOpen ? "view" : null)
   }
 
   return (
