@@ -26,7 +26,7 @@ export function DeleteContent({ row, open, onOpenChange }: DeleteContentProps) {
     return null
   }
 
-  const onDelete = async () => {
+  const onDelete = () => {
     if (isLoading) return
 
     deleteContent(
@@ -39,8 +39,8 @@ export function DeleteContent({ row, open, onOpenChange }: DeleteContentProps) {
     )
   }
 
-  const handleOpenChange = (open: boolean) => {
-    onOpenChange(open ? "delete" : null)
+  const handleOpenChange = (isOpen: boolean) => {
+    onOpenChange(isOpen ? "delete" : null)
   }
   return (
     <AlertDialog open={open === "delete"} onOpenChange={handleOpenChange}>

@@ -42,7 +42,7 @@ export type EmailLogParams = {
   limit: number
   startDate: string | null
   endDate: string | null
-  emailId?: string
+  emailId?: string // Comma separated list of email types
   accountEmail?: string
 }
 

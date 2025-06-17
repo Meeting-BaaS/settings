@@ -52,7 +52,7 @@ export function useContents() {
     onSuccess: () => {
       toast.success("Content updated successfully")
     },
-    onError: (error: ContentMutationError, { id }) => {
+    onError: (error: ContentMutationError) => {
       console.error("Failed to update content", error)
       // Revert the cache on error using the stored previous state
       queryClient.setQueryData(["contents"], (old: Content[]) => {

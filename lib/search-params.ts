@@ -30,11 +30,12 @@ export function validateFilterValues(
       .map((value) => findOptionBySearchParam(allEmailTypes, value))
       .filter((value): value is string => value !== undefined) ?? []
 
-  const validAccountEmail = accountEmail ? accountEmailSchema.safeParse(accountEmail).data : ""
+  const validAccountEmail =
+    accountEmail && accountEmailSchema.safeParse(accountEmail).success ? accountEmail : ""
 
   return {
     emailIdFilters: validEmailIdFilters,
-    accountEmail: validAccountEmail ?? ""
+    accountEmail: validAccountEmail
   }
 }
 

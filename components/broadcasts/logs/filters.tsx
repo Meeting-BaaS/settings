@@ -73,6 +73,10 @@ export function Filters({ filters, setFilters, pageIndex, onPageChange }: Filter
 
   const handleClearAll = () => {
     setOpen(false)
+    if (isEqual(emptyFilters, filters)) {
+      return
+    }
+    resetPageIndex()
     form.reset(emptyFilters)
     setFilters(emptyFilters)
   }

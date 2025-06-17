@@ -167,9 +167,12 @@ export function SendToSelectedRecipientsDialog({
     }
 
     // Send the broadcast to the recipients
-    await sendBroadcastToRecipients(recipientsToSend)
-
-    const errorSet = new Set(result.errorRecipients.map((r) => r.email))
+    const sendResult = await sendBroadcastToRecipients(recipientsToSend)
+    if (!sendResult) {
+      // Hook will handle the error
+      return
+    }
+    const errorSet = new Set(sendResult.errorRecipients.map((r) => r.email))
 
     // Build the updated statuses for all recipients
     const updatedStatuses: RecipientWithStatus[] = recipients.map((recipient) => {

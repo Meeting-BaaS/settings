@@ -46,7 +46,7 @@ export function EditContent({ broadcastTypes, row, open, onOpenChange }: EditCon
     formState: { isDirty }
   } = form
 
-  const onSubmit = async (data: ContentFormValues) => {
+  const onSubmit = (data: ContentFormValues) => {
     if (isLoading) return
 
     updateContent(
@@ -60,8 +60,8 @@ export function EditContent({ broadcastTypes, row, open, onOpenChange }: EditCon
     )
   }
 
-  const handleOpenChange = (open: boolean) => {
-    onOpenChange(open ? "edit" : null)
+  const handleOpenChange = (isOpen: boolean) => {
+    onOpenChange(isOpen ? "edit" : null)
   }
   return (
     <Dialog open={open === "edit"} onOpenChange={handleOpenChange}>

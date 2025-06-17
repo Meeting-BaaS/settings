@@ -33,8 +33,10 @@ export function useBroadcastSender({
   const [progress, setProgress] = useState<BroadcastProgress>({ current: 0, total: 0 })
   const [result, setResult] = useState<BroadcastResult>({ successCount: 0, errorRecipients: [] })
 
-  const sendBroadcastToRecipients = async (recipients: Recipient[]) => {
-    if (recipients.length === 0 || isSending) return
+  const sendBroadcastToRecipients = async (
+    recipients: Recipient[]
+  ): Promise<BroadcastResult | null> => {
+    if (recipients.length === 0 || isSending) return null
 
     setIsSending(true)
     const batches = Math.ceil(recipients.length / BATCH_SIZE)
@@ -72,8 +74,14 @@ export function useBroadcastSender({
         successCount: currentSuccessCount,
         errorRecipients: currentErrorRecipients
       })
+
+      return {
+        successCount: currentSuccessCount,
+        errorRecipients: currentErrorRecipients
+      }
     } catch (error) {
       toast.error("Failed to send broadcast")
+      return null
     } finally {
       setIsSending(false)
     }

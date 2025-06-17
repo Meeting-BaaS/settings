@@ -31,7 +31,8 @@ export const allEmailTypes: Option[] = [
     searchParam: "developer-resources"
   },
   { label: "Security", value: "security", searchParam: "security" },
-  { label: "Billing", value: "billing", searchParam: "billing" }
+  { label: "Billing", value: "billing", searchParam: "billing" },
+  { label: "Custom", value: "custom", searchParam: "custom" }
 ]
 
 export const filtersFields = [

@@ -83,7 +83,7 @@ export function ContentSelectionTable({
           isLoadingContents ? "Loading..." : "No content found for this broadcast type."
         }
         parentRowSelection={tableRowSelection}
-        enableParentRowSelection={true}
+        enableParentRowSelection
       />
       <div className="flex justify-end gap-2">
         <Button variant="outline" className="grow md:grow-0" onClick={() => onBack(selectedRows)}>

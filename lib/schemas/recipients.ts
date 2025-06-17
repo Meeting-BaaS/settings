@@ -18,7 +18,8 @@ export const recipientFormSchema = z.object({
     .min(1, "Please enter a number")
     .refine((val) => !Number.isNaN(Number(val)), {
       message: "Must be a number"
-    }),
+    })
+    .refine((val) => Number(val) > 0, { message: "Must be greater than 0" }),
   csvFile: csvFileSchema
 })
 
