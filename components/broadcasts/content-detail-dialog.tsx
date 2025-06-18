@@ -3,27 +3,31 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger
+  DialogTitle
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Eye } from "lucide-react"
 import DOMPurify from "dompurify"
 import type { Content } from "@/lib/broadcast-types"
 import { cn } from "@/lib/utils"
 import { useMemo } from "react"
+import type { DialogState } from "@/components/broadcasts/content/table-actions"
 
-export function ContentDetailDialog({ content }: { content: Content["content"] }) {
+interface ContentDetailDialogProps {
+  content: Content["content"]
+  open: DialogState
+  onOpenChange: (open: DialogState) => void
+}
+
+export function ContentDetailDialog({ content, open, onOpenChange }: ContentDetailDialogProps) {
   const contentHtml = useMemo(() => {
     return DOMPurify.sanitize(content ?? "")
   }, [content])
+
+  const handleOpenChange = (isOpen: boolean) => {
+    onOpenChange(isOpen ? "view" : null)
+  }
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="View content details">
-          <Eye />
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open === "view"} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Content Details</DialogTitle>

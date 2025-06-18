@@ -3,9 +3,9 @@ import type { DomainConfig } from "@/lib/email-types"
 export const domains: DomainConfig[] = [
   {
     type: "reports",
-    color: "bg-blue-500",
+    color: "bg-primary",
     badge:
-      "text-blue-500 border-blue-200 bg-blue-100 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-400",
+      "text-primary border-primary/20 bg-primary/10 dark:border-primary dark:bg-primary/10 dark:text-primary",
     name: "User Reports",
     description: "Reports and metrics about your Meeting BaaS usage.",
     domain: "reports.meetingbaas.com"

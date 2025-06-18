@@ -1,5 +1,12 @@
 import type { ContentFormValues } from "@/lib/schemas/content"
-import type { BroadcastParams, Content, Recipient, RecipientParams } from "@/lib/broadcast-types"
+import type {
+  BroadcastParams,
+  Content,
+  EmailLogParams,
+  EmailLogResponse,
+  Recipient,
+  RecipientParams
+} from "@/lib/broadcast-types"
 
 export async function saveContent(data: ContentFormValues) {
   const response = await fetch("/api/email/admin/content", {
@@ -12,6 +19,34 @@ export async function saveContent(data: ContentFormValues) {
 
   if (!response.ok) {
     throw new Error(`Failed to save content: ${response.status} ${response.statusText}`)
+  }
+
+  return response.json()
+}
+
+export async function updateContent(data: ContentFormValues, id: number) {
+  const response = await fetch("/api/email/admin/content", {
+    method: "PUT",
+    body: JSON.stringify({ ...data, id }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to update content: ${response.status} ${response.statusText}`)
+  }
+
+  return response.json()
+}
+
+export async function deleteContent(id: number) {
+  const response = await fetch(`/api/email/admin/content/${id}`, {
+    method: "DELETE"
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to delete content: ${response.status} ${response.statusText}`)
   }
 
   return response.json()
@@ -66,4 +101,41 @@ export async function sendBroadcast(data: BroadcastParams) {
   }
 
   return response.json()
+}
+
+export async function getEmailLogs(params: EmailLogParams): Promise<EmailLogResponse> {
+  const queryParams = new URLSearchParams()
+  queryParams.append("offset", params.offset.toString())
+  queryParams.append("limit", params.limit.toString())
+
+  if (params.startDate) {
+    queryParams.append("startDate", params.startDate)
+  }
+  if (params.endDate) {
+    queryParams.append("endDate", params.endDate)
+  }
+  if (params.emailId) {
+    queryParams.append("emailId", params.emailId)
+  }
+  if (params.accountEmail) {
+    queryParams.append("accountEmail", params.accountEmail)
+  }
+
+  const response = await fetch(`/api/email/admin/email-logs?${queryParams.toString()}`)
+
+  if (!response.ok) {
+    throw new Error(`Failed to get email logs: ${response.status} ${response.statusText}`)
+  }
+
+  return response.json()
+}
+
+export async function getEmailHTML(emailId: number): Promise<string> {
+  const response = await fetch(`/api/email/admin/email-html/${emailId}`)
+
+  if (!response.ok) {
+    throw new Error(`Failed to get email HTML: ${response.status} ${response.statusText}`)
+  }
+
+  return response.text()
 }

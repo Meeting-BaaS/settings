@@ -6,12 +6,11 @@ import type { ColumnDef } from "@tanstack/react-table"
 import type { Content } from "@/lib/broadcast-types"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import { SortableHeader } from "@/components/ui/sortable-header"
-import dayjs from "dayjs"
-import utc from "dayjs/plugin/utc"
-dayjs.extend(utc)
 import type { EmailType } from "@/lib/email-types"
-import { ContentDetailDialog } from "@/components/broadcasts/content-detail-dialog"
+import { baseContentColumns } from "@/components/broadcasts/content/columns"
+import { SendToSelectedRecipientsDialog } from "@/components/broadcasts/send-to-selected-recipients-dialog"
+import type { BroadcastFormValues } from "@/lib/schemas/broadcast"
+import { SendBroadcastDialog } from "@/components/broadcasts/send-broadcast-dialog"
 
 interface ContentSelectionTableProps {
   broadcastTypes: EmailType[]
@@ -19,8 +18,8 @@ interface ContentSelectionTableProps {
   contents: Content[]
   isLoadingContents: boolean
   onBack: (selectedContent: Content["id"][]) => void
-  onSend: (selectedContent: Content["id"][]) => void
   selectedContent: Content["id"][]
+  broadcastFormValues: BroadcastFormValues
 }
 
 export function ContentSelectionTable({
@@ -29,10 +28,13 @@ export function ContentSelectionTable({
   contents,
   isLoadingContents,
   onBack,
-  onSend,
-  selectedContent
+  selectedContent,
+  broadcastFormValues
 }: ContentSelectionTableProps) {
   const [selectedRows, setSelectedRows] = useState<Content["id"][]>(selectedContent)
+  const [showSendDialog, setShowSendDialog] = useState(false)
+  const [showSelectedRecipientsDialog, setShowSelectedRecipientsDialog] = useState(false)
+
   // Update selected rows when selectedContent changes
   useEffect(() => {
     setSelectedRows(selectedContent)
@@ -41,11 +43,6 @@ export function ContentSelectionTable({
   const filteredContents = useMemo(
     () => contents.filter((content) => content.emailType === emailTypeId),
     [contents, emailTypeId]
-  )
-
-  const emailType = useMemo(
-    () => broadcastTypes.find((type) => type.id === emailTypeId),
-    [broadcastTypes, emailTypeId]
   )
 
   const columns: ColumnDef<Content>[] = useMemo(
@@ -67,35 +64,9 @@ export function ContentSelectionTable({
           />
         )
       },
-      {
-        accessorKey: "emailType",
-        header: ({ column }) => <SortableHeader column={column} title="Email Type" />,
-        cell: () => <div>{emailType?.name}</div>
-      },
-      {
-        accessorKey: "contentText",
-        header: ({ column }) => <SortableHeader column={column} title="Content" />,
-        cell: ({ row }) => <div className="max-w-[300px] truncate">{row.original.contentText}</div>
-      },
-      {
-        accessorKey: "name",
-        header: ({ column }) => <SortableHeader column={column} title="Creator" />,
-        cell: ({ row }) => <div>{row.original.name}</div>
-      },
-      {
-        accessorKey: "createdAt",
-        header: ({ column }) => <SortableHeader column={column} title="Created At" isNumber />,
-        cell: ({ row }) => (
-          <div>{dayjs.utc(row.original.createdAt).local().format("D MMM YYYY h:mm A")}</div>
-        )
-      },
-      {
-        id: "actions",
-        header: "Details",
-        cell: ({ row }) => <ContentDetailDialog content={row.original.content} />
-      }
+      ...baseContentColumns(broadcastTypes)
     ],
-    [emailType, selectedRows]
+    [broadcastTypes, selectedRows]
   )
 
   const tableRowSelection = useMemo(
@@ -112,19 +83,43 @@ export function ContentSelectionTable({
           isLoadingContents ? "Loading..." : "No content found for this broadcast type."
         }
         parentRowSelection={tableRowSelection}
+        enableParentRowSelection
       />
       <div className="flex justify-end gap-2">
         <Button variant="outline" className="grow md:grow-0" onClick={() => onBack(selectedRows)}>
           Back
         </Button>
         <Button
+          variant="outline"
+          className="grow md:grow-0"
+          onClick={() => setShowSelectedRecipientsDialog(true)}
+          disabled={selectedRows.length === 0}
+        >
+          Send to Selected Recipients
+        </Button>
+        <Button
           disabled={selectedRows.length === 0}
           className="grow md:grow-0"
-          onClick={() => onSend(selectedRows)}
+          onClick={() => setShowSendDialog(true)}
         >
-          Send
+          Send to All
         </Button>
       </div>
+
+      <SendToSelectedRecipientsDialog
+        open={showSelectedRecipientsDialog}
+        onOpenChange={setShowSelectedRecipientsDialog}
+        broadcastFormValues={broadcastFormValues}
+        broadcastTypes={broadcastTypes}
+        selectedContent={selectedRows}
+      />
+      <SendBroadcastDialog
+        open={showSendDialog}
+        onOpenChange={setShowSendDialog}
+        broadcastFormValues={broadcastFormValues}
+        broadcastTypes={broadcastTypes}
+        selectedContent={selectedRows}
+      />
     </div>
   )
 }

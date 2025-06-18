@@ -32,6 +32,9 @@ importers:
       '@radix-ui/react-radio-group':
         specifier: ^1.3.6
         version: 1.3.6(@types/react-dom@19.1.3(@types/react@19.1.3))(@types/react@19.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-scroll-area':
+        specifier: ^1.2.9
+        version: 1.2.9(@types/react-dom@19.1.3(@types/react@19.1.3))(@types/react@19.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-select':
         specifier: ^2.2.5
         version: 2.2.5(@types/react-dom@19.1.3(@types/react@19.1.3))(@types/react@19.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -86,6 +89,9 @@ importers:
       '@types/dompurify':
         specifier: ^3.2.0
         version: 3.2.0
+      '@types/papaparse':
+        specifier: ^5.3.16
+        version: 5.3.16
       axios:
         specifier: ^1.9.0
         version: 1.9.0
@@ -101,6 +107,9 @@ importers:
       dompurify:
         specifier: ^3.2.6
         version: 3.2.6
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
       lucide-react:
         specifier: ^0.507.0
         version: 0.507.0(react@19.1.0)
@@ -113,6 +122,9 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      papaparse:
+        specifier: ^5.5.3
+        version: 5.5.3
       react:
         specifier: ^19.0.0
         version: 19.1.0
@@ -122,6 +134,9 @@ importers:
       react-hook-form:
         specifier: ^7.56.3
         version: 7.56.3(react@19.1.0)
+      react-tailwindcss-datepicker:
+        specifier: ^2.0.0
+        version: 2.0.0(dayjs@1.11.13)(react@19.1.0)
       sonner:
         specifier: ^2.0.3
         version: 2.0.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -144,6 +159,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.5
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
       '@types/node':
         specifier: ^20
         version: 20.17.43
@@ -788,6 +806,19 @@ packages:
       '@types/react-dom':
         optional: true
 
+  '@radix-ui/react-scroll-area@1.2.9':
+    resolution: {integrity: sha512-YSjEfBXnhUELsO2VzjdtYYD4CfQjvao+lhhrX5XsHD7/cyUNzljF1FHEbgTPN7LH2MClfwRMIsYlqTYpKTTe2A==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
   '@radix-ui/react-select@2.2.5':
     resolution: {integrity: sha512-HnMTdXEVuuyzx63ME0ut4+sEMYW6oouHWNGUZc7ddvUWIcfCva/AMoqEW/3wnEllriMWBa0RHspCYnfCWJQYmA==}
     peerDependencies:
@@ -1284,6 +1315,12 @@ packages:
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
+  '@types/lodash-es@4.17.12':
+    resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
+
+  '@types/lodash@4.17.17':
+    resolution: {integrity: sha512-RRVJ+J3J+WmyOTqnz3PiBLA501eKwXl2noseKOrNo/6+XEHjTAxO4xHvxQB6QuNm+s4WRbn6rSiap8+EA+ykFQ==}
+
   '@types/markdown-it@14.1.2':
     resolution: {integrity: sha512-promo4eFwuiW+TfGxhi+0x3czqTYJkG8qB17ZUJiVF10Xm7NLVRSLUsfRTU/6h1e24VvRnXCx+hG7li58lkzog==}
 
@@ -1292,6 +1329,9 @@ packages:
 
   '@types/node@20.17.43':
     resolution: {integrity: sha512-DnDEcDUnVAUYSa7U03QvrXbj1MZj00xoyi/a3lRGkR/c7BFUnqv+OY9EUphMqXUKdZJEOmuzu2mm+LmCisnPow==}
+
+  '@types/papaparse@5.3.16':
+    resolution: {integrity: sha512-T3VuKMC2H0lgsjI9buTB3uuKj3EMD2eap1MOuEQuBQ44EnDx/IkGhU6EwiTf9zG3za4SKlmwKAImdDKdNnCsXg==}
 
   '@types/react-dom@19.1.3':
     resolution: {integrity: sha512-rJXC08OG0h3W6wDMFxQrZF00Kq6qQvw0djHRdzl3U5DnIERz0MRce3WVc7IS6JYBwtaP/DwYtRRjVlvivNveKg==}
@@ -1654,6 +1694,9 @@ packages:
   linkifyjs@4.3.1:
     resolution: {integrity: sha512-DRSlB9DKVW04c4SUdGvKK5FR6be45lTU9M76JnngqPeeGDqPwYc0zdUErtsNVMtxPXgUWV4HbXbnC4sNyBxkYg==}
 
+  lodash-es@4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+
   log-symbols@5.1.0:
     resolution: {integrity: sha512-l0x2DvrW294C9uDCoQe1VSU4gf529FkSZ6leBl4TiqZH/e+0R7hSfHQBNut2mNygDgHwvYHfFLn6Oxb3VWj2rA==}
     engines: {node: '>=12'}
@@ -1772,6 +1815,9 @@ packages:
 
   orderedmap@2.1.1:
     resolution: {integrity: sha512-TvAWxi0nDe1j/rtMcWcIj94+Ffe6n7zhow33h40SKxmsmozs6dz/e+EajymfoFcHd7sxNn8yHM8839uixMOV6g==}
+
+  papaparse@5.5.3:
+    resolution: {integrity: sha512-5QvjGxYVjxO59MGU2lHVYpRWBBtKHnlIAcSe1uNFCkkptUh63NFRj0FJQm7nR67puEruUci/ZkjmEFrjCAyP4A==}
 
   path-key@3.1.1:
     resolution: {integrity: sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==}
@@ -1901,6 +1947,12 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  react-tailwindcss-datepicker@2.0.0:
+    resolution: {integrity: sha512-HADddzZjeOIMxkKkueAyQmiAExLXYcwgPG0Qv1oP9cjCx4/jrhbbOAbazgjJmxfhGxUw7e0Goqs+DY3htKlhAA==}
+    peerDependencies:
+      dayjs: ^1.11.12
+      react: ^17.0.2 || ^18.2.0 || ^19.0.0
 
   react@19.1.0:
     resolution: {integrity: sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==}
@@ -2623,6 +2675,23 @@ snapshots:
       '@types/react': 19.1.3
       '@types/react-dom': 19.1.3(@types/react@19.1.3)
 
+  '@radix-ui/react-scroll-area@1.2.9(@types/react-dom@19.1.3(@types/react@19.1.3))(@types/react@19.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@radix-ui/number': 1.1.1
+      '@radix-ui/primitive': 1.1.2
+      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.1.3)(react@19.1.0)
+      '@radix-ui/react-context': 1.1.2(@types/react@19.1.3)(react@19.1.0)
+      '@radix-ui/react-direction': 1.1.1(@types/react@19.1.3)(react@19.1.0)
+      '@radix-ui/react-presence': 1.1.4(@types/react-dom@19.1.3(@types/react@19.1.3))(@types/react@19.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.1.3(@types/react@19.1.3))(@types/react@19.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-use-callback-ref': 1.1.1(@types/react@19.1.3)(react@19.1.0)
+      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.1.3)(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.1.3
+      '@types/react-dom': 19.1.3(@types/react@19.1.3)
+
   '@radix-ui/react-select@2.2.5(@types/react-dom@19.1.3(@types/react@19.1.3))(@types/react@19.1.3)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@radix-ui/number': 1.1.1
@@ -3109,6 +3178,12 @@ snapshots:
 
   '@types/linkify-it@5.0.0': {}
 
+  '@types/lodash-es@4.17.12':
+    dependencies:
+      '@types/lodash': 4.17.17
+
+  '@types/lodash@4.17.17': {}
+
   '@types/markdown-it@14.1.2':
     dependencies:
       '@types/linkify-it': 5.0.0
@@ -3119,6 +3194,10 @@ snapshots:
   '@types/node@20.17.43':
     dependencies:
       undici-types: 6.19.8
+
+  '@types/papaparse@5.3.16':
+    dependencies:
+      '@types/node': 20.17.43
 
   '@types/react-dom@19.1.3(@types/react@19.1.3)':
     dependencies:
@@ -3442,6 +3521,8 @@ snapshots:
 
   linkifyjs@4.3.1: {}
 
+  lodash-es@4.17.21: {}
+
   log-symbols@5.1.0:
     dependencies:
       chalk: 5.2.0
@@ -3555,6 +3636,8 @@ snapshots:
       wcwidth: 1.0.1
 
   orderedmap@2.1.1: {}
+
+  papaparse@5.5.3: {}
 
   path-key@3.1.1: {}
 
@@ -3721,6 +3804,11 @@ snapshots:
       tslib: 2.8.1
     optionalDependencies:
       '@types/react': 19.1.3
+
+  react-tailwindcss-datepicker@2.0.0(dayjs@1.11.13)(react@19.1.0):
+    dependencies:
+      dayjs: 1.11.13
+      react: 19.1.0
 
   react@19.1.0: {}
 

@@ -23,10 +23,44 @@ export type Recipient = {
   lastname: string
 }
 
+export type RecipientStatus = "sent" | "error" | "skipped"
+
+export type RecipientWithStatus = Recipient & {
+  status: RecipientStatus
+}
+
 export type BroadcastParams = {
   emailId: EmailType["id"]
   frequency: EmailFrequency
   subject: string
   contentIds: Content["id"][]
-  recipient: Recipient
+  recipients: Recipient[]
+}
+
+export type EmailLogParams = {
+  offset: number
+  limit: number
+  startDate: string | null
+  endDate: string | null
+  emailId?: string // Comma separated list of email types
+  accountEmail?: string
+}
+
+export type EmailLog = {
+  id: number
+  emailType: EmailType["id"]
+  sentAt: string
+  subject: string
+  triggeredBy: string
+  email: string
+  fullName: string
+}
+
+export type EmailLogResponse = {
+  data: EmailLog[]
+  hasMore: boolean
+}
+
+export interface ContentMutationError extends Error {
+  previousState?: Content[]
 }

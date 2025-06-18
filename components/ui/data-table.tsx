@@ -26,6 +26,7 @@ interface DataTableProps<TData extends { id: string | number }, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   noDataMessage?: string
+  enableParentRowSelection?: boolean
   parentRowSelection?: RowSelectionState
 }
 
@@ -33,10 +34,13 @@ export function DataTable<TData extends { id: string | number }, TValue>({
   columns,
   data,
   noDataMessage = "No results.",
-  parentRowSelection = {}
+  parentRowSelection = {},
+  enableParentRowSelection = false
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>(parentRowSelection)
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>(
+    enableParentRowSelection ? parentRowSelection : {}
+  )
   const table = useReactTable({
     data,
     columns,
@@ -44,7 +48,7 @@ export function DataTable<TData extends { id: string | number }, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: enableParentRowSelection ? setRowSelection : undefined,
     getRowId: (row) => String(row.id),
     state: {
       sorting,
@@ -53,7 +57,9 @@ export function DataTable<TData extends { id: string | number }, TValue>({
   })
 
   useEffect(() => {
-    setRowSelection(parentRowSelection)
+    if (enableParentRowSelection) {
+      setRowSelection(parentRowSelection)
+    }
   }, [parentRowSelection])
 
   return (

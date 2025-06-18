@@ -19,17 +19,13 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { KeyRound, Trash, Mail, Inbox } from "lucide-react"
 import type { DomainConfig } from "@/lib/email-types"
-
-type MenuItem = {
-  name: string
-  type: string
-}
+import { broadcastRoutes, type BroadcastRoute } from "@/components/broadcasts/broadcast-routes"
 
 type SidebarNavItem = {
   title: string
   href: string
   icon: React.ReactNode
-  menuItems?: DomainConfig[] | MenuItem[]
+  menuItems?: DomainConfig[] | BroadcastRoute[]
 }
 
 const sidebarNavItems: SidebarNavItem[] = [
@@ -56,16 +52,7 @@ const meetingBaasNavItems: SidebarNavItem[] = [
     title: "Broadcasts",
     href: "/broadcasts",
     icon: <Inbox />,
-    menuItems: [
-      {
-        name: "Create Content",
-        type: "create"
-      },
-      {
-        name: "Send Broadcast",
-        type: "send-broadcast"
-      }
-    ]
+    menuItems: broadcastRoutes
   }
 ]
 
